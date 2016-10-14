@@ -11,8 +11,6 @@ Version: 0.1
 
 define( 'BU_LIAISON_API_PLUGIN_DIR', dirname( __FILE__ ) );
 
-$config['SpectrumEMPAPIKey'] = 'e8149913b261c4d5471212847821e59557cc60be';
-$config['SpectrumEMPClientID'] = '266';
 
 // SpectrumEMP constants.
 define( 'API_URL', 				'https://www.spectrumemp.com/api/' );
@@ -21,14 +19,19 @@ define('SUBMIT_URL', 			API_URL . 'inquiry_form/submit');
 define('CLIENT_RULES_URL', 		API_URL . 'field_rules/client_rules');
 define('FIELD_OPTIONS_URL', 	API_URL . 'field_rules/field_options');
 
-
+include(BU_LIAISON_API_PLUGIN_DIR . '/admin/admin.php');
 
 function liaison_inquiry_form( $atts ){
-	// @todo Globals are undesirable, put the constants in a class definition?
-	global $config;
+
+	// Get API key from option setting.
+	$options = get_option( 'lapi_options' );
+	$api_key = $options['APIKey'];
+
+	// Optionally override the API key with the shortcode attribute if present.
+	if ( isset( $atts['api_key'] ) ) { $api_key = $atts['api_key']; }
 
 	// Get info from EMP about the fields that should be displayed for the form.
-	$api_query = REQUIREMENTS_URL . '?IQS-API-KEY=' . $config['SpectrumEMPAPIKey'];
+	$api_query = REQUIREMENTS_URL . '?IQS-API-KEY=' . $api_key;
 	$api_response = wp_remote_get( $api_query );
 
 	// Check for a successful response from external API server.
