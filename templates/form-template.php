@@ -6,7 +6,8 @@ $html .= '<h1>' . $inquiry_form->form->header . '</h1>';
 $html .= '<p>' . $inquiry_form->form->subHeader . '<p>';
 
 // Markup code directly copied from Spectrum EMP API example.
-$html .= '<form id="form_example" action="scripts/formhandler.php" method="post">';
+// better markup - echo esc_url( admin_url('admin-post.php') );
+$html .= '<form id="form_example" action="' . get_admin_url() . 'admin-post.php" method="post">';
 
 foreach ( $inquiry_form->sections as $section_index => $section ) {
 	$html .= '
@@ -157,6 +158,8 @@ $html .= '
 	<div class="clear"></div>
 	
 	<br />
+
+	<input type="hidden" name="action" value="liaison_inquiry">
 ';
 
 $html .= '</form>';

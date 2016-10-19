@@ -57,3 +57,12 @@ function liaison_inquiry_form( $atts ){
 }
 
 add_shortcode( 'liaison_inquiry_form', 'liaison_inquiry_form' );
+
+
+function handle_liaison_inquiry() {
+	var_export( $_POST );
+	exit();
+}
+
+add_action( 'admin_post_nopriv_liaison_inquiry', 'handle_liaison_inquiry' );
+add_action( 'admin_post_liaison_inquiry', 'handle_liaison_inquiry' );
