@@ -9,7 +9,7 @@ Version: 0.1
 */
 
 
-define( 'BU_LIAISON_API_PLUGIN_DIR', dirname( __FILE__ ) );
+define( 'BU_LIAISON_INQUIRY_PLUGIN_DIR', dirname( __FILE__ ) );
 
 
 // SpectrumEMP constants.
@@ -19,12 +19,12 @@ define('SUBMIT_URL', 			API_URL . 'inquiry_form/submit');
 define('CLIENT_RULES_URL', 		API_URL . 'field_rules/client_rules');
 define('FIELD_OPTIONS_URL', 	API_URL . 'field_rules/field_options');
 
-include(BU_LIAISON_API_PLUGIN_DIR . '/admin/admin.php');
+include(BU_LIAISON_INQUIRY_PLUGIN_DIR . '/admin/admin.php');
 
 function liaison_inquiry_form( $atts ){
 
 	// Get API key from option setting.
-	$options = get_option( 'lapi_options' );
+	$options = get_option( 'bu_liaison_inquiry_options' );
 	$api_key = $options['APIKey'];
 
 	// Optionally override the API key with the shortcode attribute if present.
@@ -51,7 +51,7 @@ function liaison_inquiry_form( $atts ){
 	$inquiry_form = $inquiry_form_decode->data;
 
 	// Include a template file like bu-navigation does.
-	include( BU_LIAISON_API_PLUGIN_DIR . '/templates/form-template.php' );
+	include( BU_LIAISON_INQUIRY_PLUGIN_DIR . '/templates/form-template.php' );
 
 	return $html;
 }
