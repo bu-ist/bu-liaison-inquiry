@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: BU Liaison API
+Plugin Name: BU Liaison Inquiry
 Plugin URI: http://developer.bu.edu
 Author: Boston University (IS&T)
 Author URI: http://developer.bu.edu
