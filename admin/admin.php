@@ -1,11 +1,12 @@
 <?php
 /**
- * @internal    never define functions inside callbacks.
- *              these functions could be run multiple times; this would result in a fatal error.
+ * BU Liaison Inquiry Admin
+ *
+ * @package BU Liaison Inquiry
  */
 
 /**
- * Custom option and settings
+ * Register the settings option and define the settings page
  */
 function bu_liaison_inquiry_settings_init() {
 	// Register a new setting for "bu_liaison_inquiry" page.
@@ -13,19 +14,19 @@ function bu_liaison_inquiry_settings_init() {
 
 	// Register a new section in the "bu_liaison_inquiry" page.
 	add_settings_section(
-		'bu_liaison_inquiry_section_developers',
+		'bu_liaison_inquiry_admin_section_key',
 		__( 'Enter SpectrumEMP API Key and Client ID', 'bu_liaison_inquiry' ),
-		'bu_liaison_inquiry_section_developers_cb',
+		'bu_liaison_inquiry_admin_section_key_callback',
 		'bu_liaison_inquiry'
 	);
 
-	// Register a new field in the "bu_liaison_inquiry_section_developers" section, inside the "bu_liaison_inquiry" page.
+	// Register a new field in the "bu_liaison_inquiry_admin_section_key" section, inside the "bu_liaison_inquiry" page.
 	add_settings_field(
 		'APIKey',
 		__( 'API Key', 'bu_liaison_inquiry' ),
-		'bu_liaison_inquiry_field_APIKey_cb',
+		'bu_liaison_inquiry_field_APIKey_callback',
 		'bu_liaison_inquiry',
-		'bu_liaison_inquiry_section_developers',
+		'bu_liaison_inquiry_admin_section_key',
 		array( 'label_for' => 'APIKey', 'class' => 'bu_liaison_inquiry_row', 'bu_liaison_inquiry_custom_data' => 'custom' )
 	);
 
@@ -33,42 +34,34 @@ function bu_liaison_inquiry_settings_init() {
 	add_settings_field(
 		'ClientID',
 		__( 'Client ID', 'bu_liaison_inquiry' ),
-		'bu_liaison_inquiry_field_ClientID_cb',
+		'bu_liaison_inquiry_field_ClientID_callback',
 		'bu_liaison_inquiry',
-		'bu_liaison_inquiry_section_developers',
+		'bu_liaison_inquiry_admin_section_key',
 		array( 'label_for' => 'ClientID', 'class' => 'bu_liaison_inquiry_row', 'bu_liaison_inquiry_custom_data' => 'custom' )
 	);
 }
 
 /**
- * Register our bu_liaison_inquiry_settings_init to the admin_init action hook
+ * Initialize the admin settings
  */
 add_action( 'admin_init', 'bu_liaison_inquiry_settings_init' );
 
 /**
- * Custom option and settings:
- * callback functions
+ * Outputs a section header for the admin page, called by add_settings_section()
+ *
+ * @param array $args Contains keys for title, id, callback.
  */
-
-// developers section cb
-
-// section callbacks can accept an $args parameter, which is an array.
-// $args have the following keys defined: title, id, callback.
-// the values are defined at the add_settings_section() function.
-function bu_liaison_inquiry_section_developers_cb( $args ){
-	?>
-	<p id="<?php echo esc_attr($args['id']); ?>"><?php echo esc_html__('Set the parameters for your organization to fetch the correct form.', 'bu_liaison_inquiry'); ?></p>
-	<?php
+function bu_liaison_inquiry_admin_section_key_callback( $args ) {
+	echo "<p id='". esc_attr( $args['id'] ) . "'>" . esc_html__( 'Set the parameters for your organization to fetch the correct form.', 'bu_liaison_inquiry' ) . '</p>';
 }
-/////// field callback
-// field callbacks can accept an $args parameter, which is an array.
-// $args is defined at the add_settings_field() function.
-// wordpress has magic interaction with the following keys: label_for, class.
-// the "label_for" key value is used for the "for" attribute of the <label>.
-// the "class" key value is used for the "class" attribute of the <tr> containing the field.
-// you can add custom key value pairs to be used inside your callbacks.
-function bu_liaison_inquiry_field_APIKey_cb( $args ) {
-	// Get the value of the setting we've registered with register_setting().
+
+/**
+ * Outputs the form field for the API Key, called by add_settings_field()
+ *
+ * @param array $args Contains keys for label_for, class, bu_liaison_inquiry_custom_data.
+ */
+function bu_liaison_inquiry_field_apikey_callback( $args ) {
+	// Get the value of the setting registered with register_setting().
 	$options = get_option( 'bu_liaison_inquiry_options' );
 
 	// Output the field.
@@ -87,8 +80,13 @@ function bu_liaison_inquiry_field_APIKey_cb( $args ) {
 	<?php
 }
 
-function bu_liaison_inquiry_field_ClientID_cb( $args ) {
-	// Get the value of the setting we've registered with register_setting().
+/**
+ * Outputs the form field for the Client ID, called by add_settings_field()
+ *
+ * @param array $args Contains keys for label_for, class, bu_liaison_inquiry_custom_data.
+ */
+function bu_liaison_inquiry_field_clientid_callback( $args ) {
+	// Get the value of the setting registered with register_setting().
 	$options = get_option( 'bu_liaison_inquiry_options' );
 
 	// Output the field.
@@ -107,7 +105,7 @@ function bu_liaison_inquiry_field_ClientID_cb( $args ) {
 	<?php
 }
 /**
- * Create a submenu page.
+ * Create an admin page.
  */
 function bu_liaison_inquiry_options_page() {
 
@@ -120,15 +118,14 @@ function bu_liaison_inquiry_options_page() {
 		'bu_liaison_inquiry_options_page_html'
 	);
 }
- 
+
 /**
- * register our bu_liaison_inquiry_options_page to the admin_menu action hook
+ * Register the page in the admin menu.
  */
 add_action( 'admin_menu', 'bu_liaison_inquiry_options_page' );
 
 /**
- * top level menu:
- * callback functions
+ * Outputs the form on the admin page using the defined actions.
  */
 function bu_liaison_inquiry_options_page_html() {
 	// Check user capabilities.
@@ -136,25 +133,24 @@ function bu_liaison_inquiry_options_page_html() {
 		return;
 	}
 
-	// Add error/update messages.
-	// check if the user have submitted the settings
-	// wordpress will add the "settings-updated" $_GET parameter to the url.
+	// Add status messages.
+	// Wordpress will add the "settings-updated" $_GET parameter to the url.
 	if ( isset( $_GET['settings-updated'] ) ) {
 		// Add settings saved message with the class of "updated".
 		add_settings_error( 'bu_liaison_inquiry_messages', 'bu_liaison_inquiry_message', __( 'Settings Saved', 'bu_liaison_inquiry' ), 'updated' );
 	}
 
-	// Show error/update messages.
+	// Show status messages.
 	settings_errors( 'bu_liaison_inquiry_messages' );
 	?>
 	<div class="wrap">
 		<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
 		<form action="options.php" method="post">
 			<?php
-			// Output security fields for the registered setting "bu_liaison_inquiry".
+			// Output security fields for the registered setting.
 			settings_fields( 'bu_liaison_inquiry' );
 			// Output setting sections and their fields.
-			// (sections are registered for "bu_liaison_inquiry", each field is registered to a specific section)
+			// (sections are registered for "bu_liaison_inquiry", each field is registered to a specific section).
 			do_settings_sections( 'bu_liaison_inquiry' );
 			// Output save settings button.
 			submit_button( 'Save Settings' );
