@@ -36,6 +36,7 @@ function liaison_inquiry_form( $atts ) {
 	// Get API key from option setting.
 	$options = get_option( 'bu_liaison_inquiry_options' );
 	$api_key = $options['APIKey'];
+	$client_id = $options['ClientID'];
 
 	// Optionally override the API key with the shortcode attribute if present.
 	if ( isset( $atts['api_key'] ) ) { $api_key = $atts['api_key']; }
@@ -62,9 +63,11 @@ function liaison_inquiry_form( $atts ) {
 	wp_enqueue_script( 'jquery-ui' );
 	wp_enqueue_script( 'jquery-masked' );
 	wp_enqueue_script( 'jquery-pubsub' );
+	wp_enqueue_script( 'iqs-validate' );
+	wp_enqueue_script( 'bu-liaison-main' );
 	wp_enqueue_script( 'field_rules_form_library' );
 	wp_enqueue_script( 'field_rules_handler' );
-	wp_enqueue_script( 'bu-liaison-main' );
+
 
 	$inquiry_form = $inquiry_form_decode->data;
 
@@ -135,19 +138,21 @@ function handle_liaison_inquiry() {
 	$resp = json_decode( $remote_submit['body'] );
 
 	//From EMP API example
+	//uses jquery api callback
 	$return = array();
 	$return['status'] = 0;
 
 	$return['status'] 		= ( isset( $resp->status ) && $resp->status == 'success' ) ? 1 : 0;
 	$return['response'] 	= ( isset( $resp->message ) ) ? $resp->message : 'Something bad happened, please refresh the page and try again.';
 	$return['data'] 		= ( isset( $resp->data ) ) ? $resp->data : '';
-	//echo esc_html( $return['response'] );
+	echo esc_html( $return['response'] );
 	// End EMP API Example segment.
 
-	$redirect_url = urldecode( $return['data'] );
+	//for raw answer, not for jquery ajax callback
+	//$redirect_url = urldecode( $return['data'] );
 
 
-	echo "<script>window.location.href = '" . esc_url( $redirect_url ) . "';</script>";
+	//echo "<script>window.location.href = '" . esc_url( $redirect_url ) . "';</script>";
 
 }
 
@@ -158,6 +163,7 @@ add_action( 'admin_post_liaison_inquiry', 'handle_liaison_inquiry' );
 wp_register_script( 'jquery-ui', plugin_dir_url( __FILE__ ) . 'assets/js/jquery/jquery-ui.js', array( 'jquery' ) );
 wp_register_script( 'jquery-masked', plugin_dir_url( __FILE__ ) . 'assets/js/jquery/jquery-masked.js', array( 'jquery' ) );
 wp_register_script( 'jquery-pubsub', plugin_dir_url( __FILE__ ) . 'assets/js/jquery/jquery-pubsub.js', array( 'jquery' ) );
+wp_register_script( 'iqs-validate', plugin_dir_url( __FILE__ ) . 'assets/js/iqs/validate.js', array( 'jquery' ) );
 
 //should register jquery-ui css styles too?
 

@@ -1,3 +1,6 @@
+//Enable $ alias to jQuery
+$ = jQuery;
+
 $(document).ready(function () {
 	main();
 });
@@ -8,9 +11,9 @@ function main() {
 	
 	that.init = function() {
 		
-		$('.twipsy').tooltip({
-			'placement':'top'
-		});
+		//$('.twipsy').tooltip({
+		//	'placement':'top'
+		//});
 		
 		$('.iqs-form-phone-number').mask("(999) 999-9999", {
 			placeholder: "_"
@@ -26,7 +29,7 @@ function main() {
 				
 				var $sb = $form.find('.btn-primary').html('Submitting...').attr('disabled', 'disabled');
 				
-				$.post('scripts/formhandler.php', $form.serialize(), function(r) {
+				$.post( $form.attr('action'), $form.serialize(), function(r) {
 					
 					if (r.status == 1) {
 						$('.form-submit-danger').hide();

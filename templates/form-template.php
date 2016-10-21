@@ -5,6 +5,20 @@ $html = '';
 $html .= '<h1>' . $inquiry_form->form->header . '</h1>';
 $html .= '<p>' . $inquiry_form->form->subHeader . '<p>';
 
+
+// Inject JS validation rule config values.
+$html .= "\n";
+
+$html .= "<script type='text/javascript'>";
+$html .= "\n";
+$html .= 'var SITE = {};';
+$html .= "\n";
+$html .= 'SITE.data = {client_rules_url: "' . CLIENT_RULES_URL . '", field_options_url: "' . FIELD_OPTIONS_URL . '", client_id: "' . $client_id .'"};';
+$html .= "\n";
+$html .= '</script>';
+
+$html .= "\n";
+
 // Markup code directly copied from Spectrum EMP API example.
 // better markup - echo esc_url( admin_url('admin-post.php') );
 $html .= '<form id="form_example" action="' . get_admin_url() . 'admin-post.php" method="post">';
