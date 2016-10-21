@@ -58,6 +58,14 @@ function liaison_inquiry_form( $atts ) {
 		return 'Error in Form API response';
 	}
 
+	// Enqueue the validation scripts
+	wp_enqueue_script( 'jquery-ui' );
+	wp_enqueue_script( 'jquery-masked' );
+	wp_enqueue_script( 'jquery-pubsub' );
+	wp_enqueue_script( 'field_rules_form_library' );
+	wp_enqueue_script( 'field_rules_handler' );
+	wp_enqueue_script( 'bu-liaison-main' );
+
 	$inquiry_form = $inquiry_form_decode->data;
 
 	// Include a template file like bu-navigation does.
@@ -145,3 +153,20 @@ function handle_liaison_inquiry() {
 
 add_action( 'admin_post_nopriv_liaison_inquiry', 'handle_liaison_inquiry' );
 add_action( 'admin_post_liaison_inquiry', 'handle_liaison_inquiry' );
+
+// Register js form validation scripts so that they may be enqueued by the shortcode handler.
+wp_register_script( 'jquery-ui', plugin_dir_url( __FILE__ ) . 'assets/js/jquery/jquery-ui.js', array( 'jquery' ) );
+wp_register_script( 'jquery-masked', plugin_dir_url( __FILE__ ) . 'assets/js/jquery/jquery-masked.js', array( 'jquery' ) );
+wp_register_script( 'jquery-pubsub', plugin_dir_url( __FILE__ ) . 'assets/js/jquery/jquery-pubsub.js', array( 'jquery' ) );
+
+//should register jquery-ui css styles too?
+
+wp_register_script( 'field_rules_form_library', plugin_dir_url( __FILE__ ) . 'assets/js/field_rules_form_library.js', array( 'jquery' ) );
+wp_register_script( 'field_rules_handler', plugin_dir_url( __FILE__ ) . 'assets/js/field_rules_handler.js', array( 'jquery' ) );
+
+wp_register_script( 'bu-liaison-main', plugin_dir_url( __FILE__ ) . 'assets/js/main.js', array( 'jquery' ) );
+
+
+
+
+
