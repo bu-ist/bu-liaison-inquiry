@@ -14,14 +14,24 @@ define( 'BU_LIAISON_INQUIRY_PLUGIN_DIR', dirname( __FILE__ ) );
 
 // SpectrumEMP constants.
 define( 'API_URL', 				'https://www.spectrumemp.com/api/' );
-define('REQUIREMENTS_URL', 		API_URL . 'inquiry_form/requirements');
-define('SUBMIT_URL', 			API_URL . 'inquiry_form/submit');
-define('CLIENT_RULES_URL', 		API_URL . 'field_rules/client_rules');
-define('FIELD_OPTIONS_URL', 	API_URL . 'field_rules/field_options');
+define( 'REQUIREMENTS_URL', 	API_URL . 'inquiry_form/requirements' );
+define( 'SUBMIT_URL', 			API_URL . 'inquiry_form/submit' );
+define( 'CLIENT_RULES_URL', 	API_URL . 'field_rules/client_rules' );
+define( 'FIELD_OPTIONS_URL', 	API_URL . 'field_rules/field_options' );
 
-include(BU_LIAISON_INQUIRY_PLUGIN_DIR . '/admin/admin.php');
+/**
+ * Include the admin interface.
+ */
+include( BU_LIAISON_INQUIRY_PLUGIN_DIR . '/admin/admin.php' );
 
-function liaison_inquiry_form( $atts ){
+
+/**
+ * Shortcode definition that creates the Liaison inquiry form.
+ *
+ * @param array $atts Attributes specified in the shortcode.
+ * @return string Returns full markup to replace the shortcode.
+ */
+function liaison_inquiry_form( $atts ) {
 
 	// Get API key from option setting.
 	$options = get_option( 'bu_liaison_inquiry_options' );
@@ -61,6 +71,7 @@ add_shortcode( 'liaison_inquiry_form', 'liaison_inquiry_form' );
 
 function handle_liaison_inquiry() {
 
+	//@todo this seems weak, not sure why it was in the example.  Best thing to do would be replace this with a proper wordpress nonce
 	// Check that it looks like the right form.
 	if ( 'liaison_inquiry_form' != $_POST['form_submit'] ) {
 		//now what?
@@ -68,12 +79,13 @@ function handle_liaison_inquiry() {
 		return;
 	}
 
+	//@todo the example operates directly on the $_POST array, which seems contrary to the best practice of sanitizing $_POST first
 	unset( $_POST['form_submit'] );
 
 	// Necessary to get the API key from the options, can't expose the key by passing it through the form.
 	$options = get_option( 'bu_liaison_inquiry_options' );
 	// Check for a valid API key value.
-	if ( !isset( $options['APIKey'] ) ) {
+	if ( ! isset( $options['APIKey'] ) ) {
 		echo 'no API key';
 		return;
 	}
@@ -81,54 +93,52 @@ function handle_liaison_inquiry() {
 	$_POST['IQS-API-KEY'] = $options['APIKey'];
 
 
-	// Straight from API example
+	// From EMP API example
 	$phone_fields = $_POST['phone_fields'];
-	$phone_fields = explode(',', $phone_fields);
-	unset($_POST['phone_fields']);
+	$phone_fields = explode( ',', $phone_fields );
+	unset( $_POST['phone_fields'] );
 
 
 	$post_vars = array();
 	foreach ($_POST as $k => $v) {
-		if (in_array($k, $phone_fields)) {
-			$v = preg_replace('/[^0-9]/', '', $v);
-			$v = '%2B1' . $v;		// append +1 for US, but + needs to be %2B for posting
+		if ( in_array( $k, $phone_fields ) ) {
+			$v = preg_replace( '/[^0-9]/', '', $v );
+			$v = '%2B1' . $v;		// Append +1 for US, but + needs to be %2B for posting.
 		}
 		// if this checkbox field is set then it was checked
 		if (stripos($k, '-text-opt-in') !== false) {
 			$v = '1';
 		}
-		//$post_vars[] = $k . '=' . $v;
 	}
-	//$post_vars = implode('&', $post_vars);
 
-	//shim
+	// Shim.
 	$post_vars = $_POST;
 
-	//End API Example
+	// End EMP API Example segment.
 
-
+	// Setup arguments for the external API call.
 	$post_args = array( 'body' => $post_vars );
 
+	// Make the external API call.
 	$remote_submit = wp_remote_post( SUBMIT_URL, $post_args );
 
-	// Check response status: if successfull then redirect to the new supplied purl.
+	// Decode the response and activate redirect to the personal url on success.
 
 	$resp = json_decode( $remote_submit['body'] );
 
-	//from spectrum
+	//From EMP API example
 	$return = array();
 	$return['status'] = 0;
-	
-	$return['status'] = (isset($resp->status) && $resp->status == 'success') ? 1 : 0;
-	$return['response'] = (isset($resp->message)) ? $resp->message : 'Something bad happened, please refresh the page and try again.';
-	$return['data'] = (isset($resp->data)) ? $resp->data : '';
-	//end spectrum
 
+	$return['status'] 		= ( isset( $resp->status ) && $resp->status == 'success' ) ? 1 : 0;
+	$return['response'] 	= ( isset( $resp->message ) ) ? $resp->message : 'Something bad happened, please refresh the page and try again.';
+	$return['data'] 		= ( isset( $resp->data ) ) ? $resp->data : '';
+	//echo esc_html( $return['response'] );
+	// End EMP API Example segment.
 
-	//echo json_encode($return);
 	$redirect_url = urldecode( $return['data'] );
 
-	echo esc_html( $return['response'] );
+
 	echo "<script>window.location.href = '" . esc_url( $redirect_url ) . "';</script>";
 
 }
