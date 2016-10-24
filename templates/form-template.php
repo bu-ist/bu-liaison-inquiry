@@ -5,7 +5,6 @@ $html = '';
 $html .= '<h1>' . $inquiry_form->form->header . '</h1>';
 $html .= '<p>' . $inquiry_form->form->subHeader . '<p>';
 
-
 // Inject JS validation rule config values.
 $html .= "\n";
 
@@ -13,7 +12,7 @@ $html .= "<script type='text/javascript'>";
 $html .= "\n";
 $html .= 'var SITE = {};';
 $html .= "\n";
-$html .= 'SITE.data = {client_rules_url: "' . CLIENT_RULES_URL . '", field_options_url: "' . FIELD_OPTIONS_URL . '", client_id: "' . $client_id .'"};';
+$html .= 'SITE.data = {client_rules_url: "' . $this->client_rules_url . '", field_options_url: "' . $this->field_options_url . '", client_id: "' . $client_id .'"};';
 $html .= "\n";
 $html .= '</script>';
 
