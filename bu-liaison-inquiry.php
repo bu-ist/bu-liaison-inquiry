@@ -145,7 +145,10 @@ function handle_liaison_inquiry() {
 	$return['status'] 		= ( isset( $resp->status ) && $resp->status == 'success' ) ? 1 : 0;
 	$return['response'] 	= ( isset( $resp->message ) ) ? $resp->message : 'Something bad happened, please refresh the page and try again.';
 	$return['data'] 		= ( isset( $resp->data ) ) ? $resp->data : '';
-	echo esc_html( $return['response'] );
+
+	// Return a JSON encoded reply for the validation javascript.
+	echo json_encode($return);
+
 	// End EMP API Example segment.
 
 	//for raw answer, not for jquery ajax callback
