@@ -120,8 +120,7 @@ class BU_Liaison_Inquiry {
 			return;
 		}
 
-		//@todo the example operates directly on the $_POST array, which seems contrary to the best practice of sanitizing $_POST first
-		unset( $_POST['form_submit'] );
+
 
 		// Necessary to get the API key from the options, can't expose the key by passing it through the form.
 		$options = get_option( 'bu_liaison_inquiry_options' );
@@ -133,6 +132,7 @@ class BU_Liaison_Inquiry {
 			return;
 		}
 
+		//@todo the example operates directly on the $_POST array, which seems contrary to the best practice of sanitizing $_POST first
 		$_POST['IQS-API-KEY'] = $options['APIKey'];
 
 

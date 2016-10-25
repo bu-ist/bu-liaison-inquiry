@@ -165,7 +165,6 @@ $html .= '
 		<button type="submit" class="btn btn-primary">Go <i class="icon-chevron-right icon-white"></i></button>
 	</div>
 	
-	<input type="hidden" id="form_submit" name="form_submit" value="liaison_inquiry_form" />
 	<input type="hidden" id="phone_fields" name="phone_fields" value="' . implode(',', $phone_fields) . '" />
 	
 	<div class="clear"></div>
