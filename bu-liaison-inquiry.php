@@ -100,22 +100,23 @@ class BU_Liaison_Inquiry {
 
 		$inquiry_form = $inquiry_form_decode->data;
 
+		// Setup nonce for form to protect against various possible attacks.
+		$nonce = wp_nonce_field('liaison_inquiry', 'liaison_inquiry_nonce', false, false);
+
 		// Include a template file like bu-navigation does.
 		include( $this->plugin_dir . '/templates/form-template.php' );
 
 		return $html;
 	}
 
-	
-
 
 	function handle_liaison_inquiry() {
 
-		//@todo this seems weak, not sure why it was in the example.  Best thing to do would be replace this with a proper wordpress nonce
-		// Check that it looks like the right form.
-		if ( 'liaison_inquiry_form' != $_POST['form_submit'] ) {
-			//now what?
-			echo 'wrong form';
+		// Use wp nonce to verify the form was submitted correctly.
+		if ( ! wp_verify_nonce( $_REQUEST['liaison_inquiry_nonce'], 'liaison_inquiry' ) ) {
+			$return['status'] = 0;
+			$return['response'] = 'There was a problem with the form nonce, please reload the page';
+			echo json_encode( $return );
 			return;
 		}
 
@@ -126,7 +127,9 @@ class BU_Liaison_Inquiry {
 		$options = get_option( 'bu_liaison_inquiry_options' );
 		// Check for a valid API key value.
 		if ( ! isset( $options['APIKey'] ) ) {
-			echo 'no API key';
+			$return['status'] = 0;
+			$return['response'] = 'API Key missing';
+			echo json_encode( $return );
 			return;
 		}
 

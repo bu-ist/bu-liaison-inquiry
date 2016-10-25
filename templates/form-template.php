@@ -175,6 +175,8 @@ $html .= '
 	<input type="hidden" name="action" value="liaison_inquiry">
 ';
 
+$html .= $nonce;
+
 $html .= '</form>';
 
 
