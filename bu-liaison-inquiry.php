@@ -1,4 +1,5 @@
 <?php
+
 /*
 Plugin Name: BU Liaison Inquiry
 Plugin URI: http://developer.bu.edu
@@ -8,6 +9,12 @@ Description: Provide a form to send data to the Liaison SpectrumEMP API
 Version: 0.1
 */
 
+
+/**
+ * Main plugin class.
+ *
+ * Provides inquiry form shortcode, and form handler.
+ */
 class BU_Liaison_Inquiry {
 
 	// SpectrumEMP API URL setup.
@@ -18,7 +25,7 @@ class BU_Liaison_Inquiry {
 	const FIELD_OPTIONS_PATH = 'field_rules/field_options';
 
 	/**
-	 * Path to plugin directory
+	 * Path to plugin directory.
 	 *
 	 * @var      string
 	 */
@@ -26,17 +33,42 @@ class BU_Liaison_Inquiry {
 
 
 	// Can't setup with a single statement until php 5.6.
+	/**
+	 * URL to fetch requirements.
+	 *
+	 * @var      string
+	 */
 	public $requirements_url;
+
+	/**
+	 * URL to submit form data to Liaison.
+	 *
+	 * @var      string
+	 */
 	public $submit_url;
+
+	/**
+	 * URL to fetch form validation rules.
+	 *
+	 * @var      string
+	 */
 	public $client_rules_url;
+
+	/**
+	 * URL to fetch options for form fields.
+	 *
+	 * @var      string
+	 */
 	public $field_options_url;
 
 	/**
-	 * Setup.
+	 * Setup API URLs, and define form rendering and processing handlers.
 	 */
 	public function __construct() {
-		// Setup urls.
+		// Store the plugin directory.
 		$this->plugin_dir = dirname( __FILE__ );
+
+		// Setup urls.  After php 5.6, these can become class const definitions (prior to 5.6 only flat strings can be class constants).
 		$this->requirements_url = self::API_URL . self::REQUIREMENTS_PATH;
 		$this->submit_url = self::API_URL . self::SUBMIT_PATH;
 		$this->client_rules_url = self::API_URL . self::CLIENT_RULES_PATH;
@@ -53,12 +85,11 @@ class BU_Liaison_Inquiry {
 		add_action( 'admin_post_liaison_inquiry', array( $this, 'handle_liaison_inquiry' ) );
 	}
 
-
 	/**
 	 * Shortcode definition that creates the Liaison inquiry form.
 	 *
 	 * @param array $atts Attributes specified in the shortcode.
-	 * @return string Returns full markup to replace the shortcode.
+	 * @return string Returns full form markup to replace the shortcode.
 	 */
 	function liaison_inquiry_form( $atts ) {
 
@@ -101,7 +132,7 @@ class BU_Liaison_Inquiry {
 		$inquiry_form = $inquiry_form_decode->data;
 
 		// Setup nonce for form to protect against various possible attacks.
-		$nonce = wp_nonce_field('liaison_inquiry', 'liaison_inquiry_nonce', false, false);
+		$nonce = wp_nonce_field( 'liaison_inquiry', 'liaison_inquiry_nonce', false, false );
 
 		// Include a template file like bu-navigation does.
 		include( $this->plugin_dir . '/templates/form-template.php' );
@@ -109,7 +140,11 @@ class BU_Liaison_Inquiry {
 		return $html;
 	}
 
-
+	/**
+	 * Shortcode definition that creates the Liaison inquiry form.
+	 *
+	 * @return string Returns the result of the form submission as a JSON formatted array for the javascript validation script
+	 */
 	function handle_liaison_inquiry() {
 
 		// Use wp nonce to verify the form was submitted correctly.
@@ -119,8 +154,6 @@ class BU_Liaison_Inquiry {
 			echo json_encode( $return );
 			return;
 		}
-
-
 
 		// Necessary to get the API key from the options, can't expose the key by passing it through the form.
 		$options = get_option( 'bu_liaison_inquiry_options' );
@@ -135,8 +168,7 @@ class BU_Liaison_Inquiry {
 		//@todo the example operates directly on the $_POST array, which seems contrary to the best practice of sanitizing $_POST first
 		$_POST['IQS-API-KEY'] = $options['APIKey'];
 
-
-		// From EMP API example
+		// From EMP API example.
 		$phone_fields = $_POST['phone_fields'];
 		$phone_fields = explode( ',', $phone_fields );
 		unset( $_POST['phone_fields'] );
@@ -168,31 +200,21 @@ class BU_Liaison_Inquiry {
 		// Decode the response and activate redirect to the personal url on success.
 		$resp = json_decode( $remote_submit['body'] );
 
-		//From EMP API example
-		//uses jquery api callback
+		// From EMP API example.
 		$return = array();
 		$return['status'] = 0;
 
-		$return['status'] 		= ( isset( $resp->status ) && $resp->status == 'success' ) ? 1 : 0;
+		$return['status'] 		= ( isset( $resp->status ) && 'success' == $resp->status) ? 1 : 0;
 		$return['response'] 	= ( isset( $resp->message ) ) ? $resp->message : 'Something bad happened, please refresh the page and try again.';
 		$return['data'] 		= ( isset( $resp->data ) ) ? $resp->data : '';
 
 		// Return a JSON encoded reply for the validation javascript.
-		echo json_encode($return);
-
-		// End EMP API Example segment.
-
-		//for raw answer, not for jquery ajax callback
-		//$redirect_url = urldecode( $return['data'] );
-
-
-		//echo "<script>window.location.href = '" . esc_url( $redirect_url ) . "';</script>";
-
+		echo json_encode( $return );
 	}
 }
 
 // Instantiate plugin (only once).
-if( ! isset( $GLOBALS['bu_liaison_inquiry'] ) ) {
+if ( ! isset( $GLOBALS['bu_liaison_inquiry'] ) ) {
 	$GLOBALS['bu_liaison_inquiry'] = new BU_Liaison_Inquiry();
 }
 
