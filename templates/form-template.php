@@ -12,7 +12,11 @@
 
 <form id="form_example" action="<?php echo esc_url( admin_url('admin-post.php') ); ?>" method="post">
 
-
+<?php
+	// Initialize modal and phone fields. 
+	$modals = array();
+	$phone_fields = array();
+?>
 <?php foreach ( $inquiry_form->sections as $section_index => $section ) : ?>
 
 	<div class="section">
@@ -173,4 +177,4 @@
 
 </form>
 
-
+<?php echo implode( '', $modals ); ?>
