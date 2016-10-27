@@ -135,9 +135,12 @@ class BU_Liaison_Inquiry {
 		$nonce = wp_nonce_field( 'liaison_inquiry', 'liaison_inquiry_nonce', false, false );
 
 		// Include a template file like bu-navigation does.
+		ob_start();
 		include( $this->plugin_dir . '/templates/form-template.php' );
+		$form_html = ob_get_contents();
+		ob_end_clean();
 
-		return $html;
+		return $form_html;
 	}
 
 	/**
