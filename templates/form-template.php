@@ -1,68 +1,63 @@
-<?php
-// Assemble form markup from API response.
-$html = '';
+<h1><?php echo $inquiry_form->form->header; ?></h1>
+<p><?php echo $inquiry_form->form->subHeader;?></p>
 
-$html .= '<h1>' . $inquiry_form->form->header . '</h1>';
-$html .= '<p>' . $inquiry_form->form->subHeader . '<p>';
+<script type='text/javascript'>
+	var SITE = {};
+	SITE.data = {
+		client_rules_url: "<?php echo $this->client_rules_url; ?>",
+		field_options_url: "<?php echo $this->field_options_url; ?>",
+		client_id: "<?php echo $client_id; ?>"
+	};
+</script>
 
-// Inject JS validation rule config values.
-$html .= "\n";
+<form id="form_example" action="<?php echo esc_url( admin_url('admin-post.php') ); ?>" method="post">
 
-$html .= "<script type='text/javascript'>";
-$html .= "\n";
-$html .= 'var SITE = {};';
-$html .= "\n";
-$html .= 'SITE.data = {client_rules_url: "' . $this->client_rules_url . '", field_options_url: "' . $this->field_options_url . '", client_id: "' . $client_id .'"};';
-$html .= "\n";
-$html .= '</script>';
 
-$html .= "\n";
+<?php foreach ( $inquiry_form->sections as $section_index => $section ) : ?>
 
-// Markup code directly copied from Spectrum EMP API example.
-// better markup - echo esc_url( admin_url('admin-post.php') );
-$html .= '<form id="form_example" action="' . get_admin_url() . 'admin-post.php" method="post">';
+	<div class="section">
+		<h3 class="page-header"><?php echo $section->name; ?><small><?php echo $section->description; ?></small></h3>
+	
+			<?php foreach ( $section->fields as $field_index => $field ) : ?>
 
-foreach ( $inquiry_form->sections as $section_index => $section ) {
-	$html .= '
-		<div class="section">
-			<h3 class="page-header">' . $section->name . ' <small>' . $section->description . '</small></h3>
-	';
+			<?php
+			//setup
+			$label = $field->displayName;
 
-	foreach ( $section->fields as $field_index => $field ) {
-		$label = $field->displayName;
-
-		if ( 6 == $field->id ) {
-			// Address Line 1.
-			$label = 'Address';
-		} else if ( 7 == $field->id ) {
-			// Address Line 2.
-			$label = '';
-		}
-
-		if ( $field->htmlElement == 'input-text' ) {
-			$class = '';
-
-			if ( stripos( $field->description, 'phone number' ) !== false ) {
-				$class = ' iqs-form-phone-number';
-				$phone_fields[] = $field->id;
-			} else {
-				$class = ' iqs-form-text';
+			if ( 6 == $field->id ) {
+				// Address Line 1.
+				$label = 'Address';
+			} else if ( 7 == $field->id ) {
+				// Address Line 2.
+				$label = '';
 			}
+			//end setup
+			//begin 2 types of html elements: input-text or select
+			if ( $field->htmlElement == 'input-text' ) :
+				//begin input text
+				$class = '';
 
-			$html .= '
+				if ( stripos( $field->description, 'phone number' ) !== false ) {
+					$class = ' iqs-form-phone-number';
+					$phone_fields[] = $field->id;
+				} else {
+					$class = ' iqs-form-text';
+				}
+			?>
+
 				<div class="row">
 					<div class="form-group">
-						<label for="' . $field->id . '" class="col-sm-4 control-label">' . $label . (($field->required) ? ' <span class="asterisk">*</span>' : '') . '</label>
+						<label for="<?php echo $field->id; ?>" class="col-sm-4 control-label"><?php echo $label . (($field->required) ? ' <span class="asterisk">*</span>' : ''); ?></label>
 						<div class="col-sm-6 col-md-5">
 							<input type="text"
-								name="' . $field->id . '"
-								id="' . $field->id . '"
-								class="form-control' . (($field->required) ? ' required' : '') . $class . '" placeholder="' . $field->displayName . '" />
-			';
+								name="<?php echo $field->id; ?>"
+								id="<?php echo $field->id; ?>"
+								class="form-control<?php echo (($field->required) ? ' required' : '') . $class; ?>" placeholder="<?php echo $field->displayName; ?>" />
 			
+			<?php
 			if ($class == ' iqs-form-phone-number' && isset($section->fields[$field_index + 1])
-				&& ($section->fields[$field_index]->order + 0.1) == $section->fields[$field_index + 1]->order) {
-					
+				&& ($section->fields[$field_index]->order + 0.1) == $section->fields[$field_index + 1]->order) :
+					//begin iqs-form-phone-number
 					$element_id = $section->fields[$field_index + 1]->id;
 					$label_text = trim($section->fields[$field_index + 1]->displayName);
 					$opt_in_text = '<a href="#text-message-opt-in-modal" class="blue" data-toggle="modal">opt-in policy</a>';
@@ -86,73 +81,74 @@ foreach ( $inquiry_form->sections as $section_index => $section ) {
 					    	</div>
 						</div>
 					';
+			?>
 					
-					$html .= '
-						<input type="checkbox" name="' . $element_id . '" id="' . $element_id . '">
-						<label id="label-' . $element_id . '" for="' . $element_id . '">' . $label_text . '</label>
-					';
-			}
+						<input type="checkbox" name="<?php echo $element_id; ?>" id="<?php echo $element_id; ?>">
+						<label id="label-<?php echo $element_id;?>" for="<?php $element_id; ?>"><?php echo $label_text; ?></label>
+					
+			<?php endif; //end iqs-form-phone number ?>
 			
-			if ($field->helpText !== '') {
-				$html .= '<p class="help-block">' . $field->helpText . '</p>';
-			}
 			
-			$html .= '
+			<?php if ($field->helpText !== '') : ?>
+				<p class="help-block"><?php echo $field->helpText; ?></p>
+			<?php endif; ?>
+			
+			
 						</div>
 					</div><!-- end class="form-group" -->
 				</div><!-- end class="row" -->
-			';
 			
-		} else if ($field->htmlElement == 'select') {
+			<?php //end input txt ?>
+			<?php elseif ($field->htmlElement == 'select') : ?>
+			
+			<?php //begin select
 			$class = ' iqs-form-single-select';
+			?>
 			
-			$html .= '
 				<div class="row">
 					<div class="form-group">
-						<label for="' . $field->id . '" class="col-sm-4 control-label">' . $label . (($field->required) ? ' <span class="asterisk">*</span>' : '') . '</label>
+						<label for="<?php echo $field->id; ?>" class="col-sm-4 control-label"><?php echo $label . (($field->required) ? ' <span class="asterisk">*</span>' : ''); ?></label>
 						<div class="col-sm-6 col-md-5">
 							<select
-								name="' . $field->id . '"
-								id="' . $field->id . '"
-								class="input-sm form-control' . (($field->required) ? ' required' : '') . $class . '">
+								name="<?php echo $field->id; ?>"
+								id="<?php $field->id; ?>"
+								class="input-sm form-control<?php echo (($field->required) ? ' required' : '') . $class; ?>">
 								<option value=""></option>
-			';
 			
-			if ($field->id == 9) { // State
-				$html .= '<option value="Outside US & Canada">Outside US & Canada</option>';
-			}
+			<?php if ($field->id == 9) : // State ?>
+				<option value="Outside US & Canada">Outside US & Canada</option>
+			<?php endif; ?>
 			
-			foreach ($field->options as $option) {
-				if (isset($option->options)) {
-					$html .= '<optgroup label="' . $option->label . '">';
+			<?php foreach ($field->options as $option) : ?>
+				<?php if (isset($option->options)) : ?>
+					<optgroup label="<?php echo $option->label; ?>">
 					
-					foreach ($option->options as $sub_option) {
-						$html .= '<option value="' . $sub_option->id . '">' . $sub_option->value . '</option>';
-					}
+					<?php foreach ($option->options as $sub_option) : ?>
+						<option value="<?php echo $sub_option->id; ?>"><?php echo $sub_option->value; ?></option>
+					<?php endforeach; ?>
 					
-					$html .= '</optgroup>';
+					</optgroup>
 					
-				} else {
-					$html .= '<option value="' . $option->id . '">' . $option->value . '</option>';
-				}
-			}
-			
-			$html .= '
+				<?php else: ?>
+					<option value="<?php echo $option->id; ?>"><?php echo $option->value; ?></option>
+				<?php endif; ?>
+			<?php endforeach; ?>
+
 							</select>
-							' . (($field->helpText !== '') ? '<p class="help-block">' . $field->helpText . '</p>' : '') . '
+							<?php echo (($field->helpText !== '') ? '<p class="help-block">' . $field->helpText . '</p>' : ''); ?> 
 						</div>
 					</div><!-- end class="form-group" -->
 				</div><!-- end class="row" -->
-			';
-		}
-	}
-	
-	$html .= '
-		</div><!-- end class="section" -->
-	';
-}
+			
+		<?php endif; //end select ?>
+	<?php endforeach; //end field ?>
 
-$html .= '
+	
+		</div><!-- end class="section" -->
+	
+<?php endforeach; //end section ?>
+
+
 	<div class="clear"></div>
 	
 	<br />
@@ -165,18 +161,16 @@ $html .= '
 		<button type="submit" class="btn btn-primary">Go <i class="icon-chevron-right icon-white"></i></button>
 	</div>
 	
-	<input type="hidden" id="phone_fields" name="phone_fields" value="' . implode(',', $phone_fields) . '" />
+	<input type="hidden" id="phone_fields" name="phone_fields" value="<?php echo implode(',', $phone_fields); ?>" />
 	
 	<div class="clear"></div>
 	
 	<br />
 
 	<input type="hidden" name="action" value="liaison_inquiry">
-';
 
-$html .= $nonce;
+<?php echo $nonce; ?>
 
-$html .= '</form>';
+</form>
 
 
-// End copied markup code
