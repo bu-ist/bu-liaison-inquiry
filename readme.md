@@ -1,7 +1,7 @@
 # BU Liaison Inquiry #
 Inquiry form for Liaison Inc.'s SpectrumEMP enrollment CRM
 ## Description
-This Wordpress plugin provides an inquiry form for prospective students.  It uses the SpectrumEMP API to get the form parameters from Liaison, and submit the form data back to Liaison.
+This Wordpress plugin provides an inquiry form for prospective students.  It uses the SpectrumEMP API to get the form parameters from Liaison, and submit the form data back to Liaison. It is based on example code from `https://github.com/Liaison-Intl/EMP_API-Example`
 ## Usage
 ### Admin
 The plugin provides an option page in the Wordpress admin, under the main `Settings` menu called `Liaison API Keys`.  Enter the API Key and Client ID provided by Liaison for the relevant account here.
