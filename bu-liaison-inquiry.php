@@ -29,7 +29,7 @@ class BU_Liaison_Inquiry {
 	 *
 	 * @var      string
 	 */
-	public $plugin_dir;
+	static $plugin_dir;
 
 
 	// Can't setup with a single statement until php 5.6.
@@ -38,44 +38,44 @@ class BU_Liaison_Inquiry {
 	 *
 	 * @var      string
 	 */
-	public $requirements_url;
+	static $requirements_url;
 
 	/**
 	 * URL to submit form data to Liaison.
 	 *
 	 * @var      string
 	 */
-	public $submit_url;
+	static $submit_url;
 
 	/**
 	 * URL to fetch form validation rules.
 	 *
 	 * @var      string
 	 */
-	public $client_rules_url;
+	static $client_rules_url;
 
 	/**
 	 * URL to fetch options for form fields.
 	 *
 	 * @var      string
 	 */
-	public $field_options_url;
+	static $field_options_url;
 
 	/**
 	 * Setup API URLs, and define form rendering and processing handlers.
 	 */
 	public function __construct() {
 		// Store the plugin directory.
-		$this->plugin_dir = dirname( __FILE__ );
+		self::$plugin_dir = dirname( __FILE__ );
 
 		// Setup urls.  After php 5.6, these can become class const definitions (prior to 5.6 only flat strings can be class constants).
-		$this->requirements_url = self::API_URL . self::REQUIREMENTS_PATH;
-		$this->submit_url = self::API_URL . self::SUBMIT_PATH;
-		$this->client_rules_url = self::API_URL . self::CLIENT_RULES_PATH;
-		$this->field_options_url = self::API_URL . self::FIELD_OPTIONS_PATH;
+		self::$requirements_url = self::API_URL . self::REQUIREMENTS_PATH;
+		self::$submit_url = self::API_URL . self::SUBMIT_PATH;
+		self::$client_rules_url = self::API_URL . self::CLIENT_RULES_PATH;
+		self::$field_options_url = self::API_URL . self::FIELD_OPTIONS_PATH;
 
 		// Include the admin interface.
-		include( $this->plugin_dir . '/admin/admin.php' );
+		include( self::$plugin_dir . '/admin/admin.php' );
 
 		// Assign inquiry form shortcode.
 		add_shortcode( 'liaison_inquiry_form', array( $this, 'liaison_inquiry_form' ) );
@@ -102,7 +102,7 @@ class BU_Liaison_Inquiry {
 		if ( isset( $atts['api_key'] ) ) { $api_key = $atts['api_key']; }
 
 		// Get info from EMP about the fields that should be displayed for the form.
-		$api_query = $this->requirements_url . '?IQS-API-KEY=' . $api_key;
+		$api_query = self::$requirements_url . '?IQS-API-KEY=' . $api_key;
 		$api_response = wp_remote_get( $api_query );
 
 		// Check for a successful response from external API server.
@@ -136,7 +136,7 @@ class BU_Liaison_Inquiry {
 
 		// Include a template file like bu-navigation does.
 		ob_start();
-		include( $this->plugin_dir . '/templates/form-template.php' );
+		include( self::$plugin_dir . '/templates/form-template.php' );
 		$form_html = ob_get_contents();
 		ob_end_clean();
 
@@ -198,7 +198,7 @@ class BU_Liaison_Inquiry {
 		$post_args = array( 'body' => $post_vars );
 
 		// Make the external API call.
-		$remote_submit = wp_remote_post( $this->submit_url, $post_args );
+		$remote_submit = wp_remote_post( self::$submit_url, $post_args );
 
 		// Decode the response and activate redirect to the personal url on success.
 		$resp = json_decode( $remote_submit['body'] );

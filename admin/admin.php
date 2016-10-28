@@ -109,8 +109,7 @@ function bu_liaison_inquiry_field_clientid_callback( $args ) {
  */
 function bu_liaison_inquiry_options_page() {
 
-	add_submenu_page(
-		'tools.php',
+	add_options_page(
 		'Liaison API Keys',
 		'Liaison API Keys',
 		'manage_options',
