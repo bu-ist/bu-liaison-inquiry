@@ -4,8 +4,8 @@
 <script type='text/javascript'>
 	var SITE = {};
 	SITE.data = {
-		client_rules_url: "<?php echo $this->client_rules_url; ?>",
-		field_options_url: "<?php echo $this->field_options_url; ?>",
+		client_rules_url: "<?php echo self::$client_rules_url; ?>",
+		field_options_url: "<?php echo self::$field_options_url; ?>",
 		client_id: "<?php echo $client_id; ?>"
 	};
 </script>
