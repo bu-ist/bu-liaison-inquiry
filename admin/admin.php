@@ -112,7 +112,7 @@ function bu_liaison_inquiry_options_page() {
 	add_options_page(
 		'Liaison API Keys',
 		'Liaison API Keys',
-		'manage_options',
+		'manage_categories',
 		'bu_liaison_inquiry',
 		'bu_liaison_inquiry_options_page_html'
 	);
@@ -128,7 +128,7 @@ add_action( 'admin_menu', 'bu_liaison_inquiry_options_page' );
  */
 function bu_liaison_inquiry_options_page_html() {
 	// Check user capabilities.
-	if ( ! current_user_can( 'manage_options' ) ) {
+	if ( ! current_user_can( 'manage_categories' ) ) {
 		return;
 	}
 
