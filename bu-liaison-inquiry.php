@@ -128,8 +128,20 @@ class BU_Liaison_Inquiry {
 		wp_enqueue_script( 'field_rules_form_library' );
 		wp_enqueue_script( 'field_rules_handler' );
 
+		// Setup field ids if a restricted field set was specified in the shortcode.
+		$field_ids = array();
+		if ( isset( $atts['fields'] ) ) {
+			// Parse fields attribute.
+			$fields = explode( ',', $atts['fields'] );
+			foreach ( $fields as $field ) {
+				// Only use integer values.
+				if ( ctype_digit( $field ) ) {
+					$field_ids[] = $field;
+				}
+			}
+		}
 
-		$inquiry_form = $inquiry_form_decode->data;
+		$inquiry_form = $this->process_form_definition( $inquiry_form_decode->data, $field_ids );
 
 		// Setup nonce for form to protect against various possible attacks.
 		$nonce = wp_nonce_field( 'liaison_inquiry', 'liaison_inquiry_nonce', false, false );
@@ -144,7 +156,28 @@ class BU_Liaison_Inquiry {
 	}
 
 	/**
-	 * Shortcode definition that creates the Liaison inquiry form.
+	 * Takes the form definition returned by the Liaison API, strips out any unspecified fields for the mini form, and applies other formatting
+	 *
+	 * @param array $inquiry_form Parsed JSON data from Liaison API.
+	 * @param array $field_ids List of fields to show. If not specified, the full form is returned.
+	 * @return string Returns the result of the form submission as a JSON formatted array for the javascript validation script.
+	 */
+	function process_form_definition( $inquiry_form, $field_ids ) {
+		// If field_ids are specified, remove any fields that aren't in the specified set.
+		if ( 0 < count( $field_ids ) ) {
+			foreach ( $inquiry_form->sections as $section ) {
+				foreach ( $section->fields as $field_key => $field ) {
+					if ( ! in_array( $field->id, $field_ids ) ) {
+						unset( $section->fields[ $field_key ] );
+					}
+				}
+			}
+		}
+		return $inquiry_form;
+	}
+
+	/**
+	 * Handle incoming form data
 	 *
 	 * @return string Returns the result of the form submission as a JSON formatted array for the javascript validation script
 	 */
