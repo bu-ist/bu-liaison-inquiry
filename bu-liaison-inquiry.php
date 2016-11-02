@@ -24,6 +24,9 @@ class BU_Liaison_Inquiry {
 	const CLIENT_RULES_PATH = 'field_rules/client_rules';
 	const FIELD_OPTIONS_PATH = 'field_rules/field_options';
 
+	// Setup dummy value for required fields that aren't part of the mini form.
+	const MINI_DUMMY_VALUE = 'mini-form';
+
 	/**
 	 * Path to plugin directory.
 	 *
