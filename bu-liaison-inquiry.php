@@ -160,7 +160,7 @@ class BU_Liaison_Inquiry {
 	 *
 	 * @param array $inquiry_form Parsed JSON data from Liaison API.
 	 * @param array $field_ids List of fields to show. If not specified, the full form is returned.
-	 * @return string Returns the result of the form submission as a JSON formatted array for the javascript validation script.
+	 * @return array Returns a data array of the processed form data to be passed to the template
 	 */
 	function process_form_definition( $inquiry_form, $field_ids ) {
 		// If field_ids are specified, remove any fields that aren't in the specified set.
