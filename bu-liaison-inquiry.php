@@ -101,8 +101,14 @@ class BU_Liaison_Inquiry {
 		$api_key = $options['APIKey'];
 		$client_id = $options['ClientID'];
 
-		// Optionally override the API key with the shortcode attribute if present.
-		if ( isset( $atts['api_key'] ) ) { $api_key = $atts['api_key']; }
+		// Assign any preset field ids in the shortcode attributes.
+		$presets = array();
+		foreach ( $atts as $att_key => $att ) {
+			// Look for integer numbers, these are field ids.
+			if ( intval( $att_key ) === $att_key ) {
+				$presets[ $att_key ] = $att;
+			}
+		}
 
 		// Get info from EMP about the fields that should be displayed for the form.
 		$api_query = self::$requirements_url . '?IQS-API-KEY=' . $api_key;
@@ -144,7 +150,7 @@ class BU_Liaison_Inquiry {
 			}
 		}
 
-		$inquiry_form = $this->process_form_definition( $inquiry_form_decode->data, $field_ids );
+		$inquiry_form = $this->process_form_definition( $inquiry_form_decode->data, $field_ids, $presets );
 
 		// Setup nonce for form to protect against various possible attacks.
 		$nonce = wp_nonce_field( 'liaison_inquiry', 'liaison_inquiry_nonce', false, false );
@@ -163,9 +169,10 @@ class BU_Liaison_Inquiry {
 	 *
 	 * @param array $inquiry_form Parsed JSON data from Liaison API.
 	 * @param array $field_ids List of fields to show. If not specified, the full form is returned.
+	 * @param array $presets Array of preset field ids and values.
 	 * @return array Returns a data array of the processed form data to be passed to the template
 	 */
-	function process_form_definition( $inquiry_form, $field_ids ) {
+	function process_form_definition( $inquiry_form, $field_ids, $presets ) {
 		// If field_ids are specified, remove any fields that aren't in the specified set.
 		if ( 0 < count( $field_ids ) ) {
 			foreach ( $inquiry_form->sections as $section ) {
@@ -177,7 +184,11 @@ class BU_Liaison_Inquiry {
 							unset( $section->fields[ $field_key ] );
 						} else {
 							$field->hidden = true;
-							$field->hidden_value = self::MINI_DUMMY_VALUE;
+							if ( isset( $presets[ $field->id ] ) ) {
+								$field->hidden_value = $presets[ $field->id ];
+							} else {
+								$field->hidden_value = self::MINI_DUMMY_VALUE;
+							}
 						}
 					}
 				}
