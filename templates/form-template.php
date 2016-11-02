@@ -32,8 +32,15 @@
 				$label = '';
 			}
 			//end setup
+			?>
+
+			<?php
+			// Mini form needs to pass dummy values to otherwise required fields; insert them here as hidden inputs.
+			if ( isset( $field->hidden ) && $field->hidden ) : ?>
+				<input type="hidden" name="<?php echo $field->id;?>" value="<?php echo $field->hidden_value;?>">
+			<?php
 			//begin 2 types of html elements: input-text or select
-			if ( $field->htmlElement == 'input-text' ) :
+			elseif ( $field->htmlElement == 'input-text' ) :
 				//begin input text
 				$class = '';
 

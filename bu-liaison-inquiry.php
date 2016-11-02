@@ -170,8 +170,15 @@ class BU_Liaison_Inquiry {
 		if ( 0 < count( $field_ids ) ) {
 			foreach ( $inquiry_form->sections as $section ) {
 				foreach ( $section->fields as $field_key => $field ) {
+					// Field by field processing.
 					if ( ! in_array( $field->id, $field_ids ) ) {
-						unset( $section->fields[ $field_key ] );
+						// If a field isn't listed and isn't required, just remove it.
+						if ( '1' != $field->required ) {
+							unset( $section->fields[ $field_key ] );
+						} else {
+							$field->hidden = true;
+							$field->hidden_value = self::MINI_DUMMY_VALUE;
+						}
 					}
 				}
 			}
@@ -193,6 +200,9 @@ class BU_Liaison_Inquiry {
 			echo json_encode( $return );
 			return;
 		}
+
+		// Clear the verified nonce from $_POST so that it doesn't get passed on to Liaison.
+		unset( $_POST['liaison_inquiry_nonce'] );
 
 		// Necessary to get the API key from the options, can't expose the key by passing it through the form.
 		$options = get_option( 'bu_liaison_inquiry_options' );
