@@ -14,6 +14,8 @@ function main() {
 		//$('.twipsy').tooltip({
 		//	'placement':'top'
 		//});
+
+		$(".modal").dialog();
 		
 		$('.iqs-form-phone-number').mask("(999) 999-9999", {
 			placeholder: "_"
