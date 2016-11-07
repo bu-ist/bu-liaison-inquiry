@@ -24,6 +24,9 @@ class BU_Liaison_Inquiry {
 	const CLIENT_RULES_PATH = 'field_rules/client_rules';
 	const FIELD_OPTIONS_PATH = 'field_rules/field_options';
 
+	// Setup dummy value for required fields that aren't part of the mini form.
+	const MINI_DUMMY_VALUE = 'mini-form';
+
 	/**
 	 * Path to plugin directory.
 	 *
@@ -98,8 +101,14 @@ class BU_Liaison_Inquiry {
 		$api_key = $options['APIKey'];
 		$client_id = $options['ClientID'];
 
-		// Optionally override the API key with the shortcode attribute if present.
-		if ( isset( $atts['api_key'] ) ) { $api_key = $atts['api_key']; }
+		// Assign any preset field ids in the shortcode attributes.
+		$presets = array();
+		foreach ( $atts as $att_key => $att ) {
+			// Look for integer numbers, these are field ids.
+			if ( intval( $att_key ) === $att_key ) {
+				$presets[ $att_key ] = $att;
+			}
+		}
 
 		// Get info from EMP about the fields that should be displayed for the form.
 		$api_query = self::$requirements_url . '?IQS-API-KEY=' . $api_key;
@@ -128,8 +137,23 @@ class BU_Liaison_Inquiry {
 		wp_enqueue_script( 'field_rules_form_library' );
 		wp_enqueue_script( 'field_rules_handler' );
 
+		// Enqueue form specific CSS
+		wp_enqueue_style( 'liason-form-style' );
 
-		$inquiry_form = $inquiry_form_decode->data;
+		// Setup field ids if a restricted field set was specified in the shortcode.
+		$field_ids = array();
+		if ( isset( $atts['fields'] ) ) {
+			// Parse fields attribute.
+			$fields = explode( ',', $atts['fields'] );
+			foreach ( $fields as $field ) {
+				// Only use integer values.
+				if ( ctype_digit( $field ) ) {
+					$field_ids[] = $field;
+				}
+			}
+		}
+
+		$inquiry_form = $this->process_form_definition( $inquiry_form_decode->data, $field_ids, $presets );
 
 		// Setup nonce for form to protect against various possible attacks.
 		$nonce = wp_nonce_field( 'liaison_inquiry', 'liaison_inquiry_nonce', false, false );
@@ -144,7 +168,40 @@ class BU_Liaison_Inquiry {
 	}
 
 	/**
-	 * Shortcode definition that creates the Liaison inquiry form.
+	 * Takes the form definition returned by the Liaison API, strips out any unspecified fields for the mini form, and applies other formatting
+	 *
+	 * @param array $inquiry_form Parsed JSON data from Liaison API.
+	 * @param array $field_ids List of fields to show. If not specified, the full form is returned.
+	 * @param array $presets Array of preset field ids and values.
+	 * @return array Returns a data array of the processed form data to be passed to the template
+	 */
+	function process_form_definition( $inquiry_form, $field_ids, $presets ) {
+		// If field_ids are specified, remove any fields that aren't in the specified set.
+		if ( 0 < count( $field_ids ) ) {
+			foreach ( $inquiry_form->sections as $section ) {
+				foreach ( $section->fields as $field_key => $field ) {
+					// Field by field processing.
+					if ( ! in_array( $field->id, $field_ids ) ) {
+						// If a field isn't listed and isn't required, just remove it.
+						if ( '1' != $field->required ) {
+							unset( $section->fields[ $field_key ] );
+						} else {
+							$field->hidden = true;
+							if ( isset( $presets[ $field->id ] ) ) {
+								$field->hidden_value = $presets[ $field->id ];
+							} else {
+								$field->hidden_value = self::MINI_DUMMY_VALUE;
+							}
+						}
+					}
+				}
+			}
+		}
+		return $inquiry_form;
+	}
+
+	/**
+	 * Handle incoming form data
 	 *
 	 * @return string Returns the result of the form submission as a JSON formatted array for the javascript validation script
 	 */
@@ -157,6 +214,9 @@ class BU_Liaison_Inquiry {
 			echo json_encode( $return );
 			return;
 		}
+
+		// Clear the verified nonce from $_POST so that it doesn't get passed on to Liaison.
+		unset( $_POST['liaison_inquiry_nonce'] );
 
 		// Necessary to get the API key from the options, can't expose the key by passing it through the form.
 		$options = get_option( 'bu_liaison_inquiry_options' );
@@ -234,7 +294,7 @@ wp_register_script( 'field_rules_handler', plugin_dir_url( __FILE__ ) . 'assets/
 
 wp_register_script( 'bu-liaison-main', plugin_dir_url( __FILE__ ) . 'assets/js/main.js', array( 'jquery' ) );
 
-
+wp_register_style( 'liason-form-style',  plugin_dir_url( __FILE__ ) . 'assets/css/form-style.css' );
 
 
 
