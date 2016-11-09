@@ -1,6 +1,3 @@
-<h1><?php echo $inquiry_form->form->header; ?></h1>
-<p><?php echo $inquiry_form->form->subHeader;?></p>
-
 <script type='text/javascript'>
 	var SITE = {};
 	SITE.data = {
