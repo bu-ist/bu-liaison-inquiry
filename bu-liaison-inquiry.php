@@ -139,6 +139,7 @@ class BU_Liaison_Inquiry {
 
 		// Enqueue form specific CSS
 		wp_enqueue_style( 'liason-form-style' );
+		wp_enqueue_style( 'jquery-ui-css' );
 
 		// Setup field ids if a restricted field set was specified in the shortcode.
 		$field_ids = array();
@@ -295,6 +296,7 @@ wp_register_script( 'field_rules_handler', plugin_dir_url( __FILE__ ) . 'assets/
 wp_register_script( 'bu-liaison-main', plugin_dir_url( __FILE__ ) . 'assets/js/main.js', array( 'jquery' ) );
 
 wp_register_style( 'liason-form-style',  plugin_dir_url( __FILE__ ) . 'assets/css/form-style.css' );
+wp_register_style( 'jquery-ui-css',  plugin_dir_url( __FILE__ ) . 'assets/js/jquery/jquery-ui.css' );
 
 
 
