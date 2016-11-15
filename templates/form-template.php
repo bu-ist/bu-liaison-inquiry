@@ -68,7 +68,7 @@
 					//begin iqs-form-phone-number
 					$element_id = $section->fields[$field_index + 1]->id;
 					$label_text = trim($section->fields[$field_index + 1]->displayName);
-					$opt_in_text = '<a href="#text-message-opt-in-modal" class="blue" data-toggle="modal">opt-in policy</a>';
+					$opt_in_text = '<a href="#text-message-opt-in-modal" id="opt-in-trigger">opt-in policy</a>';
 					$label_text = str_ireplace('opt-in policy', $opt_in_text, $label_text);
 					
 					$modals[] = '

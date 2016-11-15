@@ -15,7 +15,18 @@ function main() {
 		//	'placement':'top'
 		//});
 
-		$(".modal").dialog();
+		$(".modal").dialog({
+			autoOpen: false,
+			show: {
+				effect: "fade",
+				duration: 300
+			}
+		});
+
+		$("#opt-in-trigger").on("click", function(e) {
+			e.preventDefault();
+			$("#text-message-opt-in-modal").dialog("open");
+		});
 		
 		$('.iqs-form-phone-number').mask("(999) 999-9999", {
 			placeholder: "_"
