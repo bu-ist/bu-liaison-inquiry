@@ -72,18 +72,11 @@
 					$label_text = str_ireplace('opt-in policy', $opt_in_text, $label_text);
 					
 					$modals[] = '
-						<div id="text-message-opt-in-modal" class="modal fade">
+						<div id="text-message-opt-in-modal" title="Text Message Opt-in Policy" class="modal">
 					    	<div class="modal-dialog">
 						    	<div class="modal-content">
-									<div class="modal-header">
-										<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-										<h4 class="modal-title">Text Message Opt-in Policy</h4>
-									</div>
 									<div class="modal-body">
 										 ' . $section->fields[$field_index + 1]->helpText . '
-									</div>
-									<div class="modal-footer">
-										<button type="button" class="btn" data-dismiss="modal">Close</button>
 									</div>
 						    	</div>
 					    	</div>

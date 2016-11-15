@@ -20,6 +20,11 @@ function main() {
 			show: {
 				effect: "fade",
 				duration: 300
+			},
+			buttons: {
+				Close: function() {
+					$(this).dialog('close');
+				}
 			}
 		});
 
