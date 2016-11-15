@@ -154,7 +154,7 @@ class BU_Liaison_Inquiry {
 			}
 		}
 
-		$inquiry_form = $this->process_form_definition( $inquiry_form_decode->data, $field_ids, $presets );
+		$inquiry_form = $this->minify_form_definition( $inquiry_form_decode->data, $field_ids, $presets );
 
 		// Setup nonce for form to protect against various possible attacks.
 		$nonce = wp_nonce_field( 'liaison_inquiry', 'liaison_inquiry_nonce', false, false );
@@ -176,7 +176,7 @@ class BU_Liaison_Inquiry {
 	 * @param array $presets Array of preset field ids and values.
 	 * @return array Returns a data array of the processed form data to be passed to the template
 	 */
-	function process_form_definition( $inquiry_form, $field_ids, $presets ) {
+	function minify_form_definition( $inquiry_form, $field_ids, $presets ) {
 		// If field_ids are specified, remove any fields that aren't in the specified set.
 		if ( 0 < count( $field_ids ) ) {
 			foreach ( $inquiry_form->sections as $section ) {
@@ -187,6 +187,7 @@ class BU_Liaison_Inquiry {
 						if ( '1' != $field->required ) {
 							unset( $section->fields[ $field_key ] );
 						} else {
+							// If a field isn't listed but is required, set the hidden flag and preset the value.
 							$field->hidden = true;
 							if ( isset( $presets[ $field->id ] ) ) {
 								$field->hidden_value = $presets[ $field->id ];
