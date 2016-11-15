@@ -73,13 +73,9 @@
 					
 					$modals[] = '
 						<div id="text-message-opt-in-modal" title="Text Message Opt-in Policy" class="modal">
-					    	<div class="modal-dialog">
-						    	<div class="modal-content">
-									<div class="modal-body">
+							<div class="modal-body">
 										 ' . $section->fields[$field_index + 1]->helpText . '
-									</div>
-						    	</div>
-					    	</div>
+							</div>
 						</div>
 					';
 			?>
