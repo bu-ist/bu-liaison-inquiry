@@ -53,7 +53,7 @@ function main() {
 						var message = r.response;
 						$('.form-submit-success').hide();
 						if (message.toLowerCase().indexOf('already exist') >= 0) {
-							message = 'Oops, we already have you in EMP, and don\'t want to add you again (creating a duplicate record...another great feature). Either use a different email address or contact us and we will resend you a link to your personal page.';
+							message = 'We already have a profile associated with this email address.  Please contact us and we will resend you a link to your personal page.';
 						} else if (message.toLowerCase().indexOf('incomplete or invalid') >= 0) {
 							$.each(r.data, function (i, item) {
 								message += '<br />' + item.displayName;
