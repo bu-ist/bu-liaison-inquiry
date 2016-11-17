@@ -9,7 +9,11 @@
 
 <form id="form_example" action="<?php echo esc_url( admin_url('admin-post.php') ); ?>" method="post">
 
-
+<?php
+	// Initialize modal and phone fields. 
+	$modals = array();
+	$phone_fields = array();
+?>
 <?php foreach ( $inquiry_form->sections as $section_index => $section ) : ?>
 
 	<div class="section">
@@ -64,25 +68,14 @@
 					//begin iqs-form-phone-number
 					$element_id = $section->fields[$field_index + 1]->id;
 					$label_text = trim($section->fields[$field_index + 1]->displayName);
-					$opt_in_text = '<a href="#text-message-opt-in-modal" class="blue" data-toggle="modal">opt-in policy</a>';
+					$opt_in_text = '<a href="#text-message-opt-in-modal" id="opt-in-trigger">opt-in policy</a>';
 					$label_text = str_ireplace('opt-in policy', $opt_in_text, $label_text);
 					
 					$modals[] = '
-						<div id="text-message-opt-in-modal" class="modal fade">
-					    	<div class="modal-dialog">
-						    	<div class="modal-content">
-									<div class="modal-header">
-										<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-										<h4 class="modal-title">Text Message Opt-in Policy</h4>
-									</div>
-									<div class="modal-body">
+						<div id="text-message-opt-in-modal" title="Text Message Opt-in Policy" class="modal">
+							<div class="modal-body">
 										 ' . $section->fields[$field_index + 1]->helpText . '
-									</div>
-									<div class="modal-footer">
-										<button type="button" class="btn" data-dismiss="modal">Close</button>
-									</div>
-						    	</div>
-					    	</div>
+							</div>
 						</div>
 					';
 			?>
@@ -177,4 +170,4 @@
 
 </form>
 
-
+<?php echo implode( '', $modals ); ?>

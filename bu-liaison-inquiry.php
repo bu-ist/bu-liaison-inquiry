@@ -139,6 +139,7 @@ class BU_Liaison_Inquiry {
 
 		// Enqueue form specific CSS
 		wp_enqueue_style( 'liason-form-style' );
+		wp_enqueue_style( 'jquery-ui-css' );
 
 		// Setup field ids if a restricted field set was specified in the shortcode.
 		$field_ids = array();
@@ -282,7 +283,7 @@ if ( ! isset( $GLOBALS['bu_liaison_inquiry'] ) ) {
 }
 
 // Register js form validation scripts so that they may be enqueued by the shortcode handler.
-wp_register_script( 'jquery-ui', plugin_dir_url( __FILE__ ) . 'assets/js/jquery/jquery-ui.js', array( 'jquery' ) );
+wp_register_script( 'jquery-ui', plugin_dir_url( __FILE__ ) . 'assets/js/jquery/jquery-ui.min.js', array( 'jquery' ) );
 wp_register_script( 'jquery-masked', plugin_dir_url( __FILE__ ) . 'assets/js/jquery/jquery-masked.js', array( 'jquery' ) );
 wp_register_script( 'jquery-pubsub', plugin_dir_url( __FILE__ ) . 'assets/js/jquery/jquery-pubsub.js', array( 'jquery' ) );
 wp_register_script( 'iqs-validate', plugin_dir_url( __FILE__ ) . 'assets/js/iqs/validate.js', array( 'jquery' ) );
@@ -295,6 +296,7 @@ wp_register_script( 'field_rules_handler', plugin_dir_url( __FILE__ ) . 'assets/
 wp_register_script( 'bu-liaison-main', plugin_dir_url( __FILE__ ) . 'assets/js/main.js', array( 'jquery' ) );
 
 wp_register_style( 'liason-form-style',  plugin_dir_url( __FILE__ ) . 'assets/css/form-style.css' );
+wp_register_style( 'jquery-ui-css',  plugin_dir_url( __FILE__ ) . 'assets/js/jquery/jquery-ui.min.css' );
 
 
 
