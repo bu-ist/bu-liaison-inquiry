@@ -251,7 +251,6 @@ class BU_Liaison_Inquiry {
 		// Decode the response and activate redirect to the personal url on success.
 		$resp = json_decode( $remote_submit['body'] );
 
-		// From EMP API example.
 		$return = array();
 		$return['status'] = 0;
 
