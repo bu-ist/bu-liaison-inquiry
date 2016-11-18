@@ -101,12 +101,14 @@ class BU_Liaison_Inquiry {
 		$api_key = $options['APIKey'];
 		$client_id = $options['ClientID'];
 
-		// Assign any preset field ids in the shortcode attributes.
-		$presets = array();
-		foreach ( $atts as $att_key => $att ) {
-			// Look for integer numbers, these are field ids.
-			if ( intval( $att_key ) === $att_key ) {
-				$presets[ $att_key ] = $att;
+		if ( $atts ) {
+			// Assign any preset field ids in the shortcode attributes.
+			$presets = array();
+			foreach ( $atts as $att_key => $att ) {
+				// Look for integer numbers, these are field ids.
+				if ( intval( $att_key ) === $att_key ) {
+					$presets[ $att_key ] = $att;
+				}
 			}
 		}
 
@@ -137,7 +139,7 @@ class BU_Liaison_Inquiry {
 		wp_enqueue_script( 'field_rules_form_library' );
 		wp_enqueue_script( 'field_rules_handler' );
 
-		// Enqueue form specific CSS
+		// Enqueue form specific CSS.
 		wp_enqueue_style( 'liason-form-style' );
 		wp_enqueue_style( 'jquery-ui-css' );
 
@@ -154,12 +156,12 @@ class BU_Liaison_Inquiry {
 			}
 		}
 
-		$inquiry_form = $this->process_form_definition( $inquiry_form_decode->data, $field_ids, $presets );
+		$inquiry_form = $this->minify_form_definition( $inquiry_form_decode->data, $field_ids, $presets );
 
 		// Setup nonce for form to protect against various possible attacks.
 		$nonce = wp_nonce_field( 'liaison_inquiry', 'liaison_inquiry_nonce', false, false );
 
-		// Include a template file like bu-navigation does.
+		// Include template file.
 		ob_start();
 		include( self::$plugin_dir . '/templates/form-template.php' );
 		$form_html = ob_get_contents();
@@ -169,14 +171,14 @@ class BU_Liaison_Inquiry {
 	}
 
 	/**
-	 * Takes the form definition returned by the Liaison API, strips out any unspecified fields for the mini form, and applies other formatting
+	 * Takes the form definition returned by the Liaison API, strips out any unspecified fields for the mini form, and sets hidden defaults for required fields
 	 *
 	 * @param array $inquiry_form Parsed JSON data from Liaison API.
 	 * @param array $field_ids List of fields to show. If not specified, the full form is returned.
 	 * @param array $presets Array of preset field ids and values.
 	 * @return array Returns a data array of the processed form data to be passed to the template
 	 */
-	function process_form_definition( $inquiry_form, $field_ids, $presets ) {
+	function minify_form_definition( $inquiry_form, $field_ids, $presets ) {
 		// If field_ids are specified, remove any fields that aren't in the specified set.
 		if ( 0 < count( $field_ids ) ) {
 			foreach ( $inquiry_form->sections as $section ) {
@@ -187,6 +189,7 @@ class BU_Liaison_Inquiry {
 						if ( '1' != $field->required ) {
 							unset( $section->fields[ $field_key ] );
 						} else {
+							// If a field isn't listed but is required, set the hidden flag and preset the value.
 							$field->hidden = true;
 							if ( isset( $presets[ $field->id ] ) ) {
 								$field->hidden_value = $presets[ $field->id ];
@@ -229,31 +232,15 @@ class BU_Liaison_Inquiry {
 			return;
 		}
 
-		//@todo the example operates directly on the $_POST array, which seems contrary to the best practice of sanitizing $_POST first
-		$_POST['IQS-API-KEY'] = $options['APIKey'];
-
-		// From EMP API example.
-		$phone_fields = $_POST['phone_fields'];
+		// Phone number fields are given special formatting, phone field ids are passed as a hidden field in the form.
+		$phone_fields = sanitize_text_field( $_POST['phone_fields'] );
 		$phone_fields = explode( ',', $phone_fields );
 		unset( $_POST['phone_fields'] );
 
+		$post_vars = $this->prepare_form_post( $_POST, $phone_fields );
 
-		$post_vars = array();
-		foreach ($_POST as $k => $v) {
-			if ( in_array( $k, $phone_fields ) ) {
-				$v = preg_replace( '/[^0-9]/', '', $v );
-				$v = '%2B1' . $v;		// Append +1 for US, but + needs to be %2B for posting.
-			}
-			// if this checkbox field is set then it was checked
-			if (stripos($k, '-text-opt-in') !== false) {
-				$v = '1';
-			}
-		}
-
-		// Shim.
-		$post_vars = $_POST;
-
-		// End EMP API Example segment.
+		// Set the API Key from the site options.
+		$post_vars['IQS-API-KEY'] = $options['APIKey'];
 
 		// Setup arguments for the external API call.
 		$post_args = array( 'body' => $post_vars );
@@ -264,7 +251,6 @@ class BU_Liaison_Inquiry {
 		// Decode the response and activate redirect to the personal url on success.
 		$resp = json_decode( $remote_submit['body'] );
 
-		// From EMP API example.
 		$return = array();
 		$return['status'] = 0;
 
@@ -274,6 +260,36 @@ class BU_Liaison_Inquiry {
 
 		// Return a JSON encoded reply for the validation javascript.
 		echo json_encode( $return );
+	}
+
+	/**
+	 * Sanitize and format post data for submission
+	 *
+	 * @param array $incoming_post_vars $_POST values as submitted.
+	 * @param array $phone_fields Array of phone field ids.
+	 * @return array Returns an array of sanitized and prepared post values.
+	 */
+	function prepare_form_post( $incoming_post_vars, $phone_fields ) {
+		// Process all of the existing values into a new array.
+		$post_vars = array();
+		foreach ( $incoming_post_vars as $key => $value ) {
+			if ( in_array( $key, $phone_fields ) ) {
+				// If it is a phone field, apply special formatting.
+				// Strip out everything except numerals.
+				$value = preg_replace( '/[^0-9]/', '', $value );
+				$value = '%2B1' . $value;		// Append +1 for US, but + needs to be %2B for posting.
+
+			} elseif ( stripos( $key, '-text-opt-in' ) !== false ) {
+				// If this checkbox field is set then it was checked.
+				$value = '1';
+			} else {
+				// Apply basic field sanitization.
+				$value = sanitize_text_field( $value );
+			}
+
+			$post_vars[ $key ] = $value;
+		}
+		return $post_vars;
 	}
 }
 
@@ -287,8 +303,6 @@ wp_register_script( 'jquery-ui', plugin_dir_url( __FILE__ ) . 'assets/js/jquery/
 wp_register_script( 'jquery-masked', plugin_dir_url( __FILE__ ) . 'assets/js/jquery/jquery-masked.js', array( 'jquery' ) );
 wp_register_script( 'jquery-pubsub', plugin_dir_url( __FILE__ ) . 'assets/js/jquery/jquery-pubsub.js', array( 'jquery' ) );
 wp_register_script( 'iqs-validate', plugin_dir_url( __FILE__ ) . 'assets/js/iqs/validate.js', array( 'jquery' ) );
-
-//should register jquery-ui css styles too?
 
 wp_register_script( 'field_rules_form_library', plugin_dir_url( __FILE__ ) . 'assets/js/field_rules_form_library.js', array( 'jquery' ) );
 wp_register_script( 'field_rules_handler', plugin_dir_url( __FILE__ ) . 'assets/js/field_rules_handler.js', array( 'jquery' ) );

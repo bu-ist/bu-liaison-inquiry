@@ -1,11 +1,8 @@
-//Enable $ alias to jQuery
-$ = jQuery;
-
-$(document).ready(function () {
-	main();
+jQuery(document).ready(function () {
+	main(jQuery);
 });
 
-function main() {
+function main($) {
 	
 	var that = [];
 	
