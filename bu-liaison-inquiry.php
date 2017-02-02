@@ -109,6 +109,11 @@ class BU_Liaison_Inquiry {
 				if ( intval( $att_key ) === $att_key ) {
 					$presets[ $att_key ] = $att;
 				}
+				// There is a SOURCE value that can be set as well: is this the only non-integer field label?
+				if ( 'source' === $att_key ) {
+					// Shortcode attributes appear to be processed as lower case, while Liaison uses UPPERCASE for this field label.
+					$presets['SOURCE'] = $att;
+				}
 			}
 		}
 
@@ -193,6 +198,8 @@ class BU_Liaison_Inquiry {
 							$field->hidden = true;
 							if ( isset( $presets[ $field->id ] ) ) {
 								$field->hidden_value = $presets[ $field->id ];
+								//now remove it from the $presets array so that we don't double process it?
+								unset( $presets[ $field->id ] );
 							} else {
 								$field->hidden_value = self::MINI_DUMMY_VALUE;
 							}
@@ -201,6 +208,19 @@ class BU_Liaison_Inquiry {
 				}
 			}
 		}
+		// Any other preset values that weren't covered by the minify function should be inserted as hidden values.
+		//except what if it is already a visible field?  do we need to pre-set it in the rendered for?  we can't just duplicate it as a hidden field!?
+
+		foreach ( $presets as $preset_key => $preset_val ) {
+			// Prepend any other fields to the $section->fields array.
+			$hidden_field = new stdClass;
+			$hidden_field->hidden = true;
+			$hidden_field->id = $preset_key;
+			$hidden_field->hidden_value = $preset_val;
+			array_unshift( $inquiry_form->sections[0]->fields, $hidden_field );
+
+		}
+
 		return $inquiry_form;
 	}
 
