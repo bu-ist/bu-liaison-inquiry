@@ -2,7 +2,7 @@
 Inquiry form for Liaison Inc.'s SpectrumEMP enrollment CRM
 ## Description
 This Wordpress plugin provides an inquiry form for prospective students.  It uses the SpectrumEMP API to get the form parameters from Liaison, and submit the form data back to Liaison. It is based on example code from `https://github.com/Liaison-Intl/EMP_API-Example`
-## Usage
+## Basic Usage
 ### Admin
 The plugin provides an option page in the Wordpress admin, under the main `Settings` menu called `Liaison API Keys`.  Enter the API Key and Client ID provided by Liaison for the relevant account here.
 ### Inquiry Form shortcode
@@ -10,4 +10,20 @@ Once the API Key and Client ID have been set, the inquiry form can be placed any
 
 `[liaison_inquiry_form]`
 
-When the page or post is displayed, the shortcode will be replaced by the Liaison iquiry form.  Prospective students can fill out the form and submit it directly from the Wordpress site, and will be redirected to their personal URL on the Spectrum EMP site.
+When the page or post is displayed, the shortcode will be replaced by the Liaison inquiry form.  Prospective students can fill out the form and submit it directly from the Wordpress site, and will be redirected to their personal URL on the Spectrum EMP site.
+##Advanced Usage
+### Mini-form
+
+A mini-form can be created by adding a shortcode attribute named `fields` containing a comma delimited list of integer field ids.  The field ids that are listed will appear in the shortened form.  
+
+* Any unlisted fields that are not required will be dropped from the form
+* Any unlisted required fields with no preset values set in the shortcode will be included as hidden field with a default value (currently `mini-form`)
+* Any unlisted required fields that have a preset value set in the shortcode will be included as a hidden field with the preset value
+
+Preset values can be added to the shortcode by adding an attribute with the field id and value like this: `11="PN"`.  Here `11` is the field id for the Country, and `PN` is a country code that will be used as the preset value.
+
+###Arbitrary preset values
+Any other values can be set by including a shortcode attribute of the form `field_id="preset value"`.  As long as there is a valid field id, any field can be preset in this way regardless of whether the field is part of the inquiry form.
+
+###SOURCE
+Liaison uses a special field called `source` that can track where a lead originated.  It appears to be the only field in the Liaison forms that uses something other than an integer for the field id.  The source can be set in a shortcode attribute like any other field like this: `source="12345"`.
