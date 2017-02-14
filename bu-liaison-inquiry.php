@@ -209,23 +209,25 @@ class BU_Liaison_Inquiry {
 			}
 		}
 		// Any other preset values that weren't covered by the minify function should be inserted as hidden values.
-		foreach ( $presets as $preset_key => $preset_val ) {
-			// Prepend any preset fields to the $section->fields array as hidden inputs.
-			// First check if it is already a visible field. If so, throw an error in to the error logs and drop it from the preset.
-			$field_exists = false;
-			foreach ( $inquiry_form->sections as $section ) {
-				if ( array_key_exists( $preset_key, $section->fields ) ) {$field_exists = true;}
-			}
+		if ( is_array( $presets ) ) {
+			foreach ( $presets as $preset_key => $preset_val ) {
+				// Prepend any preset fields to the $section->fields array as hidden inputs.
+				// First check if it is already a visible field. If so, throw an error in to the error logs and drop it from the preset.
+				$field_exists = false;
+				foreach ( $inquiry_form->sections as $section ) {
+					if ( array_key_exists( $preset_key, $section->fields ) ) {$field_exists = true;}
+				}
 
-			if ( $field_exists ) {
-				// Don't want to preset a hidden value for an existing field.  Who knows what might happen?
-				error_log( sprintf( 'Field key %s was found in a shortcode, but it already exists in the liason form. Dropping preset value.' , $preset_key ) );
-			} else {
-				$hidden_field = new stdClass;
-				$hidden_field->hidden = true;
-				$hidden_field->id = $preset_key;
-				$hidden_field->hidden_value = $preset_val;
-				array_unshift( $inquiry_form->sections[0]->fields, $hidden_field );
+				if ( $field_exists ) {
+					// Don't want to preset a hidden value for an existing field.  Who knows what might happen?
+					error_log( sprintf( 'Field key %s was found in a shortcode, but it already exists in the liason form. Dropping preset value.' , $preset_key ) );
+				} else {
+					$hidden_field = new stdClass;
+					$hidden_field->hidden = true;
+					$hidden_field->id = $preset_key;
+					$hidden_field->hidden_value = $preset_val;
+					array_unshift( $inquiry_form->sections[0]->fields, $hidden_field );
+				}
 			}
 		}
 
