@@ -245,7 +245,7 @@ class BU_Liaison_Inquiry {
 		if ( ! wp_verify_nonce( $_REQUEST['liaison_inquiry_nonce'], 'liaison_inquiry' ) ) {
 			$return['status'] = 0;
 			$return['response'] = 'There was a problem with the form nonce, please reload the page';
-			echo json_encode( $return );
+			wp_send_json( $return );
 			return;
 		}
 
@@ -258,7 +258,7 @@ class BU_Liaison_Inquiry {
 		if ( ! isset( $options['APIKey'] ) ) {
 			$return['status'] = 0;
 			$return['response'] = 'API Key missing';
-			echo json_encode( $return );
+			wp_send_json( $return );
 			return;
 		}
 
@@ -282,7 +282,7 @@ class BU_Liaison_Inquiry {
 			$return['status'] = 0;
 			$return['response'] = 'Failed submitting to Liaison API. Please retry. Error: ' . $remote_submit->get_error_message();
 			error_log( sprintf( '%s: %s', __METHOD__, $return['response'] ) );
-			echo json_encode( $return );
+			wp_send_json( $return );
 			return;
 		}
 
@@ -297,7 +297,7 @@ class BU_Liaison_Inquiry {
 		$return['data'] 		= ( isset( $resp->data ) ) ? $resp->data : '';
 
 		// Return a JSON encoded reply for the validation javascript.
-		echo json_encode( $return );
+		wp_send_json( $return );
 	}
 
 	/**
