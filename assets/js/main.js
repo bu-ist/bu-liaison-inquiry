@@ -31,7 +31,8 @@ function main($) {
 		});
 
 		$('.iqs-form-phone-number').mask("(999) 999-9999", {
-			placeholder: "_"
+			placeholder: "_",
+			autoclear: false
 		});
 
 		$('#form_example').validate({
@@ -41,7 +42,7 @@ function main($) {
 			errorApplyTo: 'div.form-group',
 
 			onSuccess: function($form) {
-				
+
 				var $sb = $form.find('.btn-primary').html('Submitting...').attr('disabled', 'disabled');
 
 				$.post( $form.attr('action'), $form.serialize(), function(r) {
