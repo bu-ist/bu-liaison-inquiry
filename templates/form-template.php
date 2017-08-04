@@ -18,7 +18,7 @@
 
 	<div class="section">
 		<h3 class="page-header"><?php echo $section->name; ?><small><?php echo $section->description; ?></small></h3>
-	
+
 			<?php foreach ( $section->fields as $field_index => $field ) : ?>
 
 			<?php
@@ -61,7 +61,7 @@
 								name="<?php echo $field->id; ?>"
 								id="<?php echo $field->id; ?>"
 								class="form-control<?php echo ( ( $field->required ) ? ' required' : '' ) . $class; ?>" placeholder="<?php echo $field->displayName; ?>" />
-			
+
 				<?php
 				// Begin phone field specific handler.
 				if ( ' iqs-form-phone-number' == $class && isset( $section->fields[ $field_index + 1 ] )
@@ -80,24 +80,24 @@
 							</div>
 						';
 				?>
-					
+
 						<input type="checkbox" name="<?php echo $element_id; ?>" id="<?php echo $element_id; ?>">
 						<label id="label-<?php echo $element_id;?>" for="<?php $element_id; ?>"><?php echo $label_text; ?></label>
-					
+
 				<?php endif;
 				// End phone field specific handler.
 				?>
-			
-			
+
+
 				<?php if ( '' !== $field->helpText ) :?>
 					<p class="help-block"><?php echo $field->helpText; ?></p>
 				<?php endif; ?>
-			
-			
+
+
 						</div>
 					</div><!-- end class="form-group" -->
 				</div><!-- end class="row" -->
-			
+
 			<?php
 			// End input text handler.
 			?>
@@ -105,7 +105,7 @@
 			// Begin select handler.
 			$class = ' iqs-form-single-select';
 			?>
-			
+
 				<div class="row">
 					<div class="form-group">
 						<label for="<?php echo $field->id; ?>" class="col-sm-4 control-label"><?php echo $label . (($field->required) ? ' <span class="asterisk">*</span>' : ''); ?></label>
@@ -115,58 +115,58 @@
 								id="<?php echo $field->id; ?>"
 								class="input-sm form-control<?php echo (($field->required) ? ' required' : '') . $class; ?>">
 								<option value=""></option>
-			
+
 			<?php // Add extra option to the state or region field.
 			if ( 9 == $field->id ) :  ?>
 				<option value="Outside US & Canada">Outside US & Canada</option>
 			<?php endif; ?>
-			
+
 			<?php foreach ( $field->options as $option ) : ?>
 				<?php if ( isset( $option->options ) ) : ?>
 					<optgroup label="<?php echo $option->label; ?>">
-					
+
 					<?php foreach ( $option->options as $sub_option ) : ?>
 						<option value="<?php echo $sub_option->id; ?>"><?php echo $sub_option->value; ?></option>
 					<?php endforeach; ?>
-					
+
 					</optgroup>
-					
+
 				<?php else : ?>
 					<option value="<?php echo $option->id; ?>"><?php echo $option->value; ?></option>
 				<?php endif; ?>
 			<?php endforeach; ?>
 
 							</select>
-							<?php echo (($field->helpText !== '') ? '<p class="help-block">' . $field->helpText . '</p>' : ''); ?> 
+							<?php echo (($field->helpText !== '') ? '<p class="help-block">' . $field->helpText . '</p>' : ''); ?>
 						</div>
 					</div><!-- end class="form-group" -->
 				</div><!-- end class="row" -->
-			
+
 		<?php endif; // End select field handler.?>
 	<?php endforeach; // End field handler.?>
 
-	
+
 		</div><!-- end class="section" -->
-	
+
 <?php endforeach; // End section handler.?>
 
 
 	<div class="clear"></div>
-	
+
 	<br />
-	
+
 	<div class="alert alert-success form-submit-success"></div>
-	
+
 	<div class="alert alert-danger form-submit-danger"></div>
-	
+
 	<div class="form-actions">
 		<button type="submit" class="btn btn-primary">Go <i class="icon-chevron-right icon-white"></i></button>
 	</div>
-	
+
 	<input type="hidden" id="phone_fields" name="phone_fields" value="<?php echo implode(',', $phone_fields); ?>" />
-	
+
 	<div class="clear"></div>
-	
+
 	<br />
 
 	<input type="hidden" name="action" value="liaison_inquiry">
