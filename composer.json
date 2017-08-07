@@ -1,0 +1,15 @@
+{
+    "name": "bu-ist/bu-liaison-inquiry",
+    "description": "Provide a form to send data to the Liaison SpectrumEMP API",
+    "type": "wordpress-plugin",
+    "authors": [
+        {
+            "name": "Jonathan Williams",
+            "email": "jaydub@bu.edu"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "classmap": ["src/"]
+    }
+}
