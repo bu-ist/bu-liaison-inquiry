@@ -6,6 +6,6 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'BULiaisonInquiry\\Plugin' => $baseDir . '/src/Plugin.php',
-    'BULiaisonInquiry\\SpectrumAPI' => $baseDir . '/src/SpectrumAPI.php',
+    'BULiaisonInquiry\\Plugin' => $baseDir . '/src/class-plugin.php',
+    'BULiaisonInquiry\\SpectrumAPI' => $baseDir . '/src/class-spectrumapi.php',
 );
