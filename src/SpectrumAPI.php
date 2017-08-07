@@ -83,4 +83,33 @@ class SpectrumAPI
 
         return $inquiry_form_decode->data;
     }
+
+    public function postForm($api_key, $post_args) {
+        // Set the API Key from the site options.
+        $post_args['body']['IQS-API-KEY'] = $api_key;
+
+        $remote_submit = wp_remote_post(self::$submit_url, $post_args);
+
+        $return = array();
+
+        if (is_wp_error($remote_submit)) {
+            $return['status'] = 0;
+            $return['response'] = 'Failed submitting to Liaison API. Please retry. Error: ' .
+                                  $remote_submit->get_error_message();
+            error_log(sprintf('%s: %s', __METHOD__, $return['response']));
+        } else {
+          // Decode the response and activate redirect to the personal url on success.
+          $resp = json_decode($remote_submit['body']);
+
+          $return['status'] = ( isset($resp->status) && 'success' == $resp->status) ? 1 : 0;
+          $return['data'] = ( isset($resp->data) ) ? $resp->data : '';
+          if (isset($resp->message)) {
+              $return['response'] = $resp->message;
+          } else {
+              $return['response'] = 'Something bad happened, please refresh the page and try again.';
+          }
+        }
+
+        return $return;
+    }
 }
