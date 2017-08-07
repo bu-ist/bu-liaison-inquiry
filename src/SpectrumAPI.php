@@ -45,7 +45,7 @@ class SpectrumAPI
     public static $field_options_url;
 
     /**
-     * Setup API URLs
+     * Setup API URLs.
      */
     public function __construct()
     {
@@ -55,5 +55,32 @@ class SpectrumAPI
         self::$submit_url = self::API_URL . self::SUBMIT_PATH;
         self::$client_rules_url = self::API_URL . self::CLIENT_RULES_PATH;
         self::$field_options_url = self::API_URL . self::FIELD_OPTIONS_PATH;
+    }
+
+    /**
+     * Get info from EMP about the fields that should be displayed for the form.
+     */
+    public function getRequirements($api_key)
+    {
+        $api_query = self::$requirements_url . '?IQS-API-KEY=' . $api_key;
+        $api_response = wp_remote_get($api_query);
+
+        // Check for a successful response from external API server.
+        if (is_wp_error($api_response)) {
+            $error_message = $api_response->get_error_message();
+            error_log('Liaison form API call failed: ' . $error_message);
+            throw new Exception('Form Error: ' . $error_message);
+        }
+
+        $inquiry_form_decode = json_decode($api_response['body']);
+
+        // Check that the response from the API contains actual form data.
+        if (! isset($inquiry_form_decode->data)) {
+            $form_message = $inquiry_form_decode->message;
+            error_log('Bad response from Liaison API server: ' . $form_message);
+            throw new Exception('Error in Form API response');
+        }
+
+        return $inquiry_form_decode->data;
     }
 }

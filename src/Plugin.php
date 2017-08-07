@@ -86,26 +86,6 @@ class Plugin
             }
         }
 
-        // Get info from EMP about the fields that should be displayed for the form.
-        $api_query = $this->api::$requirements_url . '?IQS-API-KEY=' . $api_key;
-        $api_response = wp_remote_get($api_query);
-
-        // Check for a successful response from external API server.
-        if (is_wp_error($api_response)) {
-            $error_message = $api_response->get_error_message();
-            error_log('Liaison form API call failed: ' . $error_message);
-            return 'Form Error: ' . $error_message;
-        }
-
-        $inquiry_form_decode = json_decode($api_response['body']);
-
-        // Check that the response from the API contains actual form data.
-        if (! isset($inquiry_form_decode->data)) {
-            $form_message = $inquiry_form_decode->message;
-            error_log('Bad response from Liaison API server: ' . $form_message);
-            return 'Error in Form API response';
-        }
-
         // Enqueue the validation scripts.
         wp_enqueue_script('jquery-ui');
         wp_enqueue_script('jquery-masked');
@@ -132,8 +112,14 @@ class Plugin
             }
         }
 
+        try {
+            $inquiry_form_data = $this->api->getRequirements($api_key);
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+
         $inquiry_form = $this->minifyFormDefinition(
-            $inquiry_form_decode->data,
+            $inquiry_form_data,
             $field_ids,
             $presets
         );
