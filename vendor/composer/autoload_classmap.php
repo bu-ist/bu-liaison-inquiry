@@ -7,4 +7,5 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'BULiaisonInquiry\\Plugin' => $baseDir . '/src/Plugin.php',
+    'BULiaisonInquiry\\SpectrumAPI' => $baseDir . '/src/SpectrumAPI.php',
 );

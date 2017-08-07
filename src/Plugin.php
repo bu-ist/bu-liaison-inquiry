@@ -9,13 +9,6 @@ namespace BULiaisonInquiry;
 class Plugin
 {
 
-    // SpectrumEMP API URL setup.
-    const API_URL = 'https://www.spectrumemp.com/api/';
-    const REQUIREMENTS_PATH = 'inquiry_form/requirements';
-    const SUBMIT_PATH = 'inquiry_form/submit';
-    const CLIENT_RULES_PATH = 'field_rules/client_rules';
-    const FIELD_OPTIONS_PATH = 'field_rules/field_options';
-
     // Setup dummy value for required fields that aren't part of the mini form.
     const MINI_DUMMY_VALUE = 'mini-form';
 
@@ -26,50 +19,17 @@ class Plugin
      */
     private static $plugin_dir;
 
-
-    // Can't setup with a single statement until php 5.6.
-    /**
-     * URL to fetch requirements.
-     *
-     * @var string
-     */
-    private static $requirements_url;
+    public $api;
 
     /**
-     * URL to submit form data to Liaison.
-     *
-     * @var string
+     * Define form rendering and processing handlers.
      */
-    private static $submit_url;
-
-    /**
-     * URL to fetch form validation rules.
-     *
-     * @var string
-     */
-    private static $client_rules_url;
-
-    /**
-     * URL to fetch options for form fields.
-     *
-     * @var string
-     */
-    private static $field_options_url;
-
-    /**
-     * Setup API URLs, and define form rendering and processing handlers.
-     */
-    public function __construct()
+    public function __construct($api)
     {
+        $this->api = $api;
+
         // Store the plugin directory.
         self::$plugin_dir = dirname(__FILE__) . '/..';
-
-        // Setup urls. After php 5.6, these can become class const definitions
-        // (prior to 5.6 only flat strings can be class constants).
-        self::$requirements_url = self::API_URL . self::REQUIREMENTS_PATH;
-        self::$submit_url = self::API_URL . self::SUBMIT_PATH;
-        self::$client_rules_url = self::API_URL . self::CLIENT_RULES_PATH;
-        self::$field_options_url = self::API_URL . self::FIELD_OPTIONS_PATH;
 
         // Include the admin interface.
         include self::$plugin_dir . '/admin/admin.php';
@@ -127,7 +87,7 @@ class Plugin
         }
 
         // Get info from EMP about the fields that should be displayed for the form.
-        $api_query = self::$requirements_url . '?IQS-API-KEY=' . $api_key;
+        $api_query = $this->api::$requirements_url . '?IQS-API-KEY=' . $api_key;
         $api_response = wp_remote_get($api_query);
 
         // Check for a successful response from external API server.
@@ -324,7 +284,7 @@ class Plugin
         $post_args = array( 'body' => $post_vars );
 
         // Make the external API call.
-        $remote_submit = wp_remote_post(self::$submit_url, $post_args);
+        $remote_submit = wp_remote_post($this->api::$submit_url, $post_args);
 
         if (is_wp_error($remote_submit)) {
             $return['status'] = 0;

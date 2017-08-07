@@ -12,10 +12,11 @@ Version: 0.6
 require __DIR__ . '/vendor/autoload.php';
 
 use BULiaisonInquiry\Plugin;
+use BULiaisonInquiry\SpectrumAPI;
 
 // Instantiate plugin (only once).
 if (! isset($GLOBALS['bu_liaison_inquiry'])) {
-    $GLOBALS['bu_liaison_inquiry'] = new Plugin();
+    $GLOBALS['bu_liaison_inquiry'] = new Plugin(new SpectrumAPI());
 }
 
 // Register js form validation scripts so that they may be enqueued
