@@ -56,28 +56,46 @@ class SpectrumAPI {
 	public static $field_options_url;
 
 	/**
-	 * Setup API URLs.
+	 * Liaison API Key.
+	 *
+	 * @var string
 	 */
-	public function __construct() {
+	public $api_key;
+
+	/**
+	 * Liaison Client ID.
+	 *
+	 * @var string
+	 */
+	public $client_id;
+
+	/**
+	 * Setup API URLs and set instance variables.
+	 *
+	 * @param string $api_key   API Key.
+	 * @param string $client_id Client ID.
+	 */
+	public function __construct( $api_key, $client_id ) {
 		// Setup urls. After php 5.6, these can become class const definitions
 		// (prior to 5.6 only flat strings can be class constants).
 		self::$requirements_url = self::API_URL . self::REQUIREMENTS_PATH;
 		self::$submit_url = self::API_URL . self::SUBMIT_PATH;
 		self::$client_rules_url = self::API_URL . self::CLIENT_RULES_PATH;
 		self::$field_options_url = self::API_URL . self::FIELD_OPTIONS_PATH;
+
+		$this->api_key = $api_key;
+		$this->client_id = $client_id;
 	}
 
 	/**
 	 * Get info from EMP API about the fields that should be displayed for the form.
 	 *
-	 * @param string $api_key Liaison autorization key (IQS-API-KEY).
-	 *
 	 * @return string Return "data" field of the decoded JSON response.
 	 *
 	 * @throws Exception If API response is not successful.
 	 */
-	public function get_requirements( $api_key ) {
-		$api_query = self::$requirements_url . '?IQS-API-KEY=' . $api_key;
+	public function get_requirements() {
+		$api_query = self::$requirements_url . '?IQS-API-KEY=' . $this->api_key;
 		$api_response = wp_remote_get( $api_query );
 
 		// Check for a successful response from external API server.
@@ -102,14 +120,21 @@ class SpectrumAPI {
 	/**
 	 * Send inquiry form to EMP API.
 	 *
-	 * @param string $api_key   Liaison autorization key (IQS-API-KEY).
-	 * @param array  $post_vars An array of form fields to be posted.
+	 * @param array $post_vars An array of form fields to be posted.
 	 *
 	 * @return array Returns the result of the form submission.
 	 */
-	public function post_form( $api_key, $post_vars ) {
+	public function post_form( $post_vars ) {
+		$return = array();
+
+		if ( ! isset( $this->api_key ) ) {
+			$return['status'] = 0;
+			$return['response'] = 'API Key missing';
+			return $return;
+		}
+
 		// Set the API Key from the site options.
-		$post_vars['IQS-API-KEY'] = $api_key;
+		$post_vars['IQS-API-KEY'] = $this->api_key;
 
 		// Setup arguments for the external API call.
 		$post_args = array(
@@ -117,8 +142,6 @@ class SpectrumAPI {
 		);
 
 		$remote_submit = wp_remote_post( self::$submit_url, $post_args );
-
-		$return = array();
 
 		if ( is_wp_error( $remote_submit ) ) {
 			$return['status'] = 0;

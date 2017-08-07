@@ -3,7 +3,7 @@
 	SITE.data = {
 		client_rules_url: "<?php echo $this->api::$client_rules_url; ?>",
 		field_options_url: "<?php echo $this->api::$field_options_url; ?>",
-		client_id: "<?php echo $client_id; ?>"
+		client_id: "<?php echo $this->api->client_id; ?>"
 	};
 </script>
 

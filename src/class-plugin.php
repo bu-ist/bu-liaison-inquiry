@@ -78,12 +78,6 @@ class Plugin {
 	 * @return string Returns full form markup to replace the shortcode.
 	 */
 	public function liaison_inquiry_form( $atts ) {
-
-		// Get API key from option setting.
-		$options = get_option( 'bu_liaison_inquiry_options' );
-		$api_key = $options['APIKey'];
-		$client_id = $options['ClientID'];
-
 		if ( $atts ) {
 			// Assign any preset field ids in the shortcode attributes.
 			$presets = array();
@@ -129,7 +123,7 @@ class Plugin {
 		}
 
 		try {
-			$inquiry_form_data = $this->api->get_requirements( $api_key );
+			$inquiry_form_data = $this->api->get_requirements();
 		} catch ( Exception $e ) {
 			return $e->getMessage();
 		}
@@ -258,17 +252,6 @@ class Plugin {
 		// Clear the verified nonce from $_POST so that it doesn't get passed on.
 		unset( $_POST['liaison_inquiry_nonce'] );
 
-		// Necessary to get the API key from the options,
-		// can't expose the key by passing it through the form.
-		$options = get_option( 'bu_liaison_inquiry_options' );
-		// Check for a valid API key value.
-		if ( ! isset( $options['APIKey'] ) ) {
-			$return['status'] = 0;
-			$return['response'] = 'API Key missing';
-			wp_send_json( $return );
-			return;
-		}
-
 		// Phone number fields are given special formatting,
 		// phone field ids are passed as a hidden field in the form.
 		$phone_fields = sanitize_text_field( $_POST['phone_fields'] );
@@ -278,7 +261,7 @@ class Plugin {
 		$post_vars = $this->prepare_form_post( $_POST, $phone_fields );
 
 		// Make the external API call.
-		$return = $this->api->post_form( $options['APIKey'], $post_vars );
+		$return = $this->api->post_form( $post_vars );
 
 		// Return a JSON encoded reply for the validation javascript.
 		wp_send_json( $return );

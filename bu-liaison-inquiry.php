@@ -16,7 +16,12 @@ use BULiaisonInquiry\SpectrumAPI;
 
 // Instantiate plugin (only once).
 if (! isset($GLOBALS['bu_liaison_inquiry'])) {
-    $GLOBALS['bu_liaison_inquiry'] = new Plugin(new SpectrumAPI());
+  // Get API key and Client ID from option settings.
+  $options = get_option( 'bu_liaison_inquiry_options' );
+  $api_key = $options['APIKey'];
+  $client_id = $options['ClientID'];
+
+  $GLOBALS['bu_liaison_inquiry'] = new Plugin(new SpectrumAPI($api_key, $client_id));
 }
 
 // Register js form validation scripts so that they may be enqueued
