@@ -30,7 +30,7 @@ Liaison uses a special field called `source` that can track where a lead origina
 
 ## Dev Mode
 
-The plugin may be switched to dev mode. In this mode, no requests to the SpectrumEMP API will be send. It is useful mostly for developers working on new features, but also for plugin users who wants to try the plugin out prior obtaining Liaison API Keys.
+The plugin may be switched to dev mode. In this mode, no requests to the SpectrumEMP API will be sent. It is useful mostly for developers working on new features, but also for plugin users who want to try the plugin out prior obtaining Liaison API Keys.
 
 To switch to dev mode, add the following to `wp-config.php`:
 
