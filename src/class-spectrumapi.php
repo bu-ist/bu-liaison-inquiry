@@ -90,7 +90,7 @@ class SpectrumAPI {
 	/**
 	 * Get info from EMP API about the fields that should be displayed for the form.
 	 *
-	 * @return string Return "data" field of the decoded JSON response.
+	 * @return array Return "data" field of the decoded JSON response.
 	 *
 	 * @throws Exception If API response is not successful.
 	 */
