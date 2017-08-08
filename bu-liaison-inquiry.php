@@ -18,6 +18,7 @@ require __DIR__ . '/vendor/autoload.php';
 
 use BULiaisonInquiry\Plugin;
 use BULiaisonInquiry\SpectrumAPI;
+use BULiaisonInquiry\MockAPI;
 
 // Instantiate plugin (only once).
 if ( ! isset( $GLOBALS['bu_liaison_inquiry'] ) ) {
@@ -26,7 +27,13 @@ if ( ! isset( $GLOBALS['bu_liaison_inquiry'] ) ) {
 	$api_key = $options['APIKey'];
 	$client_id = $options['ClientID'];
 
-	$GLOBALS['bu_liaison_inquiry'] = new Plugin( new SpectrumAPI( $api_key, $client_id ) );
+  // Check whether in Dev Mode
+  if (defined('BU_LIAISON_INQUIRY_MOCK') and BU_LIAISON_INQUIRY_MOCK) {
+    $GLOBALS['bu_liaison_inquiry'] = new Plugin( new MockAPI($client_id) );
+  }
+  else {
+    $GLOBALS['bu_liaison_inquiry'] = new Plugin( new SpectrumAPI( $api_key, $client_id ) );
+  }
 }
 
 // Register js form validation scripts so that they may be enqueued

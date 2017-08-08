@@ -7,6 +7,7 @@ namespace Composer\Autoload;
 class ComposerStaticInit83a43bff8caa94ded7a01ab7f29fe114
 {
     public static $classMap = array (
+        'BULiaisonInquiry\\MockAPI' => __DIR__ . '/../..' . '/src/class-mockapi.php',
         'BULiaisonInquiry\\Plugin' => __DIR__ . '/../..' . '/src/class-plugin.php',
         'BULiaisonInquiry\\SpectrumAPI' => __DIR__ . '/../..' . '/src/class-spectrumapi.php',
     );
