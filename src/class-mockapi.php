@@ -80,6 +80,11 @@ class MockAPI {
 	 * @return array Mock value simulating the result of the form submission.
 	 */
 	public function post_form( $post_vars ) {
-		return $this->load_mock( 'bad_form' );
+		if ( defined( 'BU_LIAISON_INQUIRY_POST_FAIL' ) && BU_LIAISON_INQUIRY_POST_FAIL ) {
+			return $this->load_mock( 'bad_form' );
+		}
+		else {
+			return $this->load_mock( 'good_form' );
+		}
 	}
 }

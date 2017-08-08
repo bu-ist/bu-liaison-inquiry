@@ -37,3 +37,9 @@ To switch to dev mode, add the following to `wp-config.php`:
 ```php
 define('BU_LIAISON_INQUIRY_MOCK', true);
 ```
+
+To simulate an input error when submitting the form, use:
+
+```php
+define('BU_LIAISON_INQUIRY_POST_FAIL', true);
+```
