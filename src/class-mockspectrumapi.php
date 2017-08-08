@@ -7,7 +7,7 @@
  * Description: Provide a form to send data to the Liaison SpectrumEMP API
  * Version: 0.6
  *
- * @package BULiaisonInquiry\MockAPI
+ * @package BULiaisonInquiry\MockSpectrumAPI
  */
 
 namespace BULiaisonInquiry;
@@ -18,7 +18,7 @@ namespace BULiaisonInquiry;
  * Primarily used during development to avoid sending any requests to the remote server.
  * Used in place of SpectrumAPI class.
  */
-class MockAPI {
+class MockSpectrumAPI {
 
 	/**
 	 * URL to fetch form validation rules (required by front-end code)

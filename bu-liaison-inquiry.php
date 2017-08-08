@@ -18,7 +18,7 @@ require __DIR__ . '/vendor/autoload.php';
 
 use BULiaisonInquiry\Plugin;
 use BULiaisonInquiry\SpectrumAPI;
-use BULiaisonInquiry\MockAPI;
+use BULiaisonInquiry\MockSpectrumAPI;
 
 // Instantiate plugin (only once).
 if ( ! isset( $GLOBALS['bu_liaison_inquiry'] ) ) {
@@ -29,7 +29,7 @@ if ( ! isset( $GLOBALS['bu_liaison_inquiry'] ) ) {
 
 	// Check whether in Dev Mode.
 	if ( defined( 'BU_LIAISON_INQUIRY_MOCK' ) && BU_LIAISON_INQUIRY_MOCK ) {
-		$GLOBALS['bu_liaison_inquiry'] = new Plugin( new MockAPI( $client_id ) );
+		$GLOBALS['bu_liaison_inquiry'] = new Plugin( new MockSpectrumAPI( $client_id ) );
 	} else {
 		$GLOBALS['bu_liaison_inquiry'] = new Plugin( new SpectrumAPI( $api_key, $client_id ) );
 	}
