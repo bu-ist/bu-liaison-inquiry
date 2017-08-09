@@ -10,7 +10,7 @@
  * @package BULiaisonInquiry\Plugin
  */
 
-namespace BULiaisonInquiry;
+namespace BU_Liaison_Inquiry;
 
 /**
  * Main plugin class.

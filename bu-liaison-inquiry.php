@@ -11,7 +11,7 @@
  * @package BULiaisonInquiry
  */
 
-namespace BULiaisonInquiry;
+namespace BU_Liaison_Inquiry;
 
 /**
  * Composer autoload

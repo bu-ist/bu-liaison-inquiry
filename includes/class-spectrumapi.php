@@ -10,7 +10,7 @@
  * @package BULiaisonInquiry\SpectrumAPI
  */
 
-namespace BULiaisonInquiry;
+namespace BU_Liaison_Inquiry;
 
 /**
  * SpectrumEMP API class.

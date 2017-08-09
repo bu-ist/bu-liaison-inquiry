@@ -10,7 +10,7 @@
  * @package BULiaisonInquiry\MockSpectrumAPI
  */
 
-namespace BULiaisonInquiry;
+namespace BU_Liaison_Inquiry;
 
 /**
  * Mock requests to EMP API.
