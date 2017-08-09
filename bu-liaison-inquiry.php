@@ -11,14 +11,12 @@
  * @package BULiaisonInquiry
  */
 
+namespace BULiaisonInquiry;
+
 /**
  * Composer autoload
  */
 require __DIR__ . '/vendor/autoload.php';
-
-use BULiaisonInquiry\Plugin;
-use BULiaisonInquiry\SpectrumAPI;
-use BULiaisonInquiry\MockSpectrumAPI;
 
 // Instantiate plugin (only once).
 if ( ! isset( $GLOBALS['bu_liaison_inquiry'] ) ) {
