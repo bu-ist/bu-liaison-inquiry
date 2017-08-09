@@ -17,7 +17,7 @@ namespace BU_Liaison_Inquiry;
  *
  * Sends, retrieves, and parses data from SpectrumEMP API.
  */
-class SpectrumAPI {
+class Spectrum_API {
 
 	// SpectrumEMP API URL setup.
 	const API_URL = 'https://www.spectrumemp.com/api/';
