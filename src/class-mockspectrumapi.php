@@ -82,8 +82,9 @@ class MockSpectrumAPI {
 	public function post_form( $post_vars ) {
 		if ( defined( 'BU_LIAISON_INQUIRY_POST_FAIL' ) && BU_LIAISON_INQUIRY_POST_FAIL ) {
 			return $this->load_mock( 'bad_form' );
-		}
-		else {
+		} elseif ( defined( 'BU_LIAISON_INQUIRY_POST_DUPLICATE' ) && BU_LIAISON_INQUIRY_POST_DUPLICATE ) {
+			return $this->load_mock( 'duplicate_form' );
+		} else {
 			return $this->load_mock( 'good_form' );
 		}
 	}

@@ -38,8 +38,9 @@ To switch to dev mode, add the following to `wp-config.php`:
 define('BU_LIAISON_INQUIRY_MOCK', true);
 ```
 
-To simulate an input error when submitting the form, use:
+By default, any submission of the form will be considered successful. To change this behavior, define one of following in `wp-config.php`:
 
-```php
-define('BU_LIAISON_INQUIRY_POST_FAIL', true);
-```
+| Constant Name                                      | Description               |
+|----------------------------------------------------|---------------------------|
+| define('BU_LIAISON_INQUIRY_POST_FAIL', true);      | Some fields are invalid   |
+| define('BU_LIAISON_INQUIRY_POST_DUPLICATE', true); | Such email already exists |
