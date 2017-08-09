@@ -6,7 +6,7 @@ Plugin URI: http://developer.bu.edu
 Author: Boston University IS&T (Jonathan Williams)
 Author URI: http://developer.bu.edu
 Description: Provide a form to send data to the Liaison SpectrumEMP API
-Version: 0.5
+Version: 0.6
 */
 
 
@@ -245,7 +245,7 @@ class BU_Liaison_Inquiry {
 		if ( ! wp_verify_nonce( $_REQUEST['liaison_inquiry_nonce'], 'liaison_inquiry' ) ) {
 			$return['status'] = 0;
 			$return['response'] = 'There was a problem with the form nonce, please reload the page';
-			echo json_encode( $return );
+			wp_send_json( $return );
 			return;
 		}
 
@@ -258,7 +258,7 @@ class BU_Liaison_Inquiry {
 		if ( ! isset( $options['APIKey'] ) ) {
 			$return['status'] = 0;
 			$return['response'] = 'API Key missing';
-			echo json_encode( $return );
+			wp_send_json( $return );
 			return;
 		}
 
@@ -278,6 +278,14 @@ class BU_Liaison_Inquiry {
 		// Make the external API call.
 		$remote_submit = wp_remote_post( self::$submit_url, $post_args );
 
+		if ( is_wp_error( $remote_submit ) ) {
+			$return['status'] = 0;
+			$return['response'] = 'Failed submitting to Liaison API. Please retry. Error: ' . $remote_submit->get_error_message();
+			error_log( sprintf( '%s: %s', __METHOD__, $return['response'] ) );
+			wp_send_json( $return );
+			return;
+		}
+
 		// Decode the response and activate redirect to the personal url on success.
 		$resp = json_decode( $remote_submit['body'] );
 
@@ -289,7 +297,7 @@ class BU_Liaison_Inquiry {
 		$return['data'] 		= ( isset( $resp->data ) ) ? $resp->data : '';
 
 		// Return a JSON encoded reply for the validation javascript.
-		echo json_encode( $return );
+		wp_send_json( $return );
 	}
 
 	/**

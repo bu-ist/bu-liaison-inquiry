@@ -48,6 +48,8 @@
 				if ( stripos( $field->description, 'phone number' ) !== false ) {
 					$class = ' iqs-form-phone-number';
 					$phone_fields[] = $field->id;
+				} elseif ( false !== stripos( $field->description, 'valid email' ) ) {
+					$class = ' iqs-form-email';
 				} else {
 					$class = ' iqs-form-text';
 				}
