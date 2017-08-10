@@ -50,25 +50,6 @@ class Plugin {
 
 		// Include the admin interface.
 		include self::$plugin_dir . '/admin/admin.php';
-
-		// Assign inquiry form shortcode.
-		add_shortcode(
-			'liaison_inquiry_form',
-			array(
-				$this,
-				'liaison_inquiry_form',
-			)
-		);
-
-		// Setup form submission handlers.
-		add_action(
-			'admin_post_nopriv_liaison_inquiry',
-			array( $this, 'handle_liaison_inquiry' )
-		);
-		add_action(
-			'admin_post_liaison_inquiry',
-			array( $this, 'handle_liaison_inquiry' )
-		);
 	}
 
 	/**

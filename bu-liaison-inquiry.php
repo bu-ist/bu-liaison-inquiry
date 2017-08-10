@@ -27,11 +27,20 @@ if ( ! isset( $GLOBALS['bu_liaison_inquiry'] ) ) {
 
 	// Check whether in Dev Mode.
 	if ( defined( 'BU_LIAISON_INQUIRY_MOCK' ) && BU_LIAISON_INQUIRY_MOCK ) {
-		$GLOBALS['bu_liaison_inquiry'] = new Plugin( new Mock_Spectrum_API( $client_id ) );
+		$plugin = new Plugin( new Mock_Spectrum_API( $client_id ) );
 	} else {
-		$GLOBALS['bu_liaison_inquiry'] = new Plugin( new Spectrum_API( $api_key, $client_id ) );
+		$plugin = new Plugin( new Spectrum_API( $api_key, $client_id ) );
 	}
 }
+
+$GLOBALS['bu_liaison_inquiry'] = $plugin;
+
+// Assign inquiry form shortcode.
+add_shortcode( 'liaison_inquiry_form', array( $plugin, 'liaison_inquiry_form' ) );
+
+// Setup form submission handlers.
+add_action( 'admin_post_nopriv_liaison_inquiry', array( $plugin, 'handle_liaison_inquiry' ) );
+add_action( 'admin_post_liaison_inquiry',   array( $plugin, 'handle_liaison_inquiry' ) );
 
 // Register js form validation scripts so that they may be enqueued
 // by the shortcode handler.
