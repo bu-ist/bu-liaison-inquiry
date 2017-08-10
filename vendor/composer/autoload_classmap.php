@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'BU_Liaison_Inquiry\\Admin' => $baseDir . '/includes/class-admin.php',
     'BU_Liaison_Inquiry\\Mock_Spectrum_API' => $baseDir . '/includes/class-mock-spectrum-api.php',
     'BU_Liaison_Inquiry\\Plugin' => $baseDir . '/includes/class-plugin.php',
     'BU_Liaison_Inquiry\\Spectrum_API' => $baseDir . '/includes/class-spectrum-api.php',

@@ -47,9 +47,6 @@ class Plugin {
 
 		// Store the plugin directory.
 		self::$plugin_dir = dirname( __FILE__ ) . '/..';
-
-		// Include the admin interface.
-		include self::$plugin_dir . '/admin/admin.php';
 	}
 
 	/**
