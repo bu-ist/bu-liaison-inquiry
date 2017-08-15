@@ -154,7 +154,7 @@ class Plugin {
 		}
 		// Any other preset values that weren't covered by the minify function
 		// should be inserted as hidden values.
-		if ( is_array( $presets ) ) {
+		if ( isset( $presets ) && is_array( $presets ) ) {
 			foreach ( $presets as $preset_key => $preset_val ) {
 				// Prepend any preset fields to the $section->fields array as
 				// hidden inputs. First check if it is already a visible field.
