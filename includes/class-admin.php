@@ -170,19 +170,19 @@ class Admin {
 		?>
 		<h2>Field inventory</h2>
 		<?php
-			$api = new Spectrum_API( $options['APIKey'], null );
-			try {
-				$inquiry_form = $api->get_requirements();
-			} catch ( \Exception $e ) {
-				echo esc_html( $e->getMessage() );
-				return;
-			}
+		$api = new Spectrum_API( $options['APIKey'], null );
+		try {
+			$inquiry_form = $api->get_requirements();
+		} catch ( \Exception $e ) {
+			echo esc_html( $e->getMessage() );
+			return;
+		}
 
-			foreach ( $inquiry_form->sections as $section ) {
-				foreach ( $section->fields as $field_key => $field ) {
-					echo '<p>' . esc_html( $field->displayName ) . ' = ' . esc_html( $field->id ) . '</p>';
-				}
+		foreach ( $inquiry_form->sections as $section ) {
+			foreach ( $section->fields as $field_key => $field ) {
+				echo '<p>' . esc_html( $field->displayName ) . ' = ' . esc_html( $field->id ) . '</p>';
 			}
+		}
 		}
 	}
 

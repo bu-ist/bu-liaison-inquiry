@@ -92,7 +92,7 @@ class Spectrum_API {
 	 *
 	 * @return array Return "data" field of the decoded JSON response.
 	 *
-	 * @throws Exception If API response is not successful.
+	 * @throws \Exception If API response is not successful.
 	 */
 	public function get_requirements() {
 		$api_query = self::$requirements_url . '?IQS-API-KEY=' . $this->api_key;
