@@ -58,7 +58,7 @@ class Plugin {
 	public function liaison_inquiry_form( $atts ) {
 		try {
 			$inquiry_form_data = $this->api->get_requirements();
-		} catch ( Exception $e ) {
+		} catch ( \Exception $e ) {
 			return $e->getMessage();
 		}
 

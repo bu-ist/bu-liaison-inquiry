@@ -102,7 +102,7 @@ class Spectrum_API {
 		if ( is_wp_error( $api_response ) ) {
 			$error_message = $api_response->get_error_message();
 			error_log( 'Liaison form API call failed: ' . $error_message );
-			throw new Exception( 'Form Error: ' . $error_message );
+			throw new \Exception( 'Error: ' . $error_message );
 		}
 
 		$inquiry_form_decode = json_decode( $api_response['body'] );
@@ -111,7 +111,7 @@ class Spectrum_API {
 		if ( ! isset( $inquiry_form_decode->data ) ) {
 			$form_message = $inquiry_form_decode->message;
 			error_log( 'Bad response from Liaison API server: ' . $form_message );
-			throw new Exception( 'Error in Form API response' );
+			throw new \Exception( 'Error: ' . $form_message );
 		}
 
 		return $inquiry_form_decode->data;

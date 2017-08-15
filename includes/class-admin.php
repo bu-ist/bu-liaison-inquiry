@@ -19,7 +19,7 @@ class Admin {
 	 */
 	function bu_liaison_inquiry_settings_init() {
 		// Register a new setting for "bu_liaison_inquiry" page.
-		register_setting( 'bu_liaison_inquiry', array( $this, 'bu_liaison_inquiry_options' ) );
+		register_setting( 'bu_liaison_inquiry', 'bu_liaison_inquiry_options' );
 
 		// Register a new section in the "bu_liaison_inquiry" page.
 		add_settings_section(
@@ -166,38 +166,24 @@ class Admin {
 		<?php
 		// If there is already a key set, use it to fetch and display a field inventory.
 		$options = get_option( 'bu_liaison_inquiry_options' );
-		if ( isset( $options['APIKey'] ) && ('' != $options['APIKey']) ) {
-			echo $this->bu_liaison_inquiry_field_guide( $options['APIKey'] );
-		}
-	}
+		if ( ! empty( $options['APIKey'] ) ) {
+		?>
+		<h2>Field inventory</h2>
+		<?php
+			$api = new Spectrum_API( $options['APIKey'], null );
+			try {
+				$inquiry_form = $api->get_requirements();
+			} catch ( \Exception $e ) {
+				echo esc_html( $e->getMessage() );
+				return;
+			}
 
-
-	function bu_liaison_inquiry_field_guide( $api_key ) {
-		// Should be rewritten with a single method for form retrieval both for the admin and shortcode functions.
-		$api_query = BU_LIAISON_INQUIRY::API_URL . BU_LIAISON_INQUIRY::REQUIREMENTS_PATH . '?IQS-API-KEY=' . $api_key;
-		$api_response = wp_remote_get( $api_query );
-		if ( is_wp_error( $api_response ) ) {
-			error_log( 'Liaison form API call failed: ' . $api_response->get_error_message() );
-			return 'Form Error: ' . $api_response->get_error_message();
-		}
-		$inquiry_form_decode = json_decode( $api_response['body'] );
-
-		// Check that the response from the API contains actual form data.
-		if ( ! isset( $inquiry_form_decode->data ) ) {
-			error_log( 'Bad response from Liaison API server: ' . $inquiry_form_decode->message );
-			return 'Error in Form API response';
-		}
-
-		$inquiry_form = $inquiry_form_decode->data;
-
-		$fields_html = '<h2>Field inventory</h2>';
-
-		foreach ( $inquiry_form->sections as $section ) {
-			foreach ( $section->fields as $field_key => $field ) {
-				$fields_html .= sprintf( '<p>%s = %s</p>', $field->displayName, $field->id );
+			foreach ( $inquiry_form->sections as $section ) {
+				foreach ( $section->fields as $field_key => $field ) {
+					echo '<p>' . esc_html( $field->displayName ) . ' = ' . esc_html( $field->id ) . '</p>';
+				}
 			}
 		}
-		return $fields_html;
 	}
 
 }
