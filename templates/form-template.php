@@ -1,3 +1,18 @@
+<?php
+	// Enqueue the validation scripts.
+	wp_enqueue_script( 'jquery-ui' );
+	wp_enqueue_script( 'jquery-masked' );
+	wp_enqueue_script( 'jquery-pubsub' );
+	wp_enqueue_script( 'iqs-validate' );
+	wp_enqueue_script( 'bu-liaison-main' );
+	wp_enqueue_script( 'field_rules_form_library' );
+	wp_enqueue_script( 'field_rules_handler' );
+
+	// Enqueue form specific CSS.
+	wp_enqueue_style( 'liason-form-style' );
+	wp_enqueue_style( 'jquery-ui-css' );
+?>
+
 <script type='text/javascript'>
 	var SITE = {};
 	SITE.data = {

@@ -51,56 +51,78 @@ add_shortcode( 'liaison_inquiry_form', array( $plugin, 'liaison_inquiry_form' ) 
 add_action( 'admin_post_nopriv_liaison_inquiry', array( $plugin, 'handle_liaison_inquiry' ) );
 add_action( 'admin_post_liaison_inquiry',   array( $plugin, 'handle_liaison_inquiry' ) );
 
-// Register js form validation scripts so that they may be enqueued
-// by the shortcode handler.
-wp_register_script(
-	'jquery-ui',
-	plugin_dir_url( __FILE__ ) . 'assets/js/jquery/jquery-ui.min.js',
-	array( 'jquery' )
-);
+// Register scripts and styles now, enqueue in the shortcode handler.
+add_action( 'wp_enqueue_scripts', __namespace__ . '\register_validation_files' );
 
-wp_register_script(
-	'jquery-masked',
-	plugin_dir_url( __FILE__ ) . 'assets/js/jquery/jquery-masked.js',
-	array( 'jquery' )
-);
+/**
+ *  Register js form validation scripts so that they may be enqueued later
+ */
+function register_validation_files() {
 
-wp_register_script(
-	'jquery-pubsub',
-	plugin_dir_url( __FILE__ ) . 'assets/js/jquery/jquery-pubsub.js',
-	array( 'jquery' )
-);
+	wp_register_script(
+		'jquery-ui',
+		plugin_dir_url( __FILE__ ) . 'assets/js/jquery/jquery-ui.min.js',
+		array( 'jquery' ),
+		null,
+		true
+	);
 
-wp_register_script(
-	'iqs-validate',
-	plugin_dir_url( __FILE__ ) . 'assets/js/iqs/validate.js',
-	array( 'jquery' )
-);
+	wp_register_script(
+		'jquery-masked',
+		plugin_dir_url( __FILE__ ) . 'assets/js/jquery/jquery-masked.js',
+		array( 'jquery' ),
+		null,
+		true
+	);
 
-wp_register_script(
-	'field_rules_form_library',
-	plugin_dir_url( __FILE__ ) . 'assets/js/field_rules_form_library.js',
-	array( 'jquery' )
-);
+	wp_register_script(
+		'jquery-pubsub',
+		plugin_dir_url( __FILE__ ) . 'assets/js/jquery/jquery-pubsub.js',
+		array( 'jquery' ),
+		null,
+		true
+	);
 
-wp_register_script(
-	'field_rules_handler',
-	plugin_dir_url( __FILE__ ) . 'assets/js/field_rules_handler.js',
-	array( 'jquery' )
-);
+	wp_register_script(
+		'iqs-validate',
+		plugin_dir_url( __FILE__ ) . 'assets/js/iqs/validate.js',
+		array( 'jquery' ),
+		null,
+		true
+	);
 
-wp_register_script(
-	'bu-liaison-main',
-	plugin_dir_url( __FILE__ ) . 'assets/js/main.js',
-	array( 'jquery' )
-);
+	wp_register_script(
+		'field_rules_form_library',
+		plugin_dir_url( __FILE__ ) . 'assets/js/field_rules_form_library.js',
+		array( 'jquery' ),
+		null,
+		true
+	);
 
-wp_register_style(
-	'liason-form-style',
-	plugin_dir_url( __FILE__ ) . 'assets/css/form-style.css'
-);
+	wp_register_script(
+		'field_rules_handler',
+		plugin_dir_url( __FILE__ ) . 'assets/js/field_rules_handler.js',
+		array( 'jquery' ),
+		null,
+		true
+	);
 
-wp_register_style(
-	'jquery-ui-css',
-	plugin_dir_url( __FILE__ ) . 'assets/js/jquery/jquery-ui.min.css'
-);
+	wp_register_script(
+		'bu-liaison-main',
+		plugin_dir_url( __FILE__ ) . 'assets/js/main.js',
+		array( 'jquery' ),
+		null,
+		true
+	);
+
+	wp_register_style(
+		'liason-form-style',
+		plugin_dir_url( __FILE__ ) . 'assets/css/form-style.css'
+	);
+
+	wp_register_style(
+		'jquery-ui-css',
+		plugin_dir_url( __FILE__ ) . 'assets/js/jquery/jquery-ui.min.css'
+	);
+
+}
