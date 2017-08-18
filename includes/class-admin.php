@@ -2,10 +2,10 @@
 /**
  * BU Liaison Inquiry Admin
  *
- * @package BULiaisonInquiry
+ * @package BU_Liaison_Inquiry
  */
 
-namespace BU_Liaison_Inquiry;
+namespace BU\Plugins\Liaison_Inquiry;
 
 /**
  *  Admin class.

@@ -7,10 +7,10 @@
  * Description: Provide a form to send data to the Liaison SpectrumEMP API
  * Version: 0.6
  *
- * @package BULiaisonInquiry\MockSpectrumAPI
+ * @package BU_Liaison_Inquiry
  */
 
-namespace BU_Liaison_Inquiry;
+namespace BU\Plugins\Liaison_Inquiry;
 
 /**
  * Mock requests to EMP API.

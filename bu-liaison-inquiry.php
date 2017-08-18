@@ -8,10 +8,10 @@
  * Description: Provide a form to send data to the Liaison SpectrumEMP API
  * Version: 0.6
  *
- * @package BULiaisonInquiry
+ * @package BU_Liaison_Inquiry
  */
 
-namespace BU_Liaison_Inquiry;
+namespace BU\Plugins\Liaison_Inquiry;
 
 /**
  * Composer autoload
