@@ -62,6 +62,18 @@ class Plugin {
 			$atts
 		);
 
+		$form_html = $this->get_form_html( $inquiry_form );
+
+		return $form_html;
+	}
+
+	/**
+	 * Render the form via a template
+	 *
+	 * @param stdClass $inquiry_form Object representing the form.
+	 * @return string Returns full form markup
+	 */
+	public function get_form_html( $inquiry_form ) {
 		// Setup nonce for form to protect against various possible attacks.
 		$nonce = wp_nonce_field(
 			'liaison_inquiry',
