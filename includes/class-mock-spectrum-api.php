@@ -1,11 +1,6 @@
 <?php
 /**
- * Plugin Name: BU Liaison Inquiry
- * Plugin URI: http://developer.bu.edu
- * Author: Boston University IS&T (Jonathan Williams)
- * Author URI: http://developer.bu.edu
- * Description: Provide a form to send data to the Liaison SpectrumEMP API
- * Version: 0.6
+ * Class mocking API responses
  *
  * @package BU_Liaison_Inquiry
  */

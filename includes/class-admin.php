@@ -1,6 +1,6 @@
 <?php
 /**
- * BU Liaison Inquiry Admin
+ * Class containing methods that add the settings page into the admin panel
  *
  * @package BU_Liaison_Inquiry
  */
