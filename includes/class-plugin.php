@@ -50,17 +50,16 @@ class Plugin {
 	 * @param  array $atts Attributes specified in the shortcode.
 	 * @return string Returns full form markup to replace the shortcode.
 	 */
-	public function liaison_inquiry_form( $atts ) {
+	public function liaison_inquiry_form( $atts = [] ) {
 		try {
-			$inquiry_form_data = $this->api->get_requirements();
+			$inquiry_form = $this->api->get_requirements();
 		} catch ( \Exception $e ) {
 			return $e->getMessage();
 		}
 
-		$inquiry_form = $this->minify_form_definition(
-			$inquiry_form_data,
-			$atts
-		);
+		if ( count( $atts ) ) {
+			$inquiry_form = $this->minify_form_definition( $inquiry_form, $atts );
+		}
 
 		$form_html = $this->get_form_html( $inquiry_form );
 
