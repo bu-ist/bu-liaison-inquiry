@@ -184,7 +184,7 @@ class Plugin {
 						)
 					);
 				} else {
-					$hidden_field = new stdClass();
+					$hidden_field = new \stdClass();
 					$hidden_field->hidden = true;
 					$hidden_field->id = $preset_key;
 					$hidden_field->hidden_value = $preset_val;
