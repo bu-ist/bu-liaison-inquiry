@@ -70,26 +70,31 @@ class BU_Liaison_Inquiry_Test_Plugin extends WP_UnitTestCase {
 	public function test_minify_form_definition()
 	{
 		$field_1 = new stdClass();
-		$field_1->id = 1;
+		$field_1->id = '1';
 		$field_1->required = '1';
 
 		$field_2 = new stdClass();
-		$field_2->id = 2;
+		$field_2->id = '2';
 		$field_2->required = '0';
 
 		$field_3 = new stdClass();
-		$field_3->id = 3;
+		$field_3->id = '3';
 		$field_3->required = '1';
 
+		$field_4 = new stdClass();
+		$field_4->id = '4';
+		$field_4->required = '1';
+
 		$form_section = new stdClass();
-		$form_section->fields = [$field_1, $field_2, $field_3];
+		$form_section->fields = [$field_1, $field_2, $field_3, $field_4];
 		$form_definition = new stdClass();
 		$form_definition->sections = [$form_section];
 
 		$attributes = array(
-			'fields' => '1',
-			'source' => 'some_source',
-			3 => 'preset_value'
+			'fields' => '1,4',
+			'source' => 'some source',
+			'3' => 'preset value',
+			'4' => 'ignored'
 		);
 
 		$plugin = new BU\Plugins\Liaison_Inquiry\Plugin(null);
@@ -97,19 +102,23 @@ class BU_Liaison_Inquiry_Test_Plugin extends WP_UnitTestCase {
 		$minified_form = $plugin->minify_form_definition($form_definition, $attributes);
 		$minified_fields = $minified_form->sections[0]->fields;
 
-		$this->assertCount(3, $minified_fields);
+		$this->assertCount(4, $minified_fields);
 
 		$this->assertEquals($minified_fields[0]->id, 'SOURCE');
 		$this->assertEquals($minified_fields[0]->hidden, true);
-		$this->assertEquals($minified_fields[0]->hidden_value, 'some_source');
+		$this->assertEquals($minified_fields[0]->hidden_value, 'some source');
 
-		$this->assertEquals($minified_fields[1]->id, 1);
+		$this->assertEquals($minified_fields[1]->id, '1');
 		$this->assertEquals($minified_fields[1]->required, '1');
 
-		$this->assertEquals($minified_fields[2]->id, 3);
+		$this->assertEquals($minified_fields[2]->id, '3');
 		$this->assertEquals($minified_fields[2]->required, '1');
 		$this->assertEquals($minified_fields[2]->hidden, true);
-		$this->assertEquals($minified_fields[2]->hidden_value, 'preset_value');
+		$this->assertEquals($minified_fields[2]->hidden_value, 'preset value');
+
+		$this->assertEquals($minified_fields[3]->id, '4');
+		$this->assertEquals($minified_fields[3]->required, '1');
+		$this->assertFalse(property_exists($minified_fields[3], 'hidden_value'));
 	}
 
 }

@@ -167,8 +167,10 @@ class Plugin {
 				// If so, throw an error in to the error logs and drop it.
 				$field_exists = false;
 				foreach ( $inquiry_form->sections as $section ) {
-					if ( array_key_exists( $preset_key, $section->fields ) ) {
-						$field_exists = true;
+					foreach ($section->fields as $field) {
+						if ($field->id == $preset_key) {
+							$field_exists = true;
+						}
 					}
 				}
 
