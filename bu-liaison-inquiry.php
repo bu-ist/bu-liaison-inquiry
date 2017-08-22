@@ -48,8 +48,8 @@ $GLOBALS['bu_liaison_inquiry'] = $plugin;
 add_shortcode( 'liaison_inquiry_form', array( $plugin, 'liaison_inquiry_form' ) );
 
 // Setup form submission handlers.
-add_action( 'admin_post_nopriv_liaison_inquiry', array( $plugin, 'handle_liaison_inquiry' ) );
-add_action( 'admin_post_liaison_inquiry',   array( $plugin, 'handle_liaison_inquiry' ) );
+add_action( 'admin_post_nopriv_liaison_inquiry', array( $plugin, 'ajax_inquiry_form_post' ) );
+add_action( 'admin_post_liaison_inquiry',   array( $plugin, 'ajax_inquiry_form_post' ) );
 
 // Register scripts and styles now, enqueue in the shortcode handler.
 add_action( 'wp_enqueue_scripts', __namespace__ . '\register_validation_files' );

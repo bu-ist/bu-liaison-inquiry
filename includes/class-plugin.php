@@ -19,6 +19,20 @@ class Plugin {
 	const MINI_DUMMY_VALUE = 'mini-form';
 
 	/**
+	 * Name of the nonce field included in the form
+	 *
+	 * @var string
+	 */
+	public static $nonce_field_name = 'liaison_inquiry_nonce';
+
+	/**
+	 * Nonce name
+	 *
+	 * @var string
+	 */
+	public static $nonce_name = 'liaison_inquiry';
+
+	/**
 	 * Path to plugin directory.
 	 *
 	 * @var string
@@ -75,8 +89,8 @@ class Plugin {
 	public function get_form_html( $inquiry_form ) {
 		// Setup nonce for form to protect against various possible attacks.
 		$nonce = wp_nonce_field(
-			'liaison_inquiry',
-			'liaison_inquiry_nonce',
+			self::$nonce_name,
+			self::$nonce_field_name,
 			false,
 			false
 		);
@@ -167,8 +181,8 @@ class Plugin {
 				// If so, throw an error in to the error logs and drop it.
 				$field_exists = false;
 				foreach ( $inquiry_form->sections as $section ) {
-					foreach ($section->fields as $field) {
-						if ($field->id == $preset_key) {
+					foreach ( $section->fields as $field ) {
+						if ( $field->id == $preset_key ) {
 							$field_exists = true;
 						}
 					}
@@ -202,30 +216,24 @@ class Plugin {
 	}
 
 	/**
+	 * WordPress Ajax request handler
+	 */
+	public function ajax_inquiry_form_post() {
+		wp_send_json( $this->handle_liaison_inquiry() );
+	}
+
+	/**
 	 * Handle incoming form data
 	 *
 	 * @return string Returns the result of the form submission as a JSON formatted array for the javascript validation
 	 */
 	public function handle_liaison_inquiry() {
-		// Use wp nonce to verify the form was submitted correctly.
-		if ( ! empty( $_POST['liaison_inquiry_nonce'] ) ) {
-			$verify_nonce_status = wp_verify_nonce(
-				sanitize_key( $_POST['liaison_inquiry_nonce'] ),
-				'liaison_inquiry'
-			);
-		} else {
-			$verify_nonce_status = false;
-		}
-
-		if ( ! $verify_nonce_status ) {
+		if ( ! $this->verify_nonce() ) {
 			$return = array();
 			$return['status'] = 0;
 			$return['response'] = 'There was a problem with the form nonce, please reload the page';
-			wp_send_json( $return );
-			return;
+			return $return;
 		}
-		// Clear the verified nonce from $_POST so that it doesn't get passed on.
-		unset( $_POST['liaison_inquiry_nonce'] );
 
 		$post_vars = $this->prepare_form_post( $_POST );
 
@@ -233,7 +241,31 @@ class Plugin {
 		$return = $this->api->post_form( $post_vars );
 
 		// Return a JSON encoded reply for the validation javascript.
-		wp_send_json( $return );
+		return $return;
+	}
+
+	/**
+	 * Use wp nonce to verify the form was submitted correctly
+	 *
+	 * Must be used only once during processing a request because it removes nonce
+	 * field from $_POST parameters
+	 *
+	 * @return boolean Whether or not nonce verification was successful
+	 */
+	public function verify_nonce() {
+		if ( ! empty( $_POST[ self::$nonce_field_name ] ) ) {
+			$verify_nonce_status = wp_verify_nonce(
+				sanitize_key( $_POST[ self::$nonce_field_name ] ),
+				self::$nonce_name
+			);
+		} else {
+			$verify_nonce_status = false;
+		}
+
+		// Clear the verified nonce from $_POST so that it doesn't get passed on.
+		unset( $_POST[ self::$nonce_field_name ] );
+
+		return (bool) $verify_nonce_status;
 	}
 
 	/**

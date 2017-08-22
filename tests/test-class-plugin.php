@@ -4,6 +4,7 @@ class BU_Liaison_Inquiry_Test_Plugin extends WP_UnitTestCase {
 
 	public function setUp() {
 		$this->spectrum = $this->createMock(BU\Plugins\Liaison_Inquiry\Spectrum_API::class);
+		$this->plugin_instance = new BU\Plugins\Liaison_Inquiry\Plugin(null);
 	}
 
 	/**
@@ -97,7 +98,7 @@ class BU_Liaison_Inquiry_Test_Plugin extends WP_UnitTestCase {
 			'4' => 'ignored'
 		);
 
-		$plugin = new BU\Plugins\Liaison_Inquiry\Plugin(null);
+		$plugin = $this->plugin_instance;
 
 		$minified_form = $plugin->minify_form_definition($form_definition, $attributes);
 		$minified_fields = $minified_form->sections[0]->fields;
@@ -121,4 +122,110 @@ class BU_Liaison_Inquiry_Test_Plugin extends WP_UnitTestCase {
 		$this->assertFalse(property_exists($minified_fields[3], 'hidden_value'));
 	}
 
+	/**
+	 * @covers BU\Plugins\Liaison_Inquiry\Plugin::handle_liaison_inquiry
+	 */
+	public function test_handle_liaison_inquiry()
+	{
+		$prepared_form = 'form prepared to be sent to API';
+		$api_response = 'return value of the API call';
+
+		$plugin = $this->getMockBuilder(BU\Plugins\Liaison_Inquiry\Plugin::class)
+									 ->setConstructorArgs([$this->spectrum])
+									 ->setMethods(['verify_nonce', 'prepare_form_post'])
+									 ->getMock();
+
+		// Assert Plugin::verify_nonce called
+		$plugin->expects($this->once())
+					 ->method('verify_nonce')
+					 ->willReturn(true);
+
+		// Assert Plugin::prepare_form_post called with $_POST as a parameter
+		$plugin->expects($this->once())
+					 ->method('prepare_form_post')
+					 ->with($_POST)
+					 ->willReturn($prepared_form);
+
+		// Assert Spectrum_API::post_form called with the return value of Plugin::prepare_form_post
+		$this->spectrum->expects($this->once())
+									 ->method('post_form')
+									 ->with($prepared_form)
+									 ->willReturn($api_response);
+
+		// Method returns the return value of the Spectrum_API::form_post
+		$this->assertEquals($api_response, $plugin->handle_liaison_inquiry());
+	}
+
+	/**
+	 * @covers BU\Plugins\Liaison_Inquiry\Plugin::handle_liaison_inquiry
+	 */
+	public function test_handle_liaison_inquiry_nonce_error()
+	{
+		$plugin = $this->getMockBuilder(BU\Plugins\Liaison_Inquiry\Plugin::class)
+									 ->setConstructorArgs([$this->spectrum])
+									 ->setMethods(['verify_nonce', 'prepare_form_post'])
+									 ->getMock();
+
+		// Assert Plugin::verify_nonce called
+		$plugin->expects($this->once())
+					 ->method('verify_nonce')
+					 ->willReturn(false);
+
+		$return = $plugin->handle_liaison_inquiry();
+
+		// Method return error status
+		$this->assertEquals(0, $return['status']);
+		$this->assertNotEmpty($return['response']);
+	}
+
+	/**
+	 * @covers BU\Plugins\Liaison_Inquiry\Plugin::verify_nonce
+	 */
+	public function test_verify_nonce()
+	{
+		$plugin = $this->plugin_instance;
+
+		$_POST = array();
+		$_POST[$plugin::$nonce_field_name] = 'asdf';
+
+		// Nonce with the wrong value must fail
+		$this->assertFalse($plugin->verify_nonce());
+		$this->assertEmpty($_POST);
+
+		$_POST[$plugin::$nonce_field_name] = wp_create_nonce($plugin::$nonce_name);
+
+		// Nonce with the correct value must succeed
+		$this->assertTrue($plugin->verify_nonce());
+		$this->assertEmpty($_POST);
+
+		// $_POST with no nonce field must fail
+		$this->assertFalse($plugin->verify_nonce());
+	}
+
+	/**
+	 * @covers BU\Plugins\Liaison_Inquiry\Plugin::prepare_form_post
+	 */
+	public function test_prepare_form_post()
+	{
+		$plugin = $this->plugin_instance;
+
+		$return = $plugin->prepare_form_post(array(
+			'pass_through' => 'value',
+			'needs_sanitation' => '<',
+			'checkbox-text-opt-in' => ''
+		));
+
+		$this->assertEquals('value', $return['pass_through']);
+		$this->assertEquals('&lt;', $return['needs_sanitation']);
+		$this->assertEquals('1', $return['checkbox-text-opt-in']);
+		$this->assertCount(3, $return);
+
+		$return = $plugin->prepare_form_post(array(
+			'number' => '999-999-9999',
+			'phone_fields' => 'number'
+		));
+
+		$this->assertEquals('%2B19999999999', $return['number']);
+		$this->assertCount(1, $return);
+	}
 }
