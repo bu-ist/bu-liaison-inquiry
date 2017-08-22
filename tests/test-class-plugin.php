@@ -1,13 +1,30 @@
 <?php
+/**
+ * Unit test file
+ *
+ * @package BU_Liaison_Inquiry
+ */
 
+/**
+ * Cover BU\Plugins\Liaison_Inquiry\Plugin class
+ *
+ * @group bu-liaison-inquiry
+ * @group bu-liaison-inquiry-plugin
+ */
 class BU_Liaison_Inquiry_Test_Plugin extends WP_UnitTestCase {
 
+	/**
+	 * Setup the testcase
+	 */
 	public function setUp() {
 		$this->spectrum = $this->createMock( BU\Plugins\Liaison_Inquiry\Spectrum_API::class );
 		$this->plugin_instance = new BU\Plugins\Liaison_Inquiry\Plugin( null );
 	}
 
 	/**
+	 * Call the method two times, with and without attributes, and check that
+	 * it doesn't try to minify form definition when no attributes were passed
+	 *
 	 * @covers BU\Plugins\Liaison_Inquiry\Plugin::liaison_inquiry_form
 	 */
 	public function test_liaison_inquiry_form() {
@@ -24,12 +41,12 @@ class BU_Liaison_Inquiry_Test_Plugin extends WP_UnitTestCase {
 									 ->setMethods( [ 'minify_form_definition', 'get_form_html' ] )
 									 ->getMock();
 
-		// Spectrum_API::get_requirements is called
+		// Spectrum_API::get_requirements is called.
 		$this->spectrum->expects( $this->exactly( 2 ) )
 									 ->method( 'get_requirements' )
 									 ->willReturn( $form_definition );
 
-		// Plugin::minify_form_definition is called with proper arguments
+		// Plugin::minify_form_definition is called with proper arguments.
 		$plugin->expects( $this->once() )
 					 ->method( 'minify_form_definition' )
 					 ->with( $form_definition, $shortcode_attributes )
@@ -42,12 +59,14 @@ class BU_Liaison_Inquiry_Test_Plugin extends WP_UnitTestCase {
 
 		$plugin->method( 'get_form_html' )->will( $this->returnValueMap( $map ) );
 
-		// Method returns the return value of Plugin::get_form_html
+		// Method returns the return value of Plugin::get_form_html.
 		$this->assertEquals( $form_html, $plugin->liaison_inquiry_form( array() ) );
 		$this->assertEquals( $form_html_mini, $plugin->liaison_inquiry_form( $shortcode_attributes ) );
 	}
 
 	/**
+	 * Emulate Spectrum_API::get_requirements throwing an exception
+	 *
 	 * @covers BU\Plugins\Liaison_Inquiry\Plugin::liaison_inquiry_form
 	 */
 	public function test_liaison_inquiry_form_api_error() {
@@ -62,11 +81,13 @@ class BU_Liaison_Inquiry_Test_Plugin extends WP_UnitTestCase {
 		$this->spectrum->method( 'get_requirements' )
 									 ->will( $this->throwException( new \Exception( $exception_message ) ) );
 
-		// Method returns the value of Exception::getMessage
+		// Method returns the value of Exception::getMessage.
 		$this->assertEquals( $exception_message, $plugin->liaison_inquiry_form( null ) );
 	}
 
 	/**
+	 * Try all possible shortcode attributes with different types of form fields
+	 *
 	 * @covers BU\Plugins\Liaison_Inquiry\Plugin::minify_form_definition
 	 */
 	public function test_minify_form_definition() {
@@ -123,6 +144,9 @@ class BU_Liaison_Inquiry_Test_Plugin extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Ensure that nonce is verified and form fields are processed
+	 * before passing them to Spectrum_API::form_post
+	 *
 	 * @covers BU\Plugins\Liaison_Inquiry\Plugin::handle_liaison_inquiry
 	 */
 	public function test_handle_liaison_inquiry() {
@@ -134,28 +158,31 @@ class BU_Liaison_Inquiry_Test_Plugin extends WP_UnitTestCase {
 									 ->setMethods( [ 'verify_nonce', 'prepare_form_post' ] )
 									 ->getMock();
 
-		// Assert Plugin::verify_nonce called
+		// Assert Plugin::verify_nonce called.
 		$plugin->expects( $this->once() )
 					 ->method( 'verify_nonce' )
 					 ->willReturn( true );
 
-		// Assert Plugin::prepare_form_post called with $_POST as a parameter
+		// Assert Plugin::prepare_form_post called with $_POST as a parameter.
 		$plugin->expects( $this->once() )
 					 ->method( 'prepare_form_post' )
 					 ->with( $_POST )
 					 ->willReturn( $prepared_form );
 
-		// Assert Spectrum_API::post_form called with the return value of Plugin::prepare_form_post
+		// Assert Spectrum_API::post_form called with the return value of Plugin::prepare_form_post.
 		$this->spectrum->expects( $this->once() )
 									 ->method( 'post_form' )
 									 ->with( $prepared_form )
 									 ->willReturn( $api_response );
 
-		// Method returns the return value of the Spectrum_API::form_post
+		// Method returns the return value of the Spectrum_API::form_post.
 		$this->assertEquals( $api_response, $plugin->handle_liaison_inquiry() );
 	}
 
 	/**
+	 * Emulate Plugin::verify_nonce failure and make sure that client-side is
+	 * getting notified about it
+	 *
 	 * @covers BU\Plugins\Liaison_Inquiry\Plugin::handle_liaison_inquiry
 	 */
 	public function test_handle_liaison_inquiry_nonce_error() {
@@ -164,19 +191,21 @@ class BU_Liaison_Inquiry_Test_Plugin extends WP_UnitTestCase {
 									 ->setMethods( [ 'verify_nonce', 'prepare_form_post' ] )
 									 ->getMock();
 
-		// Assert Plugin::verify_nonce called
+		// Assert Plugin::verify_nonce called.
 		$plugin->expects( $this->once() )
 					 ->method( 'verify_nonce' )
 					 ->willReturn( false );
 
 		$return = $plugin->handle_liaison_inquiry();
 
-		// Method return error status
+		// Method return error status.
 		$this->assertEquals( 0, $return['status'] );
 		$this->assertNotEmpty( $return['response'] );
 	}
 
 	/**
+	 * Modify $_POST and insure proper nonce verification
+	 *
 	 * @covers BU\Plugins\Liaison_Inquiry\Plugin::verify_nonce
 	 */
 	public function test_verify_nonce() {
@@ -185,21 +214,24 @@ class BU_Liaison_Inquiry_Test_Plugin extends WP_UnitTestCase {
 		$_POST = array();
 		$_POST[ $plugin::$nonce_field_name ] = 'asdf';
 
-		// Nonce with the wrong value must fail
+		// Nonce with the wrong value must fail.
 		$this->assertFalse( $plugin->verify_nonce() );
 		$this->assertEmpty( $_POST );
 
 		$_POST[ $plugin::$nonce_field_name ] = wp_create_nonce( $plugin::$nonce_name );
 
-		// Nonce with the correct value must succeed
+		// Nonce with the correct value must succeed.
 		$this->assertTrue( $plugin->verify_nonce() );
 		$this->assertEmpty( $_POST );
 
-		// $_POST with no nonce field must fail
+		// $_POST with no nonce field must fail.
 		$this->assertFalse( $plugin->verify_nonce() );
 	}
 
 	/**
+	 * Pass different types of fields to the method and make sure that
+	 * every type is properly processed
+	 *
 	 * @covers BU\Plugins\Liaison_Inquiry\Plugin::prepare_form_post
 	 */
 	public function test_prepare_form_post() {
