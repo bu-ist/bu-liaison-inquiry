@@ -12,6 +12,8 @@ namespace BU\Plugins\Liaison_Inquiry;
  *
  * Primarily used during development to avoid sending any requests to the remote server.
  * Used in place of SpectrumAPI class.
+ *
+ * @codeCoverageIgnore
  */
 class Sample_Spectrum_API {
 
