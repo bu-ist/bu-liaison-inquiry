@@ -35,8 +35,8 @@ if ( ! isset( $GLOBALS['bu_liaison_inquiry'] ) ) {
 	$client_id = $options['ClientID'];
 
 	// Check whether in Dev Mode.
-	if ( defined( 'BU_LIAISON_INQUIRY_MOCK' ) && BU_LIAISON_INQUIRY_MOCK ) {
-		$plugin = new Plugin( new Mock_Spectrum_API( $client_id ) );
+	if ( defined( 'BU_LIAISON_INQUIRY_SAMPLE' ) && BU_LIAISON_INQUIRY_SAMPLE ) {
+		$plugin = new Plugin( new Sample_Spectrum_API( $client_id ) );
 	} else {
 		$plugin = new Plugin( new Spectrum_API( $api_key, $client_id ) );
 	}

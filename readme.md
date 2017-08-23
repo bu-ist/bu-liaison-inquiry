@@ -35,7 +35,7 @@ The plugin may be switched to dev mode. In this mode, no requests to the Spectru
 To switch to dev mode, add the following to `wp-config.php`:
 
 ```php
-define('BU_LIAISON_INQUIRY_MOCK', true);
+define('BU_LIAISON_INQUIRY_SAMPLE', true);
 ```
 
 By default, any submission of the form will be considered successful. To change this behavior, define one of following in `wp-config.php`:
