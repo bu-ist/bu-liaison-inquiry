@@ -96,7 +96,10 @@ class Spectrum_API {
 		// Check for a successful response from external API server.
 		if ( is_wp_error( $api_response ) ) {
 			$error_message = $api_response->get_error_message();
-			error_log( 'Liaison form API call failed: ' . $error_message );
+			// @codeCoverageIgnoreStart
+			if ( defined( 'BU_CMS' ) && BU_CMS ) {
+				error_log( 'Liaison form API call failed: ' . $error_message );
+			}// @codeCoverageIgnoreEnd
 			throw new \Exception( 'Error: ' . $error_message );
 		}
 
@@ -105,7 +108,10 @@ class Spectrum_API {
 		// Check that the response from the API contains actual form data.
 		if ( ! isset( $inquiry_form_decode->data ) ) {
 			$form_message = $inquiry_form_decode->message;
-			error_log( 'Bad response from Liaison API server: ' . $form_message );
+			// @codeCoverageIgnoreStart
+			if ( defined( 'BU_CMS' ) && BU_CMS ) {
+				error_log( 'Bad response from Liaison API server: ' . $form_message );
+			}// @codeCoverageIgnoreEnd
 			throw new \Exception( 'Error: ' . $form_message );
 		}
 
@@ -142,7 +148,10 @@ class Spectrum_API {
 			$return['status'] = 0;
 			$return['response'] = 'Failed submitting to Liaison API. Please retry. Error: ' .
 								  $remote_submit->get_error_message();
-			error_log( sprintf( '%s: %s', __METHOD__, $return['response'] ) );
+			// @codeCoverageIgnoreStart
+			if ( defined( 'BU_CMS' ) && BU_CMS ) {
+				error_log( sprintf( '%s: %s', __METHOD__, $return['response'] ) );
+			}// @codeCoverageIgnoreEnd
 		} else {
 			// Decode the response and activate redirect to the personal url on success.
 			$resp = json_decode( $remote_submit['body'] );

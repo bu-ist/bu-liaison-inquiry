@@ -191,14 +191,16 @@ class Plugin {
 				if ( $field_exists ) {
 					// Don't want to preset a hidden value for an existing field.
 					// Who knows what might happen?
-					error_log(
-						sprintf(
-							'Field key %s was found in a shortcode, ' .
-							'but it already exists in the liason form. ' .
-							'Dropping preset value.',
-							$preset_key
-						)
+					$warning = sprintf(
+						'Field key %s was found in a shortcode, ' .
+						'but it already exists in the liason form. ' .
+						'Dropping preset value.',
+						$preset_key
 					);
+					// @codeCoverageIgnoreStart
+					if ( defined( 'BU_CMS' ) && BU_CMS ) {
+						error_log( $warning );
+					}// @codeCoverageIgnoreEnd
 				} else {
 					$hidden_field = new \stdClass();
 					$hidden_field->hidden = true;
