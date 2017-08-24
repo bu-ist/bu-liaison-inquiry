@@ -26,10 +26,11 @@ class BU_Liaison_Inquiry_Test_Spectrum_API extends WP_UnitTestCase {
 	 * @covers BU\Plugins\Liaison_Inquiry\Spectrum_API::__construct
 	 */
 	public function test_constructor() {
-		$this->assertNotEmpty( $this->api::$requirements_url );
-		$this->assertNotEmpty( $this->api::$submit_url );
-		$this->assertNotEmpty( $this->api::$client_rules_url );
-		$this->assertNotEmpty( $this->api::$field_options_url );
+		$apiClass = get_class($this->api);
+		$this->assertNotEmpty( $apiClass::$requirements_url );
+		$this->assertNotEmpty( $apiClass::$submit_url );
+		$this->assertNotEmpty( $apiClass::$client_rules_url );
+		$this->assertNotEmpty( $apiClass::$field_options_url );
 
 		$this->assertEquals( 'key', $this->api->api_key );
 		$this->assertEquals( 'client_id', $this->api->client_id );
