@@ -37,20 +37,20 @@ class BU_Liaison_Inquiry_Test_Plugin extends WP_UnitTestCase {
 		$form_html_mini = 'html response mini';
 
 		$plugin = $this->getMockBuilder( BU\Plugins\Liaison_Inquiry\Plugin::class )
-									 ->setConstructorArgs( [ $this->spectrum ] )
-									 ->setMethods( [ 'minify_form_definition', 'get_form_html' ] )
-									 ->getMock();
+					   ->setConstructorArgs( [ $this->spectrum ] )
+					   ->setMethods( [ 'minify_form_definition', 'get_form_html' ] )
+					   ->getMock();
 
 		// Spectrum_API::get_requirements is called.
 		$this->spectrum->expects( $this->exactly( 2 ) )
-									 ->method( 'get_requirements' )
-									 ->willReturn( $form_definition );
+					   ->method( 'get_requirements' )
+					   ->willReturn( $form_definition );
 
 		// Plugin::minify_form_definition is called with proper arguments.
 		$plugin->expects( $this->once() )
-					 ->method( 'minify_form_definition' )
-					 ->with( $form_definition, $shortcode_attributes )
-					 ->willReturn( $minified_form_definition );
+			   ->method( 'minify_form_definition' )
+			   ->with( $form_definition, $shortcode_attributes )
+			   ->willReturn( $minified_form_definition );
 
 		$map = [
 			[ $form_definition, $form_html ],
@@ -73,13 +73,13 @@ class BU_Liaison_Inquiry_Test_Plugin extends WP_UnitTestCase {
 		$exception_message = 'error in api response';
 
 		$plugin = $this->getMockBuilder( BU\Plugins\Liaison_Inquiry\Plugin::class )
-									 ->setConstructorArgs( [ $this->spectrum ] )
-									 ->setMethods( null )
-									 ->getMock();
+					   ->setConstructorArgs( [ $this->spectrum ] )
+					   ->setMethods( null )
+					   ->getMock();
 
 		// Spectrum_API::get_requirements throws the exception.
 		$this->spectrum->method( 'get_requirements' )
-									 ->will( $this->throwException( new \Exception( $exception_message ) ) );
+					   ->will( $this->throwException( new \Exception( $exception_message ) ) );
 
 		// Method returns the value of Exception::getMessage.
 		$this->assertEquals( $exception_message, $plugin->liaison_inquiry_form( null ) );
@@ -154,26 +154,26 @@ class BU_Liaison_Inquiry_Test_Plugin extends WP_UnitTestCase {
 		$api_response = 'return value of the API call';
 
 		$plugin = $this->getMockBuilder( BU\Plugins\Liaison_Inquiry\Plugin::class )
-									 ->setConstructorArgs( [ $this->spectrum ] )
-									 ->setMethods( [ 'verify_nonce', 'prepare_form_post' ] )
-									 ->getMock();
+					   ->setConstructorArgs( [ $this->spectrum ] )
+					   ->setMethods( [ 'verify_nonce', 'prepare_form_post' ] )
+					   ->getMock();
 
 		// Assert Plugin::verify_nonce called.
 		$plugin->expects( $this->once() )
-					 ->method( 'verify_nonce' )
-					 ->willReturn( true );
+			   ->method( 'verify_nonce' )
+			   ->willReturn( true );
 
 		// Assert Plugin::prepare_form_post called with $_POST as a parameter.
 		$plugin->expects( $this->once() )
-					 ->method( 'prepare_form_post' )
-					 ->with( $_POST )
-					 ->willReturn( $prepared_form );
+			   ->method( 'prepare_form_post' )
+			   ->with( $_POST )
+			   ->willReturn( $prepared_form );
 
 		// Assert Spectrum_API::post_form called with the return value of Plugin::prepare_form_post.
 		$this->spectrum->expects( $this->once() )
-									 ->method( 'post_form' )
-									 ->with( $prepared_form )
-									 ->willReturn( $api_response );
+					   ->method( 'post_form' )
+					   ->with( $prepared_form )
+					   ->willReturn( $api_response );
 
 		// Method returns the return value of the Spectrum_API::form_post.
 		$this->assertEquals( $api_response, $plugin->handle_liaison_inquiry() );
@@ -187,14 +187,14 @@ class BU_Liaison_Inquiry_Test_Plugin extends WP_UnitTestCase {
 	 */
 	public function test_handle_liaison_inquiry_nonce_error() {
 		$plugin = $this->getMockBuilder( BU\Plugins\Liaison_Inquiry\Plugin::class )
-									 ->setConstructorArgs( [ $this->spectrum ] )
-									 ->setMethods( [ 'verify_nonce', 'prepare_form_post' ] )
-									 ->getMock();
+					   ->setConstructorArgs( [ $this->spectrum ] )
+					   ->setMethods( [ 'verify_nonce', 'prepare_form_post' ] )
+					   ->getMock();
 
 		// Assert Plugin::verify_nonce called.
 		$plugin->expects( $this->once() )
-					 ->method( 'verify_nonce' )
-					 ->willReturn( false );
+			   ->method( 'verify_nonce' )
+			   ->willReturn( false );
 
 		$return = $plugin->handle_liaison_inquiry();
 
