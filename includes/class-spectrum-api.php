@@ -16,39 +16,10 @@ class Spectrum_API {
 
 	// SpectrumEMP API URL setup.
 	const API_URL = 'https://www.spectrumemp.com/api/';
-	const REQUIREMENTS_PATH = 'inquiry_form/requirements';
-	const SUBMIT_PATH = 'inquiry_form/submit';
-	const CLIENT_RULES_PATH = 'field_rules/client_rules';
-	const FIELD_OPTIONS_PATH = 'field_rules/field_options';
-
-	// Can't setup with a single statement until php 5.6.
-	/**
-	 * URL to fetch requirements.
-	 *
-	 * @var string
-	 */
-	public static $requirements_url;
-
-	/**
-	 * URL to submit form data to Liaison.
-	 *
-	 * @var string
-	 */
-	public static $submit_url;
-
-	/**
-	 * URL to fetch form validation rules.
-	 *
-	 * @var string
-	 */
-	public static $client_rules_url;
-
-	/**
-	 * URL to fetch options for form fields.
-	 *
-	 * @var string
-	 */
-	public static $field_options_url;
+	const REQUIREMENTS_URL = self::API_URL . 'inquiry_form/requirements';
+	const SUBMIT_URL = self::API_URL . 'inquiry_form/submit';
+	const CLIENT_RULES_URL = self::API_URL . 'field_rules/client_rules';
+	const FIELD_OPTIONS_URL = self::API_URL . 'field_rules/field_options';
 
 	/**
 	 * Liaison API Key.
@@ -71,13 +42,6 @@ class Spectrum_API {
 	 * @param string $client_id Client ID.
 	 */
 	public function __construct( $api_key, $client_id ) {
-		// Setup urls. After php 5.6, these can become class const definitions
-		// (prior to 5.6 only flat strings can be class constants).
-		self::$requirements_url = self::API_URL . self::REQUIREMENTS_PATH;
-		self::$submit_url = self::API_URL . self::SUBMIT_PATH;
-		self::$client_rules_url = self::API_URL . self::CLIENT_RULES_PATH;
-		self::$field_options_url = self::API_URL . self::FIELD_OPTIONS_PATH;
-
 		$this->api_key = $api_key;
 		$this->client_id = $client_id;
 	}
@@ -90,7 +54,7 @@ class Spectrum_API {
 	 * @throws \Exception If API response is not successful.
 	 */
 	public function get_requirements() {
-		$api_query = self::$requirements_url . '?IQS-API-KEY=' . $this->api_key;
+		$api_query = self::REQUIREMENTS_URL . '?IQS-API-KEY=' . $this->api_key;
 		$api_response = wp_remote_get( $api_query );
 
 		// Check for a successful response from external API server.
@@ -142,7 +106,7 @@ class Spectrum_API {
 			'body' => $post_vars,
 		);
 
-		$remote_submit = wp_remote_post( self::$submit_url, $post_args );
+		$remote_submit = wp_remote_post( self::SUBMIT_URL, $post_args );
 
 		if ( is_wp_error( $remote_submit ) ) {
 			$return['status'] = 0;

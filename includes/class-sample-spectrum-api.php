@@ -17,19 +17,8 @@ namespace BU\Plugins\Liaison_Inquiry;
  */
 class Sample_Spectrum_API {
 
-	/**
-	 * URL to fetch form validation rules (required by front-end code)
-	 *
-	 * @var string
-	 */
-	public static $client_rules_url = 'https://www.spectrumemp.com/api/field_rules/client_rules';
-
-	/**
-	 * URL to fetch options for form fields (required by front-end code)
-	 *
-	 * @var string
-	 */
-	public static $field_options_url = 'https://www.spectrumemp.com/api/field_rules/field_options';
+	const CLIENT_RULES_URL = 'https://www.spectrumemp.com/api/field_rules/client_rules';
+	const FIELD_OPTIONS_URL = 'https://www.spectrumemp.com/api/field_rules/field_options';
 
 	/**
 	 * Liaison Client ID (required by front-end code)

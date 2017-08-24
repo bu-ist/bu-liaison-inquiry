@@ -16,8 +16,8 @@
 <script type='text/javascript'>
 	var SITE = {};
 	SITE.data = {
-		client_rules_url: "<?php echo $this->api::$client_rules_url; ?>",
-		field_options_url: "<?php echo $this->api::$field_options_url; ?>",
+		client_rules_url: "<?php echo $this->api::CLIENT_RULES_URL; ?>",
+		field_options_url: "<?php echo $this->api::FIELD_OPTIONS_URL; ?>",
 		client_id: "<?php echo $this->api->client_id; ?>"
 	};
 </script>

@@ -26,12 +26,6 @@ class BU_Liaison_Inquiry_Test_Spectrum_API extends WP_UnitTestCase {
 	 * @covers BU\Plugins\Liaison_Inquiry\Spectrum_API::__construct
 	 */
 	public function test_constructor() {
-		$apiClass = get_class($this->api);
-		$this->assertNotEmpty( $apiClass::$requirements_url );
-		$this->assertNotEmpty( $apiClass::$submit_url );
-		$this->assertNotEmpty( $apiClass::$client_rules_url );
-		$this->assertNotEmpty( $apiClass::$field_options_url );
-
 		$this->assertEquals( 'key', $this->api->api_key );
 		$this->assertEquals( 'client_id', $this->api->client_id );
 	}
@@ -44,7 +38,7 @@ class BU_Liaison_Inquiry_Test_Spectrum_API extends WP_UnitTestCase {
 	public function test_get_requirements() {
 		$api = $this->api;
 		$interceptor = function ( $return, $args, $url ) use ( $api ) {
-			if ( $url === $api::$requirements_url . '?IQS-API-KEY=key' ) {
+			if ( $url === $api::REQUIREMENTS_URL . '?IQS-API-KEY=key' ) {
 				return array(
 					'body' => '{"data": "some data"}',
 				);
@@ -66,7 +60,7 @@ class BU_Liaison_Inquiry_Test_Spectrum_API extends WP_UnitTestCase {
 	public function test_get_requirements_api_error() {
 		$api = $this->api;
 		$interceptor = function ( $return, $args, $url ) use ( $api ) {
-			if ( $url === $api::$requirements_url . '?IQS-API-KEY=key' ) {
+			if ( $url === $api::REQUIREMENTS_URL . '?IQS-API-KEY=key' ) {
 				return new WP_ERROR();
 			}
 		};
@@ -88,7 +82,7 @@ class BU_Liaison_Inquiry_Test_Spectrum_API extends WP_UnitTestCase {
 	public function test_get_requirements_response_error() {
 		$api = $this->api;
 		$interceptor = function ( $return, $args, $url ) use ( $api ) {
-			if ( $url === $api::$requirements_url . '?IQS-API-KEY=key' ) {
+			if ( $url === $api::REQUIREMENTS_URL . '?IQS-API-KEY=key' ) {
 				return array(
 					'body' => '{"message": "something went wrong"}',
 				);
@@ -114,7 +108,7 @@ class BU_Liaison_Inquiry_Test_Spectrum_API extends WP_UnitTestCase {
 
 		$api = $this->api;
 		$interceptor = function ( $return, $args, $url ) use ( $api ) {
-			if ( $url === $api::$submit_url ) {
+			if ( $url === $api::SUBMIT_URL ) {
 				return array(
 					'body' => '{"status": "success", "data": "some data", "message": "some message"}',
 				);
@@ -156,7 +150,7 @@ class BU_Liaison_Inquiry_Test_Spectrum_API extends WP_UnitTestCase {
 
 		$api = $this->api;
 		$interceptor = function ( $return, $args, $url ) use ( $api ) {
-			if ( $url === $api::$submit_url ) {
+			if ( $url === $api::SUBMIT_URL ) {
 				return new WP_ERROR();
 			}
 		};
@@ -180,7 +174,7 @@ class BU_Liaison_Inquiry_Test_Spectrum_API extends WP_UnitTestCase {
 
 		$api = $this->api;
 		$interceptor = function ( $return, $args, $url ) use ( $api ) {
-			if ( $url === $api::$submit_url ) {
+			if ( $url === $api::SUBMIT_URL ) {
 				return array(
 					'body' => '{"status": "failure", "data": "some data"}',
 				);
