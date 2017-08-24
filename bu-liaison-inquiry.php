@@ -311,11 +311,18 @@ class BU_Liaison_Inquiry {
 		// Process all of the existing values into a new array.
 		$post_vars = array();
 		foreach ( $incoming_post_vars as $key => $value ) {
+			$ignore = false;
+			
 			if ( in_array( $key, $phone_fields ) ) {
 				// If it is a phone field, apply special formatting.
 				// Strip out everything except numerals.
 				$value = preg_replace( '/[^0-9]/', '', $value );
-				$value = '%2B1' . $value;		// Append +1 for US, but + needs to be %2B for posting.
+				if ($value) {
+					$value = '%2B1' . $value;		// Append +1 for US, but + needs to be %2B for posting.
+				}
+				else {
+					$ignore = true;
+				}
 
 			} elseif ( stripos( $key, '-text-opt-in' ) !== false ) {
 				// If this checkbox field is set then it was checked.
@@ -325,7 +332,9 @@ class BU_Liaison_Inquiry {
 				$value = sanitize_text_field( $value );
 			}
 
-			$post_vars[ $key ] = $value;
+			if ( !$ignore ) {
+				$post_vars[ $key ] = $value;
+			}
 		}
 		return $post_vars;
 	}
