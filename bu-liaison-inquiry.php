@@ -6,7 +6,7 @@ Plugin URI: http://developer.bu.edu
 Author: Boston University IS&T (Jonathan Williams)
 Author URI: http://developer.bu.edu
 Description: Provide a form to send data to the Liaison SpectrumEMP API
-Version: 0.6
+Version: 0.7
 */
 
 
