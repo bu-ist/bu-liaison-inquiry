@@ -315,10 +315,9 @@ class BU_Liaison_Inquiry {
 				// If it is a phone field, apply special formatting.
 				// Strip out everything except numerals.
 				$value = preg_replace( '/[^0-9]/', '', $value );
-				if ($value) {
+				if ( $value ) {
 					$value = '%2B1' . $value;		// Append +1 for US, but + needs to be %2B for posting.
 				}
-
 			} elseif ( stripos( $key, '-text-opt-in' ) !== false ) {
 				// If this checkbox field is set then it was checked.
 				$value = '1';
