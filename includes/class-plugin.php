@@ -299,8 +299,10 @@ class Plugin {
 				// Strip out everything except numerals.
 				$value = preg_replace( '/[^0-9]/', '', $value );
 
-				// Append +1 for US, but + needs to be %2B for posting.
-				$value = '%2B1' . $value;
+				if ( $value ) {
+					// Append +1 for US, but + needs to be %2B for posting.
+					$value = '%2B1' . $value;
+				}
 			} elseif ( stripos( $key, '-text-opt-in' ) !== false ) {
 				// If this checkbox field is set then it was checked.
 				$value = '1';

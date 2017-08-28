@@ -63,6 +63,8 @@
 				if ( stripos( $field->description, 'phone number' ) !== false ) {
 					$class = ' iqs-form-phone-number';
 					$phone_fields[] = $field->id;
+				} elseif ( false !== stripos( $field->description, 'valid email' ) ) {
+					$class = ' iqs-form-email';
 				} else {
 					$class = ' iqs-form-text';
 				}
@@ -97,7 +99,7 @@
 				?>
 
 						<input type="checkbox" name="<?php echo $element_id; ?>" id="<?php echo $element_id; ?>">
-						<label id="label-<?php echo $element_id;?>" for="<?php $element_id; ?>"><?php echo $label_text; ?></label>
+						<label id="label-<?php echo $element_id; ?>" for="<?php echo $element_id; ?>"><?php echo $label_text; ?></label>
 
 				<?php endif;
 				// End phone field specific handler.
