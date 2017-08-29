@@ -44,8 +44,6 @@ function main($) {
 			onSuccess: function($form) {
 
 				var $sb = $form.find('.btn-primary').html('Submitting...').attr('disabled', 'disabled');
-				// Remove 'error' class if the previous submission had errors.
-				jQuery('div.form-group').removeClass('error');
 
 				$.post( $form.attr('action'), $form.serialize(), function(r) {
 
@@ -59,11 +57,10 @@ function main($) {
 						$('.form-submit-success').hide();
 						if (message.toLowerCase().indexOf('already exist') >= 0) {
 							window.location.href = r.data;
-						} else if (message.toLowerCase().indexOf('incomplete or invalid') >= 0
-										|| message.toLowerCase().indexOf('fields are invalid') >= 0) {
+						} else if (message.toLowerCase().indexOf('incomplete or invalid') >= 0) {
 							$.each(r.data, function (i, item) {
 								message += '<br />' + item.displayName;
-								$('#' + item.id).parents('div.form-group').addClass('error');
+								$('#' + item.id).parents('div.control-group').addClass('error');
 							});
 
 						}
