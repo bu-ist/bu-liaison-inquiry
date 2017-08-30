@@ -6,7 +6,7 @@ Plugin URI: http://developer.bu.edu
 Author: Boston University IS&T (Jonathan Williams)
 Author URI: http://developer.bu.edu
 Description: Provide a form to send data to the Liaison SpectrumEMP API
-Version: 0.6
+Version: 0.7
 */
 
 
@@ -315,8 +315,9 @@ class BU_Liaison_Inquiry {
 				// If it is a phone field, apply special formatting.
 				// Strip out everything except numerals.
 				$value = preg_replace( '/[^0-9]/', '', $value );
-				$value = '%2B1' . $value;		// Append +1 for US, but + needs to be %2B for posting.
-
+				if ( $value ) {
+					$value = '%2B1' . $value;		// Append +1 for US, but + needs to be %2B for posting.
+				}
 			} elseif ( stripos( $key, '-text-opt-in' ) !== false ) {
 				// If this checkbox field is set then it was checked.
 				$value = '1';
