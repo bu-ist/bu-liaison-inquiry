@@ -15,17 +15,24 @@ namespace BU\Plugins\Liaison_Inquiry;
 class Plugin {
 
 	/**
-	 * @var
+	 * API class name
+	 *
+	 * @var String
 	 */
 	public $api_class;
 
 	/**
-	 * @param
+	 * Setup class variables
+	 *
+	 * @param String $api_class API class name.
 	 */
 	public function __construct( $api_class ) {
 		$this->api_class = $api_class;
 	}
 
+	/**
+	 * Initializes API class
+	 */
 	public function get_api_instance() {
 		// Get API key and Client ID from option settings.
 		$options = get_option( 'bu_liaison_inquiry_options' );
@@ -34,18 +41,21 @@ class Plugin {
 
 		$class = $this->api_class;
 
-		return new $class($client_id, $api_key);
-	}
-
-	public function get_form() {
-		$api = $this->get_api_instance();
-		return new Inquiry_Form($api);
+		return new $class( $client_id, $api_key );
 	}
 
 	/**
-	 * Shortcode definition that creates the Liaison inquiry form.
+	 * Creates an inquiry form instance
+	 */
+	public function get_form() {
+		$api = $this->get_api_instance();
+		return new Inquiry_Form( $api );
+	}
+
+	/**
+	 * Shortcode definition that creates the Liaison inquiry form
 	 *
-	 * @param  array $atts Attributes specified in the shortcode.
+	 * @param  array $attrs Attributes specified in the shortcode.
 	 * @return string Returns full form markup to replace the shortcode.
 	 */
 	public function liaison_inquiry_form( $attrs = [] ) {

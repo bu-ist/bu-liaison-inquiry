@@ -33,12 +33,12 @@ class Sample_Spectrum_API {
 	 * @param string $client_id Client ID.
 	 * @param string $api_key   API Key.
 	 */
-	public function __construct( $client_id, $api_key=null ) {
+	public function __construct( $client_id, $api_key = null ) {
 		$this->client_id = $client_id;
 	}
 
 	/**
-	 * Load a json files from the local directory
+	 * Load a json files from the local directory.
 	 *
 	 * @param string $name Filename.
 	 *

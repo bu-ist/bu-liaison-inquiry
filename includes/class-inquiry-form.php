@@ -7,6 +7,11 @@
 
 namespace BU\Plugins\Liaison_Inquiry;
 
+/**
+ * Inquiry Form builder
+ *
+ * Renders form HTML and sends submitted forms to API endpoints.
+ */
 class Inquiry_Form {
 
 	// Setup dummy value for required fields that aren't part of the mini form.
@@ -27,12 +32,18 @@ class Inquiry_Form {
 	public static $nonce_name = 'liaison_inquiry';
 
 	/**
-	 * Path to plugin directory.
+	 * Path to plugin directory
 	 *
 	 * @var string
 	 */
 	private static $plugin_dir;
 
+
+	/**
+	 * Setup class variables
+	 *
+	 * @param Object $api API class instance.
+	 */
 	public function __construct( $api ) {
 		$this->api = $api;
 
@@ -40,6 +51,12 @@ class Inquiry_Form {
 		self::$plugin_dir = dirname( __FILE__ ) . '/..';
 	}
 
+	/**
+	 * Retrievs form definition from the API and builds the form
+	 *
+	 * @param  array $attrs Attributes specified in the shortcode.
+	 * @return string Form HTML
+	 */
 	public function get_html( $attrs ) {
 		try {
 			$inquiry_form = $this->api->get_requirements();
