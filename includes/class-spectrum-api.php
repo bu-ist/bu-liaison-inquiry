@@ -36,14 +36,14 @@ class Spectrum_API {
 	public $client_id;
 
 	/**
-	 * Setup API URLs and set instance variables.
+	 * Setup $client_id and $api_key variables.
 	 *
-	 * @param string $api_key   API Key.
 	 * @param string $client_id Client ID.
+	 * @param string $api_key   API Key.
 	 */
-	public function __construct( $api_key, $client_id ) {
-		$this->api_key = $api_key;
+	public function __construct( $client_id, $api_key ) {
 		$this->client_id = $client_id;
+		$this->api_key = $api_key;
 	}
 
 	/**

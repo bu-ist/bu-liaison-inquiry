@@ -29,16 +29,11 @@ add_action( 'admin_menu', array( $admin, 'bu_liaison_inquiry_options_page' ) );
 
 // Instantiate plugin (only once).
 if ( ! isset( $GLOBALS['bu_liaison_inquiry'] ) ) {
-	// Get API key and Client ID from option settings.
-	$options = get_option( 'bu_liaison_inquiry_options' );
-	$api_key = $options['APIKey'];
-	$client_id = $options['ClientID'];
-
 	// Check whether in Dev Mode.
 	if ( defined( 'BU_LIAISON_INQUIRY_SAMPLE' ) && BU_LIAISON_INQUIRY_SAMPLE ) {
-		$plugin = new Plugin( new Sample_Spectrum_API( $client_id ) );
+		$plugin = new Plugin( Sample_Spectrum_API::class );
 	} else {
-		$plugin = new Plugin( new Spectrum_API( $api_key, $client_id ) );
+		$plugin = new Plugin( Spectrum_API::class );
 	}
 }
 
