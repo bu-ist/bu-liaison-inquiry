@@ -58,8 +58,14 @@ class Inquiry_Form {
 	 * @return string Form HTML
 	 */
 	public function get_html( $attrs ) {
+		if ( isset( $attrs['form_id'] ) ) {
+			$form_id = $attrs['form_id'];
+		} else {
+			$form_id = null;
+		}
+		
 		try {
-			$inquiry_form = $this->api->get_requirements();
+			$inquiry_form = $this->api->get_requirements( $form_id );
 		} catch ( \Exception $e ) {
 			return $e->getMessage();
 		}
@@ -68,7 +74,7 @@ class Inquiry_Form {
 			$inquiry_form = $this->minify_form_definition( $inquiry_form, $attrs );
 		}
 
-		return $this->render_template( $inquiry_form );
+		return $this->render_template( $inquiry_form, $form_id );
 	}
 
 	/**
@@ -190,7 +196,7 @@ class Inquiry_Form {
 	 * @param stdClass $inquiry_form Object representing the form.
 	 * @return string Returns full form markup
 	 */
-	public function render_template( $inquiry_form ) {
+	public function render_template( $inquiry_form, $form_id ) {
 		// Setup nonce for form to protect against various possible attacks.
 		$nonce = wp_nonce_field(
 			self::$nonce_name,
