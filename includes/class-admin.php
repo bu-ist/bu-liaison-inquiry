@@ -167,22 +167,52 @@ class Admin {
 		// If there is already a key set, use it to fetch and display a field inventory.
 		$options = get_option( 'bu_liaison_inquiry_options' );
 		if ( ! empty( $options['APIKey'] ) ) {
+			$api = new Spectrum_API( null, $options['APIKey'] );
 		?>
-		<h2>Field inventory</h2>
+		<h2>Select Liaison Form:</h2>
+
 		<?php
-		$api = new Spectrum_API( null, $options['APIKey'] );
 		try {
-			$inquiry_form = $api->get_requirements();
+			$forms_list = $api->get_forms_list();
 		} catch ( \Exception $e ) {
 			echo esc_html( $e->getMessage() );
 			return;
 		}
+		?>
 
-		foreach ( $inquiry_form->sections as $section ) {
-			foreach ( $section->fields as $field_key => $field ) {
-				echo '<p>' . esc_html( $field->displayName ) . ' = ' . esc_html( $field->id ) . '</p>';
+		<select>
+		<?php 
+			foreach ($forms_list as $name => $form_id) {
+				$caption = $name . ($form_id ? ': ' . $form_id : '');
+		?>
+			<option><?php echo $caption ?></option>
+		<?php }?>
+		</select>
+
+		<?php 
+			foreach ($forms_list as $name => $form_id) {
+
+		?>
+		<h2>Sample shortcode:</h2>
+
+		[liaison_inquiry_form<?php echo $form_id ? ' form_id="'.$form_id.'"' : '' ?>]
+
+
+		<h2>Field inventory</h2>
+		<?php
+				try {
+					$inquiry_form = $api->get_requirements( $form_id );
+				} catch ( \Exception $e ) {
+					echo esc_html( $e->getMessage() );
+					return;
+				}
+
+				foreach ( $inquiry_form->sections as $section ) {
+					foreach ( $section->fields as $field_key => $field ) {
+						echo '<p>' . esc_html( $field->displayName ) . ' = ' . esc_html( $field->id ) . '</p>';
+					}
+				}
 			}
-		}
 		}
 	}
 
