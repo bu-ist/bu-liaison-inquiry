@@ -16,8 +16,9 @@ class Spectrum_API {
 
 	// SpectrumEMP API URL setup.
 	const API_URL = 'https://www.spectrumemp.com/api/';
-	const REQUIREMENTS_URL = self::API_URL . 'inquiry_form/requirements';
-	const SUBMIT_URL = self::API_URL . 'inquiry_form/submit';
+	const SUBMITTABLE_URL = self::API_URL . 'forms/submittable';
+	const REQUIREMENTS_URL = self::API_URL . 'forms/requirements';
+	const SUBMIT_URL = self::API_URL . 'forms/submit';
 	const CLIENT_RULES_URL = self::API_URL . 'field_rules/client_rules';
 	const FIELD_OPTIONS_URL = self::API_URL . 'field_rules/field_options';
 
@@ -44,6 +45,28 @@ class Spectrum_API {
 	public function __construct( $client_id, $api_key ) {
 		$this->client_id = $client_id;
 		$this->api_key = $api_key;
+	}
+
+	public function get_forms_list() {
+		// Default to the inquiry form that always exists
+		$result = array(
+			"Inquiry Form" => null
+		);
+
+		$api_query = self::SUBMITTABLE_URL . '?IQS-API-KEY=' . $this->api_key;
+
+		$api_response = wp_remote_get( $api_query );
+
+		// TODO: check if there's an error
+
+		$response_decode = json_decode( $api_response['body'], true );
+
+		if ( isset( $response_decode['data'] ) && isset( $response_decode['data']['sem_forms'] ) ) {
+			return array_merge($result, $response_decode['data']['sem_forms']);
+		}
+		else {
+			return $result;
+		}
 	}
 
 	/**
