@@ -76,8 +76,12 @@ class Spectrum_API {
 	 *
 	 * @throws \Exception If API response is not successful.
 	 */
-	public function get_requirements() {
+	public function get_requirements( $form_id ) {
 		$api_query = self::REQUIREMENTS_URL . '?IQS-API-KEY=' . $this->api_key;
+		if ( $form_id ) {
+			$api_query .= '&formID=' . $form_id;
+		}
+
 		$api_response = wp_remote_get( $api_query );
 
 		// Check for a successful response from external API server.
