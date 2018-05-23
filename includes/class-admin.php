@@ -170,7 +170,7 @@ class Admin {
 		?>
 		<h2>Field inventory</h2>
 		<?php
-		$api = new Spectrum_API( $options['APIKey'], null );
+		$api = new Spectrum_API( null, $options['APIKey'] );
 		try {
 			$inquiry_form = $api->get_requirements();
 		} catch ( \Exception $e ) {
