@@ -180,19 +180,36 @@ class Admin {
 		}
 		?>
 
-		<select>
+		<script>
+			jQuery(document).ready(function(){
+				jQuery('#select_form').change(function () {
+					// Hide inventory of every form
+					jQuery('[id^=form_]').hide();
+					var selected = jQuery('#select_form').val();
+					jQuery('#form_' + selected).show();
+				});
+
+				// Hide inventory of every form
+				jQuery('[id^=form_]').hide();
+				// Show the default one
+				jQuery('#form_default').show();
+			});
+		</script>
+
+		<select id="select_form">
 		<?php 
 			foreach ($forms_list as $name => $form_id) {
 				$caption = $name . ($form_id ? ': ' . $form_id : '');
+				$value = $form_id ? $form_id : 'default';
+				$selected = $form_id ? '' : 'selected';
 		?>
-			<option><?php echo $caption ?></option>
+			<option value="<?php echo $value ?>" <?php echo $selected ?>><?php echo $caption ?></option>
 		<?php }?>
 		</select>
-
 		<?php 
 			foreach ($forms_list as $name => $form_id) {
-
 		?>
+		<div id="form_<?php echo $form_id ? $form_id : 'default' ?>">
 		<h2>Sample shortcode:</h2>
 
 		[liaison_inquiry_form<?php echo $form_id ? ' form_id="'.$form_id.'"' : '' ?>]
@@ -212,6 +229,9 @@ class Admin {
 						echo '<p>' . esc_html( $field->displayName ) . ' = ' . esc_html( $field->id ) . '</p>';
 					}
 				}
+		?>
+		</div>
+		<?php
 			}
 		}
 	}
