@@ -29,7 +29,7 @@ class Admin {
 			'bu_liaison_inquiry'
 		);
 
-		// Register a new field in the "bu_liaison_inquiry_admin_section_key" section, inside the "bu_liaison_inquiry" page.
+		// Register the API Key field.
 		add_settings_field(
 			'APIKey',
 			__( 'API Key', 'bu_liaison_inquiry' ),
@@ -64,7 +64,7 @@ class Admin {
 	 * @param array $args Contains keys for title, id, callback.
 	 */
 	function bu_liaison_inquiry_admin_section_key_callback( $args ) {
-		echo "<p id='" . esc_attr( $args['id'] ) . "'>" . esc_html__( 'Set the parameters for your organization to fetch the correct form.', 'bu_liaison_inquiry' ) . '</p>';
+		echo "<p id='" . esc_attr( $args['id'] ) . "'>" . esc_html__( 'Set the parameters for your organization to fetch the correct forms.', 'bu_liaison_inquiry' ) . '</p>';
 	}
 
 	/**
