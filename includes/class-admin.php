@@ -169,7 +169,7 @@ class Admin {
 		if ( ! empty( $options['APIKey'] ) ) {
 			$api = new Spectrum_API( null, $options['APIKey'] );
 		?>
-		<h2>Select Liaison Form:</h2>
+		<h2>Select Liaison Form</h2>
 
 		<?php
 		try {
@@ -210,7 +210,7 @@ class Admin {
 			foreach ($forms_list as $name => $form_id) {
 		?>
 		<div id="form_<?php echo $form_id ? $form_id : 'default' ?>">
-		<h2>Sample shortcode:</h2>
+		<h2>Sample shortcode</h2>
 
 		[liaison_inquiry_form<?php echo $form_id ? ' form_id="'.$form_id.'"' : '' ?>]
 
