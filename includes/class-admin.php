@@ -14,6 +14,42 @@ namespace BU\Plugins\Liaison_Inquiry;
  */
 class Admin {
 
+	private function add_setting( $section_name, $setting_name, $setting_title, $callback_name, $description='' ) {
+		$args = array(
+			'label_for' => $setting_name,
+			'class' => 'bu_liaison_inquiry_row',
+			'bu_liaison_inquiry_custom_data' => 'custom',
+		);
+
+		if ($description) {
+			$args['description'] = $description;
+		}
+
+		add_settings_field(
+			$setting_name,
+			__( $setting_title, 'bu_liaison_inquiry' ),
+			array( $this, $callback_name ),
+			'bu_liaison_inquiry',
+			$section_name,
+			$args
+		);
+	}
+
+	private function setting_html_input( $value, $size, $args ) {
+		$description = '';
+		if ( $args['description'] ) {
+			$esc_description = esc_html( $args['description'], 'bu_liaison_inquiry' );
+			$description = '<p class="description">' . $esc_description . '</p>';
+		}
+
+		return '<input' .
+		' type="text" size="' . esc_html($size) . '" id="' . esc_attr( $args['label_for'] ) . '"' .
+		' data-custom="' . esc_attr( $args['bu_liaison_inquiry_custom_data'] ) . '"' .
+		' name="bu_liaison_inquiry_options[' . esc_attr( $args['label_for'] ) . ']"' .
+		' value="' . esc_html( $value ) . '"' .
+		'>' . $description;
+	}
+
 	/**
 	 * Register the settings option and define the settings page
 	 */
