@@ -80,6 +80,57 @@ class Admin {
 			'clientid_callback',
 			'The Client ID specifies the organizational account.'
 		);
+
+
+		// Register the UTM Parameters section.
+		add_settings_section(
+			'bu_liaison_inquiry_admin_section_utm',
+			__( 'UTM Parameters', 'bu_liaison_inquiry' ),
+			array( $this, 'bu_liaison_inquiry_admin_section_utm_callback' ),
+			'bu_liaison_inquiry'
+		);
+
+		$this->add_setting(
+			'bu_liaison_inquiry_admin_section_utm',
+			'utm_source',
+			'Source',
+			'utm_source_callback'
+		);
+
+		$this->add_setting(
+			'bu_liaison_inquiry_admin_section_utm',
+			'utm_campaign',
+			'Campaign Name',
+			'utm_campaign_callback'
+		);
+
+		$this->add_setting(
+			'bu_liaison_inquiry_admin_section_utm',
+			'utm_content',
+			'Content',
+			'utm_content_callback'
+		);
+
+		$this->add_setting(
+			'bu_liaison_inquiry_admin_section_utm',
+			'utm_medium',
+			'Medium',
+			'utm_medium_callback'
+		);
+
+		$this->add_setting(
+			'bu_liaison_inquiry_admin_section_utm',
+			'utm_term',
+			'Term',
+			'utm_term_callback'
+		);
+
+		$this->add_setting(
+			'bu_liaison_inquiry_admin_section_utm',
+			'utm_page_subject',
+			'Landing Page Subject',
+			'utm_page_subject_callback'
+		);
 	}
 
 	/**
@@ -111,6 +162,33 @@ class Admin {
 		echo $this->setting_html_input( Settings::get('ClientID'), 10, $args );
 	}
 
+	function bu_liaison_inquiry_admin_section_utm_callback( $args ) {
+		echo "<p id='" . esc_attr( $args['id'] ) . "'>" . esc_html__( 'Specify Spectrum EMP field IDs associated with UTM parameters.', 'bu_liaison_inquiry' ) . '</p>';
+	}
+
+	function utm_source_callback( $args ) {
+		echo $this->setting_html_input( Settings::get('utm_source'), 10, $args );
+	}
+
+	function utm_campaign_callback( $args ) {
+		echo $this->setting_html_input( Settings::get('utm_campaign'), 10, $args );
+	}
+
+	function utm_content_callback( $args ) {
+		echo $this->setting_html_input( Settings::get('utm_content'), 10, $args );
+	}
+
+	function utm_medium_callback( $args ) {
+		echo $this->setting_html_input( Settings::get('utm_medium'), 10, $args );
+	}
+
+	function utm_term_callback( $args ) {
+		echo $this->setting_html_input( Settings::get('utm_term'), 10, $args );
+	}
+
+	function utm_page_subject_callback( $args ) {
+		echo $this->setting_html_input( Settings::get('utm_page_subject'), 10, $args );
+	}
 
 	/**
 	 * Create an admin page.
