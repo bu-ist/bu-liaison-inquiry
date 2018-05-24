@@ -57,7 +57,7 @@ class Admin {
 		// Register a new setting for "bu_liaison_inquiry" page.
 		register_setting( 'bu_liaison_inquiry', 'bu_liaison_inquiry_options' );
 
-		// Register a new section in the "bu_liaison_inquiry" page.
+		// Register the API Key and Client ID section.
 		add_settings_section(
 			'bu_liaison_inquiry_admin_section_key',
 			__( 'Enter SpectrumEMP API Key and Client ID', 'bu_liaison_inquiry' ),
@@ -65,32 +65,18 @@ class Admin {
 			'bu_liaison_inquiry'
 		);
 
-		// Register the API Key field.
-		add_settings_field(
-			'APIKey',
-			__( 'API Key', 'bu_liaison_inquiry' ),
-			array( $this, 'bu_liaison_inquiry_field_apikey_callback' ),
-			'bu_liaison_inquiry',
+		$this->add_setting(
 			'bu_liaison_inquiry_admin_section_key',
-			array(
-				'label_for' => 'APIKey',
-				'class' => 'bu_liaison_inquiry_row',
-				'bu_liaison_inquiry_custom_data' => 'custom',
-			)
+			'APIKey',
+			'API Key',
+			'apikey_callback'
 		);
 
-		// Register the ClientID field.
-		add_settings_field(
-			'ClientID',
-			__( 'Client ID', 'bu_liaison_inquiry' ),
-			array( $this, 'bu_liaison_inquiry_field_clientid_callback' ),
-			'bu_liaison_inquiry',
+		$this->add_setting(
 			'bu_liaison_inquiry_admin_section_key',
-			array(
-				'label_for' => 'ClientID',
-				'class' => 'bu_liaison_inquiry_row',
-				'bu_liaison_inquiry_custom_data' => 'custom',
-			)
+			'ClientID',
+			'Client ID',
+			'clientid_callback'
 		);
 	}
 
