@@ -35,9 +35,8 @@ class Plugin {
 	 */
 	public function get_api_instance() {
 		// Get API key and Client ID from option settings.
-		$options = get_option( 'bu_liaison_inquiry_options' );
-		$client_id = $options['ClientID'];
-		$api_key = $options['APIKey'];
+		$client_id = Settings::get('ClientID');
+		$api_key = Settings::get('APIKey');
 
 		$class = $this->api_class;
 
