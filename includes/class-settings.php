@@ -18,7 +18,15 @@ class Settings {
 
     static function get( $setting_name ) {
         $options = get_option( self::NAME );
-        // TODO: check if setting exists before retrieving it
+
+        if ( !$options ) {
+            return '';
+        }
+
+        if ( !array_key_exists( $setting_name, $options ) ) {
+            return '';
+        }
+
         return $options[$setting_name];
     }
 
