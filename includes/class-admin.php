@@ -92,7 +92,7 @@ class Admin {
 	}
 
 	/**
-	 * Outputs the form field for the API Key, called by add_settings_field()
+	 * Outputs the form field for the API Key setting
 	 *
 	 * @param array $args Contains keys for label_for, class, bu_liaison_inquiry_custom_data.
 	 */
@@ -101,7 +101,7 @@ class Admin {
 	}
 
 	/**
-	 * Outputs the form field for the Client ID, called by add_settings_field()
+	 * Outputs the form field for the Client ID setting
 	 *
 	 * @param array $args Contains keys for label_for, class, bu_liaison_inquiry_custom_data.
 	 */
