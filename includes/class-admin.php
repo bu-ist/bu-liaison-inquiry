@@ -14,7 +14,7 @@ namespace BU\Plugins\Liaison_Inquiry;
  */
 class Admin {
 
-	private function add_setting( $section_name, $setting_name, $setting_title, $callback_name, $description='' ) {
+	private function add_setting( $section_name, $setting_name, $setting_title, $callback, $description='' ) {
 		$args = array(
 			'label_for' => $setting_name,
 			'class' => 'bu_liaison_inquiry_row',
@@ -28,7 +28,7 @@ class Admin {
 		add_settings_field(
 			$setting_name,
 			__( $setting_title, 'bu_liaison_inquiry' ),
-			array( $this, $callback_name ),
+			$callback,
 			'bu_liaison_inquiry',
 			$section_name,
 			$args
@@ -69,7 +69,9 @@ class Admin {
 			'bu_liaison_inquiry_admin_section_key',
 			'APIKey',
 			'API Key',
-			'apikey_callback',
+			function ( $args ) {
+				echo $this->setting_html_input( Settings::get('APIKey'), 50, $args );
+			},
 			'The API Key allows access to SpectrumEMP.'
 		);
 
@@ -77,7 +79,9 @@ class Admin {
 			'bu_liaison_inquiry_admin_section_key',
 			'ClientID',
 			'Client ID',
-			'clientid_callback',
+			function ( $args ) {
+				echo $this->setting_html_input( Settings::get('ClientID'), 10, $args );
+			},
 			'The Client ID specifies the organizational account.'
 		);
 
@@ -140,26 +144,6 @@ class Admin {
 	 */
 	function bu_liaison_inquiry_admin_section_key_callback( $args ) {
 		echo "<p id='" . esc_attr( $args['id'] ) . "'>" . esc_html__( 'Set the parameters for your organization to fetch the correct forms.', 'bu_liaison_inquiry' ) . '</p>';
-	}
-
-	/**
-	 * Outputs the form field for the API Key setting
-	 *
-	 * @param array $args Contains keys for label_for, class, bu_liaison_inquiry_custom_data,
-	 *                    and description (optional).
-	 */
-	function apikey_callback( $args ) {
-		echo $this->setting_html_input( Settings::get('APIKey'), 50, $args );
-	}
-
-	/**
-	 * Outputs the form field for the Client ID setting
-	 *
-	 * @param array $args Contains keys for label_for, class, bu_liaison_inquiry_custom_data,
-	 *                    and description (optional).
-	 */
-	function clientid_callback( $args ) {
-		echo $this->setting_html_input( Settings::get('ClientID'), 10, $args );
 	}
 
 	function bu_liaison_inquiry_admin_section_utm_callback( $args ) {
