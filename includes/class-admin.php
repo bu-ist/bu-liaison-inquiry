@@ -94,7 +94,8 @@ class Admin {
 	/**
 	 * Outputs the form field for the API Key setting
 	 *
-	 * @param array $args Contains keys for label_for, class, bu_liaison_inquiry_custom_data.
+	 * @param array $args Contains keys for label_for, class, bu_liaison_inquiry_custom_data,
+	 *                    and description (optional).
 	 */
 	function apikey_callback( $args ) {
 		echo $this->setting_html_input( Settings::get('APIKey'), 50, $args );
@@ -103,7 +104,8 @@ class Admin {
 	/**
 	 * Outputs the form field for the Client ID setting
 	 *
-	 * @param array $args Contains keys for label_for, class, bu_liaison_inquiry_custom_data.
+	 * @param array $args Contains keys for label_for, class, bu_liaison_inquiry_custom_data,
+	 *                    and description (optional).
 	 */
 	function clientid_callback( $args ) {
 		echo $this->setting_html_input( Settings::get('ClientID'), 10, $args );
