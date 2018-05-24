@@ -94,24 +94,8 @@ class Admin {
 	 *
 	 * @param array $args Contains keys for label_for, class, bu_liaison_inquiry_custom_data.
 	 */
-	function bu_liaison_inquiry_field_apikey_callback( $args ) {
-		// Get the value of the setting registered with register_setting().
-		$options = get_option( 'bu_liaison_inquiry_options' );
-
-		// Output the field.
-	?>
-	<input type="text" size="50" id="<?php echo esc_attr( $args['label_for'] ); ?>"
-			data-custom="<?php echo esc_attr( $args['bu_liaison_inquiry_custom_data'] ); ?>"
-			name="bu_liaison_inquiry_options[<?php echo esc_attr( $args['label_for'] ); ?>]"
-			value="<?php echo esc_html( $options['APIKey'] ); ?>"
-	>
-
-	<p class="description">
-		<?php echo esc_html( 'The API Key allows access to SpectrumEMP.', 'bu_liaison_inquiry' ); ?>
-	</p>
-
-
-	<?php
+	function apikey_callback( $args ) {
+		echo $this->setting_html_input( Settings::get('APIKey'), 50, $args );
 	}
 
 	/**
@@ -119,25 +103,11 @@ class Admin {
 	 *
 	 * @param array $args Contains keys for label_for, class, bu_liaison_inquiry_custom_data.
 	 */
-	function bu_liaison_inquiry_field_clientid_callback( $args ) {
-		// Get the value of the setting registered with register_setting().
-		$options = get_option( 'bu_liaison_inquiry_options' );
-
-		// Output the field.
-	?>
-	<input type="text" size="10" id="<?php echo esc_attr( $args['label_for'] ); ?>"
-			data-custom="<?php echo esc_attr( $args['bu_liaison_inquiry_custom_data'] ); ?>"
-			name="bu_liaison_inquiry_options[<?php echo esc_attr( $args['label_for'] ); ?>]"
-			value="<?php echo esc_html( $options['ClientID'] ); ?>"
-	>
-
-	<p class="description">
-		<?php echo esc_html( 'The Client ID specifies the organizational account.', 'bu_liaison_inquiry' ); ?>
-	</p>
-
-
-	<?php
+	function clientid_callback( $args ) {
+		echo $this->setting_html_input( Settings::get('ClientID'), 10, $args );
 	}
+
+
 	/**
 	 * Create an admin page.
 	 */
