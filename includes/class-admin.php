@@ -69,14 +69,16 @@ class Admin {
 			'bu_liaison_inquiry_admin_section_key',
 			'APIKey',
 			'API Key',
-			'apikey_callback'
+			'apikey_callback',
+			'The API Key allows access to SpectrumEMP.'
 		);
 
 		$this->add_setting(
 			'bu_liaison_inquiry_admin_section_key',
 			'ClientID',
 			'Client ID',
-			'clientid_callback'
+			'clientid_callback',
+			'The Client ID specifies the organizational account.'
 		);
 	}
 
