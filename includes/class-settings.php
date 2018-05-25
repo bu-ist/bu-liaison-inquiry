@@ -41,6 +41,17 @@ class Settings {
         return $result;
     }
 
+    static function list_utm_values() {
+        $result = array();
+        foreach (self::UTM_SETTINGS as $index => $setting_name) {
+            $value = self::get( $setting_name );
+            if ( $value ) {
+                $result[$setting_name] = $value;
+            }
+        }
+        return $result;
+    }
+
     static function page_title_value() {
         return self::get( self::PAGE_TITLE_SETTING );
     }
