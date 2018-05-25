@@ -32,7 +32,7 @@ class Settings {
         return $options[$setting_name];
     }
 
-    static function list_utm() {
+    static function list_utm_titles() {
         $result = array();
         foreach (self::UTM_SETTINGS as $index => $setting_name) {
             $result[$setting_name] = SELF::UTM_SETTINGS_TITLES[$index];

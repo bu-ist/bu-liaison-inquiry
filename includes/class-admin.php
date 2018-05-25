@@ -94,7 +94,7 @@ class Admin {
 			'bu_liaison_inquiry'
 		);
 
-		foreach (Settings::list_utm() as $name => $title) {
+		foreach (Settings::list_utm_titles() as $name => $title) {
 			$this->add_setting(
 				'bu_liaison_inquiry_admin_section_utm',
 				$name,
