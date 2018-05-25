@@ -74,7 +74,21 @@ class Inquiry_Form {
 			$inquiry_form = $this->minify_form_definition( $inquiry_form, $attrs );
 		}
 
+		$inquiry_form = $this->hide_page_title( $inquiry_form, Settings::page_title_value(), get_the_title() );
+
 		return $this->render_template( $inquiry_form, $form_id );
+	}
+
+	public function hide_page_title ( $inquiry_form, $title_field_id, $page_title ) {
+		foreach ( $inquiry_form->sections as $section ) {
+			foreach ( $section->fields as $field_key => $field ) {
+				if ( $field->id == $title_field_id ) {
+					$field->hidden = true;
+					$field->hidden_value = $page_title;
+				}
+			}
+		}
+		return $inquiry_form;
 	}
 
 	/**
