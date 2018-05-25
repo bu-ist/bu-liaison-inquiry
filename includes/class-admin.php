@@ -61,7 +61,10 @@ class Admin {
 		add_settings_section(
 			'bu_liaison_inquiry_admin_section_key',
 			__( 'Enter SpectrumEMP API Key and Client ID', 'bu_liaison_inquiry' ),
-			array( $this, 'bu_liaison_inquiry_admin_section_key_callback' ),
+			function ( $args ) {
+				$escaped_description = esc_html__( 'Set the parameters for your organization to fetch the correct forms.', 'bu_liaison_inquiry' );
+				echo "<p id='" . esc_attr( $args['id'] ) . "'>" . $escaped_description . '</p>';
+			},
 			'bu_liaison_inquiry'
 		);
 
@@ -107,15 +110,6 @@ class Admin {
 				}
 			);	
 		}
-	}
-
-	/**
-	 * Outputs a section header for the admin page, called by add_settings_section()
-	 *
-	 * @param array $args Contains keys for title, id, callback.
-	 */
-	function bu_liaison_inquiry_admin_section_key_callback( $args ) {
-		echo "<p id='" . esc_attr( $args['id'] ) . "'>" . esc_html__( 'Set the parameters for your organization to fetch the correct forms.', 'bu_liaison_inquiry' ) . '</p>';
 	}
 
 	/**
