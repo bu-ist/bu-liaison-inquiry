@@ -31,17 +31,22 @@ class BU_Liaison_Inquiry_Test_Inquiry_Form extends WP_UnitTestCase {
 	 * @covers BU\Plugins\Liaison_Inquiry\Inquiry_Form::get_html
 	 */
 	public function test_get_html() {
+		$default_form_id = null;
 		$form_id = 'form_id';
-		$shortcode_attributes = array(
+		$shortcode_attributes = [
 			'some' => 'value'
-		);
-		$shortcode_attributes_with_form = array_merge( $shortcode_attributes, array(
+		];
+		$shortcode_attributes_with_form = array_merge( $shortcode_attributes, [
 			'form_id' => $form_id
-		) );
-		$form_definition = 'form_definition coming from api';
-		$minified_form_definition = 'minified form definition';
-		$form_html = 'html response';
-		$form_html_mini = 'html response mini';
+		] );
+		$form_definition = 'form_definition coming from api, non-default form';
+		$form_definition_default = 'form_definition coming from api, default form';
+		$minified_form_definition = 'minified form definition, non-default form';
+		$minified_form_definition_default = 'minified form definition, default form';
+		$form_html = 'html response, non-default form';
+		$form_html_default = 'html response, default form';
+		$form_html_mini = 'html response mini, non-default form';
+		$form_html_mini_default = 'html response mini, default form';
 
 		$form = $this->getMockBuilder( Inquiry_Form::class )
 					   ->setConstructorArgs( [ $this->spectrum ] )
@@ -49,27 +54,44 @@ class BU_Liaison_Inquiry_Test_Inquiry_Form extends WP_UnitTestCase {
 					   ->getMock();
 
 		// Spectrum_API::get_requirements is called with form id as argument.
-		$this->spectrum->expects( $this->exactly( 2 ) )
+		$this->spectrum->expects( $this->exactly( 4 ) )
 					   ->method( 'get_requirements' )
-					   ->with( $form_id )
-					   ->willReturn( $form_definition );
+					   ->withConsecutive(
+						   [$this->equalTo( $form_id )],
+						   [$this->equalTo( $default_form_id )],
+						   [$this->equalTo( $form_id )],
+						   [$this->equalTo( $default_form_id )]
+						 )
+					   ->willReturnOnConsecutiveCalls(
+						   $form_definition,
+						   $form_definition_default,
+						   $form_definition,
+						   $form_definition_default
+						 );
 
 		// Plugin::minify_form_definition is called with proper arguments.
-		$form->expects( $this->once() )
+		$form->expects( $this->exactly( 2 ) )
 			   ->method( 'minify_form_definition' )
-			   ->with( $form_definition, $shortcode_attributes )
-			   ->willReturn( $minified_form_definition );
+			   ->withConsecutive( 
+				   [$form_definition, $shortcode_attributes],
+				   [$form_definition_default, $shortcode_attributes]
+				 )
+			   ->willReturnOnConsecutiveCalls( $minified_form_definition, $minified_form_definition_default );
 
 		$map = [
 			[ $form_definition, $form_id, $form_html ],
+			[ $form_definition_default, $default_form_id, $form_html_default ],
 			[ $minified_form_definition, $form_id, $form_html_mini ],
+			[ $minified_form_definition_default, $default_form_id, $form_html_mini_default ],
 		];
 
 		$form->method( 'render_template' )->will( $this->returnValueMap( $map ) );
 
 		// Method returns the return value of Plugin::render_template.
 		$this->assertEquals( $form_html, $form->get_html( array( 'form_id' => $form_id ) ) );
+		$this->assertEquals( $form_html_default, $form->get_html( array( 'form_id' => $default_form_id ) ) );
 		$this->assertEquals( $form_html_mini, $form->get_html( $shortcode_attributes_with_form ) );
+		$this->assertEquals( $form_html_mini_default, $form->get_html( $shortcode_attributes ) );
 	}
 
 	/**
