@@ -15,8 +15,8 @@ namespace BU\Plugins\Liaison_Inquiry;
 class Settings {
 
     const NAME = 'bu_liaison_inquiry_options';
-    const UTM_SETTINGS = array('utm_source', 'utm_campaign', 'utm_content', 'utm_medium', 'utm_term', 'utm_page_subject');
-    const UTM_SETTINGS_TITLES = array('Source', 'Campaign Name', 'Content', 'Medium', 'Term', 'Landing Page Subject');
+    const UTM_SETTINGS = array('utm_source', 'utm_campaign', 'utm_content', 'utm_medium', 'utm_term');
+    const UTM_SETTINGS_TITLES = array('Source', 'Campaign Name', 'Content', 'Medium', 'Term');
 
     static function get( $setting_name ) {
         $options = get_option( self::NAME );

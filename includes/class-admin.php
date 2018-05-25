@@ -110,6 +110,15 @@ class Admin {
 				}
 			);	
 		}
+
+		$this->add_setting(
+			'bu_liaison_inquiry_admin_section_utm',
+			'page_title',
+			'Page Title',
+			function ( $args ) {
+				echo $this->setting_html_input( Settings::get('page_title'), 10, $args );
+			}
+		);
 	}
 
 	/**
