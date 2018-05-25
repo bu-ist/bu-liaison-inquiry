@@ -15,6 +15,7 @@ namespace BU\Plugins\Liaison_Inquiry;
 class Settings {
 
     const NAME = 'bu_liaison_inquiry_options';
+    const PAGE_TITLE_SETTING = 'page_title';
     const UTM_SETTINGS = array('utm_source', 'utm_campaign', 'utm_content', 'utm_medium', 'utm_term');
     const UTM_SETTINGS_TITLES = array('Source', 'Campaign Name', 'Content', 'Medium', 'Term');
 
@@ -38,5 +39,9 @@ class Settings {
             $result[$setting_name] = SELF::UTM_SETTINGS_TITLES[$index];
         }
         return $result;
+    }
+
+    static function page_title_value() {
+        return self::get( self::PAGE_TITLE_SETTING );
     }
 }

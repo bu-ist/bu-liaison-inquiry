@@ -113,10 +113,10 @@ class Admin {
 
 		$this->add_setting(
 			'bu_liaison_inquiry_admin_section_utm',
-			'page_title',
+			Settings::PAGE_TITLE_SETTING,
 			'Page Title',
 			function ( $args ) {
-				echo $this->setting_html_input( Settings::get('page_title'), 10, $args );
+				echo $this->setting_html_input( Settings::get(Settings::PAGE_TITLE_SETTING), 10, $args );
 			}
 		);
 	}
