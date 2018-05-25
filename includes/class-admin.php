@@ -90,7 +90,10 @@ class Admin {
 		add_settings_section(
 			'bu_liaison_inquiry_admin_section_utm',
 			__( 'UTM Parameters', 'bu_liaison_inquiry' ),
-			array( $this, 'bu_liaison_inquiry_admin_section_utm_callback' ),
+			function ( $args ) {
+				$escaped_description = esc_html__( 'Specify Spectrum EMP field IDs associated with UTM parameters.', 'bu_liaison_inquiry' );
+				echo "<p id='" . esc_attr( $args['id'] ) . "'>" . $escaped_description . '</p>';
+			},
 			'bu_liaison_inquiry'
 		);
 
@@ -113,10 +116,6 @@ class Admin {
 	 */
 	function bu_liaison_inquiry_admin_section_key_callback( $args ) {
 		echo "<p id='" . esc_attr( $args['id'] ) . "'>" . esc_html__( 'Set the parameters for your organization to fetch the correct forms.', 'bu_liaison_inquiry' ) . '</p>';
-	}
-
-	function bu_liaison_inquiry_admin_section_utm_callback( $args ) {
-		echo "<p id='" . esc_attr( $args['id'] ) . "'>" . esc_html__( 'Specify Spectrum EMP field IDs associated with UTM parameters.', 'bu_liaison_inquiry' ) . '</p>';
 	}
 
 	/**
