@@ -40,7 +40,7 @@ class BU_Liaison_Inquiry_Test_Spectrum_API extends WP_UnitTestCase {
 	public function test_get_requirements() {
 		$api = $this->api;
 		$interceptor = function ( $return, $args, $url ) use ( $api ) {
-			if ( $url === $api::REQUIREMENTS_URL . '?IQS-API-KEY=key' ) {
+			if ( $url === $api::REQUIREMENTS_URL . '?IQS-API-KEY=key&formID=form_id' ) {
 				return array(
 					'body' => '{"data": "some data"}',
 				);
@@ -49,7 +49,7 @@ class BU_Liaison_Inquiry_Test_Spectrum_API extends WP_UnitTestCase {
 
 		add_filter( 'pre_http_request', $interceptor, 10, 3 );
 
-		$this->assertEquals( 'some data', $api->get_requirements() );
+		$this->assertEquals( 'some data', $api->get_requirements( 'form_id' ) );
 
 		remove_filter( 'pre_http_request', $interceptor, 10 );
 	}
@@ -62,7 +62,7 @@ class BU_Liaison_Inquiry_Test_Spectrum_API extends WP_UnitTestCase {
 	public function test_get_requirements_api_error() {
 		$api = $this->api;
 		$interceptor = function ( $return, $args, $url ) use ( $api ) {
-			if ( $url === $api::REQUIREMENTS_URL . '?IQS-API-KEY=key' ) {
+			if ( $url === $api::REQUIREMENTS_URL . '?IQS-API-KEY=key&formID=form_id' ) {
 				return new WP_ERROR();
 			}
 		};
@@ -71,7 +71,7 @@ class BU_Liaison_Inquiry_Test_Spectrum_API extends WP_UnitTestCase {
 
 		$this->expectException( \Exception::class );
 
-		$api->get_requirements();
+		$api->get_requirements( 'form_id' );
 
 		remove_filter( 'pre_http_request', $interceptor, 10 );
 	}
@@ -84,7 +84,7 @@ class BU_Liaison_Inquiry_Test_Spectrum_API extends WP_UnitTestCase {
 	public function test_get_requirements_response_error() {
 		$api = $this->api;
 		$interceptor = function ( $return, $args, $url ) use ( $api ) {
-			if ( $url === $api::REQUIREMENTS_URL . '?IQS-API-KEY=key' ) {
+			if ( $url === $api::REQUIREMENTS_URL . '?IQS-API-KEY=key&formID=form_id' ) {
 				return array(
 					'body' => '{"message": "something went wrong"}',
 				);
@@ -95,7 +95,7 @@ class BU_Liaison_Inquiry_Test_Spectrum_API extends WP_UnitTestCase {
 
 		$this->expectException( \Exception::class );
 
-		$api->get_requirements();
+		$api->get_requirements( 'form_id' );
 
 		remove_filter( 'pre_http_request', $interceptor, 10 );
 	}

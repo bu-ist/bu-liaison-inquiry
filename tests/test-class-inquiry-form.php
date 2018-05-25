@@ -31,9 +31,13 @@ class BU_Liaison_Inquiry_Test_Inquiry_Form extends WP_UnitTestCase {
 	 * @covers BU\Plugins\Liaison_Inquiry\Inquiry_Form::get_html
 	 */
 	public function test_get_html() {
+		$form_id = 'form_id';
 		$shortcode_attributes = array(
-			'some' => 'value',
+			'some' => 'value'
 		);
+		$shortcode_attributes_with_form = array_merge( $shortcode_attributes, array(
+			'form_id' => $form_id
+		) );
 		$form_definition = 'form_definition coming from api';
 		$minified_form_definition = 'minified form definition';
 		$form_html = 'html response';
@@ -44,9 +48,10 @@ class BU_Liaison_Inquiry_Test_Inquiry_Form extends WP_UnitTestCase {
 					   ->setMethods( [ 'minify_form_definition', 'render_template' ] )
 					   ->getMock();
 
-		// Spectrum_API::get_requirements is called.
+		// Spectrum_API::get_requirements is called with form id as argument.
 		$this->spectrum->expects( $this->exactly( 2 ) )
 					   ->method( 'get_requirements' )
+					   ->with( $form_id )
 					   ->willReturn( $form_definition );
 
 		// Plugin::minify_form_definition is called with proper arguments.
@@ -56,15 +61,15 @@ class BU_Liaison_Inquiry_Test_Inquiry_Form extends WP_UnitTestCase {
 			   ->willReturn( $minified_form_definition );
 
 		$map = [
-			[ $form_definition, $form_html ],
-			[ $minified_form_definition, $form_html_mini ],
+			[ $form_definition, $form_id, $form_html ],
+			[ $minified_form_definition, $form_id, $form_html_mini ],
 		];
 
 		$form->method( 'render_template' )->will( $this->returnValueMap( $map ) );
 
 		// Method returns the return value of Plugin::render_template.
-		$this->assertEquals( $form_html, $form->get_html( array() ) );
-		$this->assertEquals( $form_html_mini, $form->get_html( $shortcode_attributes ) );
+		$this->assertEquals( $form_html, $form->get_html( array( 'form_id' => $form_id ) ) );
+		$this->assertEquals( $form_html_mini, $form->get_html( $shortcode_attributes_with_form ) );
 	}
 
 	/**
