@@ -52,7 +52,9 @@ class Settings {
         return $result;
     }
 
-    static function page_title_value() {
-        return self::get( self::PAGE_TITLE_SETTING );
+    static function page_title_values( $default_value ) {
+        $result = array();
+        $result[self::PAGE_TITLE_SETTING] = self::get( self::PAGE_TITLE_SETTING );
+        return $result;
     }
 }
