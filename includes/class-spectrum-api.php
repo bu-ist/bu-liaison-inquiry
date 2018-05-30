@@ -55,7 +55,7 @@ class Spectrum_API {
 	 *               [(string)'Form Name' => (string|null) 'Form ID']
 	 */
 	public function get_forms_list() {
-		// Default to the inquiry form that always exists
+		// Default to the inquiry form that always exists.
 		$result = array(
 			'Inquiry Form' => null,
 		);
@@ -142,9 +142,9 @@ class Spectrum_API {
 		$remote_submit = wp_remote_post( self::SUBMIT_URL, $post_args );
 
 		if ( is_wp_error( $remote_submit ) ) {
+			$error              = $remote_submit->get_error_message();
 			$return['status']   = 0;
-			$return['response'] = 'Failed submitting to Liaison API. Please retry. Error: ' .
-								  $remote_submit->get_error_message();
+			$return['response'] = 'Failed submitting to Liaison API. Please retry. Error: ' . $error;
 			// @codeCoverageIgnoreStart
 			if ( defined( 'BU_CMS' ) && BU_CMS ) {
 				error_log( sprintf( '%s: %s', __METHOD__, $return['response'] ) );
