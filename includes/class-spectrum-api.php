@@ -47,6 +47,13 @@ class Spectrum_API {
 		$this->api_key   = $api_key;
 	}
 
+	/**
+	 * Get the list of forms from EMP API. The list is always prepended by
+	 * "Inquiry Form" which is missing from API response.
+	 *
+	 * @return array Return the list of forms as an associative array in the format:
+	 *               [(string)'Form Name' => (string|null) 'Form ID']
+	 */
 	public function get_forms_list() {
 		// Default to the inquiry form that always exists
 		$result = array(
@@ -70,6 +77,7 @@ class Spectrum_API {
 	/**
 	 * Get info from EMP API about the fields that should be displayed for the form.
 	 *
+	 * @param  string|null $form_id Form's ID, null for default one.
 	 * @return array Return "data" field of the decoded JSON response.
 	 *
 	 * @throws \Exception If API response is not successful.

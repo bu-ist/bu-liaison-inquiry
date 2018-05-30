@@ -194,7 +194,8 @@ class Inquiry_Form {
 	/**
 	 * Render the form via a template
 	 *
-	 * @param stdClass $inquiry_form Object representing the form.
+	 * @param  stdClass    $inquiry_form Object representing the form.
+	 * @param  string|null $form_id Form's ID, null for default one.
 	 * @return string Returns full form markup
 	 */
 	public function render_template( $inquiry_form, $form_id ) {
