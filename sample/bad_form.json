@@ -1,0 +1,23 @@
+{
+    "status": 0,
+    "data": [{
+        "order": "0",
+        "required": "1",
+        "helpText": "",
+        "hasOptions": 0,
+        "id": "12",
+        "displayName": "Email",
+        "description": "Accepts valid email addresses in the format: email@provider.com.",
+        "htmlElement": "input-text"
+    }, {
+        "order": "9",
+        "required": "0",
+        "helpText": "",
+        "hasOptions": 0,
+        "id": "13",
+        "displayName": "Primary Phone",
+        "description": "Accepts phone numbers in the format: +18454734400 (E.164 format, http:\/\/en.wikipedia.org\/wiki\/E.164).",
+        "htmlElement": "input-text"
+    }],
+    "response": "The following fields are invalid."
+}

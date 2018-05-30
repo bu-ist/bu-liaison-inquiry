@@ -27,3 +27,20 @@ Any other values can be set by including a shortcode attribute of the form `fiel
 
 ### SOURCE
 Liaison uses a special field called `source` that can track where a lead originated.  It appears to be the only field in the Liaison forms that uses something other than an integer for the field id.  The source can be set in a shortcode attribute like any other field like this: `source="12345"`.
+
+## Dev Mode
+
+The plugin may be switched to dev mode. In this mode, no requests to the SpectrumEMP API will be sent. It is useful mostly for developers working on new features, but also for plugin users who want to try the plugin out prior obtaining Liaison API Keys.
+
+To switch to dev mode, add the following to `wp-config.php`:
+
+```php
+define('BU_LIAISON_INQUIRY_SAMPLE', true);
+```
+
+By default, any submission of the form will be considered successful. To change this behavior, define one of following in `wp-config.php`:
+
+| Constant Name                                      | Description               |
+|----------------------------------------------------|---------------------------|
+| define('BU_LIAISON_INQUIRY_POST_FAIL', true);      | Some fields are invalid   |
+| define('BU_LIAISON_INQUIRY_POST_DUPLICATE', true); | Such email already exists |
