@@ -5,6 +5,8 @@
  * @package BU_Liaison_Inquiry
  */
 
+use BU\Plugins\Liaison_Inquiry\Spectrum_API;
+
 /**
  * Cover BU\Plugins\Liaison_Inquiry\Spectrum_API class
  *
@@ -17,7 +19,7 @@ class BU_Liaison_Inquiry_Test_Spectrum_API extends WP_UnitTestCase {
 	 * Setup the testcase
 	 */
 	public function setUp() {
-		$this->api = new BU\Plugins\Liaison_Inquiry\Spectrum_API( 'key', 'client_id' );
+		$this->api = new Spectrum_API( 'client_id', 'key' );
 	}
 
 	/**
