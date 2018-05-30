@@ -29,18 +29,18 @@ class BU_Liaison_Inquiry_Test_Plugin extends WP_UnitTestCase {
 
 		$form   = $this->createMock( Inquiry_Form::class );
 		$plugin = $this->getMockBuilder( Plugin::class )
-					   ->setConstructorArgs( [ null ] )
-					   ->setMethods( [ 'get_form' ] )
-					   ->getMock();
+							->setConstructorArgs( [ null ] )
+							->setMethods( [ 'get_form' ] )
+							->getMock();
 
 		$plugin->expects( $this->once() )
-			   ->method( 'get_form' )
-			   ->willReturn( $form );
+		->method( 'get_form' )
+		->willReturn( $form );
 
 		$form->expects( $this->once() )
-			 ->method( 'get_html' )
-			 ->with( $shortcode_attributes )
-			 ->willReturn( $html );
+		->method( 'get_html' )
+		->with( $shortcode_attributes )
+		->willReturn( $html );
 
 		// Method returns the return value of Plugin::get_form_html.
 		$this->assertEquals( $html, $plugin->liaison_inquiry_form( $shortcode_attributes ) );
