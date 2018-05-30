@@ -63,6 +63,7 @@ class Inquiry_Form {
 		} else {
 			$form_id = null;
 		}
+		unset( $attrs['form_id'] );
 		
 		try {
 			$inquiry_form = $this->api->get_requirements( $form_id );
