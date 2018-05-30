@@ -197,42 +197,42 @@ class Admin {
 		</script>
 
 		<select id="select_form">
-		<?php 
-			foreach ($forms_list as $name => $form_id) {
-				$caption = $name . ($form_id ? ': ' . $form_id : '');
-				$value = $form_id ? $form_id : 'default';
-				$selected = $form_id ? '' : 'selected';
+		<?php
+		foreach ( $forms_list as $name => $form_id ) {
+			$caption  = $name . ( $form_id ? ': ' . $form_id : '' );
+			$value    = $form_id ? $form_id : 'default';
+			$selected = $form_id ? '' : 'selected';
 		?>
-			<option value="<?php echo $value ?>" <?php echo $selected ?>><?php echo $caption ?></option>
-		<?php }?>
+		<option value="<?php echo $value; ?>" <?php echo $selected; ?>><?php echo $caption; ?></option>
+		<?php } ?>
 		</select>
-		<?php 
-			foreach ($forms_list as $name => $form_id) {
+		<?php
+		foreach ( $forms_list as $name => $form_id ) {
 		?>
-		<div id="form_<?php echo $form_id ? $form_id : 'default' ?>">
+		<div id="form_<?php echo $form_id ? $form_id : 'default'; ?>">
 		<h2>Sample shortcode</h2>
 
-		[liaison_inquiry_form<?php echo $form_id ? ' form_id="'.$form_id.'"' : '' ?>]
+		[liaison_inquiry_form<?php echo $form_id ? ' form_id="' . $form_id . '"' : ''; ?>]
 
 
 		<h2>Field inventory</h2>
 		<?php
-				try {
-					$inquiry_form = $api->get_requirements( $form_id );
-				} catch ( \Exception $e ) {
-					echo esc_html( $e->getMessage() );
-					return;
-				}
+		try {
+			$inquiry_form = $api->get_requirements( $form_id );
+		} catch ( \Exception $e ) {
+			echo esc_html( $e->getMessage() );
+			return;
+		}
 
-				foreach ( $inquiry_form->sections as $section ) {
-					foreach ( $section->fields as $field_key => $field ) {
-						echo '<p>' . esc_html( $field->displayName ) . ' = ' . esc_html( $field->id ) . '</p>';
-					}
-				}
+		foreach ( $inquiry_form->sections as $section ) {
+			foreach ( $section->fields as $field_key => $field ) {
+				echo '<p>' . esc_html( $field->displayName ) . ' = ' . esc_html( $field->id ) . '</p>';
+			}
+		}
 		?>
 		</div>
 		<?php
-			}
+		}
 		}
 	}
 

@@ -15,11 +15,11 @@ namespace BU\Plugins\Liaison_Inquiry;
 class Spectrum_API {
 
 	// SpectrumEMP API URL setup.
-	const API_URL = 'https://www.spectrumemp.com/api/';
-	const SUBMITTABLE_URL = self::API_URL . 'forms/submittable';
-	const REQUIREMENTS_URL = self::API_URL . 'forms/requirements';
-	const SUBMIT_URL = self::API_URL . 'forms/submit';
-	const CLIENT_RULES_URL = self::API_URL . 'field_rules/client_rules';
+	const API_URL           = 'https://www.spectrumemp.com/api/';
+	const SUBMITTABLE_URL   = self::API_URL . 'forms/submittable';
+	const REQUIREMENTS_URL  = self::API_URL . 'forms/requirements';
+	const SUBMIT_URL        = self::API_URL . 'forms/submit';
+	const CLIENT_RULES_URL  = self::API_URL . 'field_rules/client_rules';
 	const FIELD_OPTIONS_URL = self::API_URL . 'field_rules/field_options';
 
 	/**
@@ -44,13 +44,13 @@ class Spectrum_API {
 	 */
 	public function __construct( $client_id, $api_key ) {
 		$this->client_id = $client_id;
-		$this->api_key = $api_key;
+		$this->api_key   = $api_key;
 	}
 
 	public function get_forms_list() {
 		// Default to the inquiry form that always exists
 		$result = array(
-			"Inquiry Form" => null
+			'Inquiry Form' => null,
 		);
 
 		$api_query = self::SUBMITTABLE_URL . '?IQS-API-KEY=' . $this->api_key;
@@ -58,13 +58,11 @@ class Spectrum_API {
 		$api_response = wp_remote_get( $api_query );
 
 		// TODO: check if there's an error
-
 		$response_decode = json_decode( $api_response['body'], true );
 
 		if ( isset( $response_decode['data'] ) && isset( $response_decode['data']['sem_forms'] ) ) {
-			return array_merge($result, $response_decode['data']['sem_forms']);
-		}
-		else {
+			return array_merge( $result, $response_decode['data']['sem_forms'] );
+		} else {
 			return $result;
 		}
 	}
@@ -120,7 +118,7 @@ class Spectrum_API {
 		$return = array();
 
 		if ( ! isset( $this->api_key ) ) {
-			$return['status'] = 0;
+			$return['status']   = 0;
 			$return['response'] = 'API Key missing';
 			return $return;
 		}
@@ -136,7 +134,7 @@ class Spectrum_API {
 		$remote_submit = wp_remote_post( self::SUBMIT_URL, $post_args );
 
 		if ( is_wp_error( $remote_submit ) ) {
-			$return['status'] = 0;
+			$return['status']   = 0;
 			$return['response'] = 'Failed submitting to Liaison API. Please retry. Error: ' .
 								  $remote_submit->get_error_message();
 			// @codeCoverageIgnoreStart
@@ -147,8 +145,8 @@ class Spectrum_API {
 			// Decode the response and activate redirect to the personal url on success.
 			$resp = json_decode( $remote_submit['body'] );
 
-			$return['status'] = ( isset( $resp->status ) && 'success' === $resp->status) ? 1 : 0;
-			$return['data'] = ( isset( $resp->data ) ) ? $resp->data : '';
+			$return['status'] = ( isset( $resp->status ) && 'success' === $resp->status ) ? 1 : 0;
+			$return['data']   = ( isset( $resp->data ) ) ? $resp->data : '';
 			if ( isset( $resp->message ) ) {
 				$return['response'] = $resp->message;
 			} else {

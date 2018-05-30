@@ -25,9 +25,9 @@ class BU_Liaison_Inquiry_Test_Plugin extends WP_UnitTestCase {
 		$shortcode_attributes = array(
 			'some' => 'value',
 		);
-		$html = 'rendered form html';
+		$html                 = 'rendered form html';
 
-		$form = $this->createMock( Inquiry_Form::class );
+		$form   = $this->createMock( Inquiry_Form::class );
 		$plugin = $this->getMockBuilder( Plugin::class )
 					   ->setConstructorArgs( [ null ] )
 					   ->setMethods( [ 'get_form' ] )
