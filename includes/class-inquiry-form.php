@@ -64,7 +64,7 @@ class Inquiry_Form {
 			$form_id = null;
 		}
 		unset( $attrs['form_id'] );
-		
+
 		try {
 			$inquiry_form = $this->api->get_requirements( $form_id );
 		} catch ( \Exception $e ) {
@@ -199,9 +199,9 @@ class Inquiry_Form {
 						error_log( $warning );
 					}// @codeCoverageIgnoreEnd
 				} else {
-					$hidden_field = new \stdClass();
-					$hidden_field->hidden = true;
-					$hidden_field->id = $preset_key;
+					$hidden_field               = new \stdClass();
+					$hidden_field->hidden       = true;
+					$hidden_field->id           = $preset_key;
 					$hidden_field->hidden_value = $preset_val;
 					array_unshift(
 						$inquiry_form->sections[0]->fields,
@@ -245,8 +245,8 @@ class Inquiry_Form {
 	 */
 	public function handle_liaison_inquiry() {
 		if ( ! $this->verify_nonce() ) {
-			$return = array();
-			$return['status'] = 0;
+			$return             = array();
+			$return['status']   = 0;
 			$return['response'] = 'There was a problem with the form nonce, please reload the page';
 			return $return;
 		}

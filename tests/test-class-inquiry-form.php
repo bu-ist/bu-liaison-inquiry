@@ -20,7 +20,7 @@ class BU_Liaison_Inquiry_Test_Inquiry_Form extends WP_UnitTestCase {
 	 * Setup the testcase
 	 */
 	public function setUp() {
-		$this->spectrum = $this->createMock( Spectrum_API::class );
+		$this->spectrum      = $this->createMock( Spectrum_API::class );
 		$this->form_instance = new Inquiry_Form( $this->spectrum );
 	}
 
@@ -31,22 +31,24 @@ class BU_Liaison_Inquiry_Test_Inquiry_Form extends WP_UnitTestCase {
 	 * @covers BU\Plugins\Liaison_Inquiry\Inquiry_Form::get_html
 	 */
 	public function test_get_html() {
-		$default_form_id = null;
-		$form_id = 'form_id';
-		$shortcode_attributes = [
-			'some' => 'value'
+		$default_form_id                  = null;
+		$form_id                          = 'form_id';
+		$shortcode_attributes             = [
+			'some' => 'value',
 		];
-		$shortcode_attributes_with_form = array_merge( $shortcode_attributes, [
-			'form_id' => $form_id
-		] );
-		$form_definition = 'form_definition coming from api, non-default form';
-		$form_definition_default = 'form_definition coming from api, default form';
-		$minified_form_definition = 'minified form definition, non-default form';
+		$shortcode_attributes_with_form   = array_merge(
+			$shortcode_attributes, [
+				'form_id' => $form_id,
+			]
+		);
+		$form_definition                  = 'form_definition coming from api, non-default form';
+		$form_definition_default          = 'form_definition coming from api, default form';
+		$minified_form_definition         = 'minified form definition, non-default form';
 		$minified_form_definition_default = 'minified form definition, default form';
-		$form_html = 'html response, non-default form';
-		$form_html_default = 'html response, default form';
-		$form_html_mini = 'html response mini, non-default form';
-		$form_html_mini_default = 'html response mini, default form';
+		$form_html                        = 'html response, non-default form';
+		$form_html_default                = 'html response, default form';
+		$form_html_mini                   = 'html response mini, non-default form';
+		$form_html_mini_default           = 'html response mini, default form';
 
 		$form = $this->getMockBuilder( Inquiry_Form::class )
 					   ->setConstructorArgs( [ $this->spectrum ] )
@@ -56,26 +58,26 @@ class BU_Liaison_Inquiry_Test_Inquiry_Form extends WP_UnitTestCase {
 		// Spectrum_API::get_requirements is called with form id as argument.
 		$this->spectrum->expects( $this->exactly( 4 ) )
 					   ->method( 'get_requirements' )
-					   ->withConsecutive(
-						   [$this->equalTo( $form_id )],
-						   [$this->equalTo( $default_form_id )],
-						   [$this->equalTo( $form_id )],
-						   [$this->equalTo( $default_form_id )]
-						 )
-					   ->willReturnOnConsecutiveCalls(
-						   $form_definition,
-						   $form_definition_default,
-						   $form_definition,
-						   $form_definition_default
-						 );
+					->withConsecutive(
+						[ $this->equalTo( $form_id ) ],
+						[ $this->equalTo( $default_form_id ) ],
+						[ $this->equalTo( $form_id ) ],
+						[ $this->equalTo( $default_form_id ) ]
+					)
+					->willReturnOnConsecutiveCalls(
+						$form_definition,
+						$form_definition_default,
+						$form_definition,
+						$form_definition_default
+					);
 
 		// Plugin::minify_form_definition is called with proper arguments.
 		$form->expects( $this->exactly( 2 ) )
 			   ->method( 'minify_form_definition' )
-			   ->withConsecutive( 
-				   [$form_definition, $shortcode_attributes],
-				   [$form_definition_default, $shortcode_attributes]
-				 )
+			->withConsecutive(
+				[ $form_definition, $shortcode_attributes ],
+				[ $form_definition_default, $shortcode_attributes ]
+			)
 			   ->willReturnOnConsecutiveCalls( $minified_form_definition, $minified_form_definition_default );
 
 		$map = [
@@ -121,37 +123,37 @@ class BU_Liaison_Inquiry_Test_Inquiry_Form extends WP_UnitTestCase {
 	 * @covers BU\Plugins\Liaison_Inquiry\Inquiry_Form::minify_form_definition
 	 */
 	public function test_minify_form_definition() {
-		$field_1 = new stdClass();
-		$field_1->id = '1';
+		$field_1           = new stdClass();
+		$field_1->id       = '1';
 		$field_1->required = '1';
 
-		$field_2 = new stdClass();
-		$field_2->id = '2';
+		$field_2           = new stdClass();
+		$field_2->id       = '2';
 		$field_2->required = '0';
 
-		$field_3 = new stdClass();
-		$field_3->id = '3';
+		$field_3           = new stdClass();
+		$field_3->id       = '3';
 		$field_3->required = '1';
 
-		$field_4 = new stdClass();
-		$field_4->id = '4';
+		$field_4           = new stdClass();
+		$field_4->id       = '4';
 		$field_4->required = '1';
 
-		$form_section = new stdClass();
-		$form_section->fields = [ $field_1, $field_2, $field_3, $field_4 ];
-		$form_definition = new stdClass();
+		$form_section              = new stdClass();
+		$form_section->fields      = [ $field_1, $field_2, $field_3, $field_4 ];
+		$form_definition           = new stdClass();
 		$form_definition->sections = [ $form_section ];
 
 		$attributes = array(
 			'fields' => '1,4',
 			'source' => 'some source',
-			'3' => 'preset value',
-			'4' => 'ignored',
+			'3'      => 'preset value',
+			'4'      => 'ignored',
 		);
 
 		$form = $this->form_instance;
 
-		$minified_form = $form->minify_form_definition( $form_definition, $attributes );
+		$minified_form   = $form->minify_form_definition( $form_definition, $attributes );
 		$minified_fields = $minified_form->sections[0]->fields;
 
 		$this->assertCount( 4, $minified_fields );
@@ -181,7 +183,7 @@ class BU_Liaison_Inquiry_Test_Inquiry_Form extends WP_UnitTestCase {
 	 */
 	public function test_handle_liaison_inquiry() {
 		$prepared_form = 'form prepared to be sent to API';
-		$api_response = 'return value of the API call';
+		$api_response  = 'return value of the API call';
 
 		$form = $this->getMockBuilder( Inquiry_Form::class )
 					   ->setConstructorArgs( [ $this->spectrum ] )
@@ -241,7 +243,7 @@ class BU_Liaison_Inquiry_Test_Inquiry_Form extends WP_UnitTestCase {
 	public function test_verify_nonce() {
 		$form = $this->form_instance;
 
-		$_POST = array();
+		$_POST                             = array();
 		$_POST[ $form::$nonce_field_name ] = 'asdf';
 
 		// Nonce with the wrong value must fail.
@@ -269,8 +271,8 @@ class BU_Liaison_Inquiry_Test_Inquiry_Form extends WP_UnitTestCase {
 
 		$return = $form->prepare_form_post(
 			array(
-				'pass_through' => 'value',
-				'needs_sanitation' => '<',
+				'pass_through'         => 'value',
+				'needs_sanitation'     => '<',
 				'checkbox-text-opt-in' => '',
 			)
 		);
@@ -282,7 +284,7 @@ class BU_Liaison_Inquiry_Test_Inquiry_Form extends WP_UnitTestCase {
 
 		$return = $form->prepare_form_post(
 			array(
-				'number' => '999-999-9999',
+				'number'       => '999-999-9999',
 				'phone_fields' => 'number',
 			)
 		);

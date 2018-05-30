@@ -38,7 +38,7 @@ class BU_Liaison_Inquiry_Test_Spectrum_API extends WP_UnitTestCase {
 	 * @covers BU\Plugins\Liaison_Inquiry\Spectrum_API::get_requirements
 	 */
 	public function test_get_requirements() {
-		$api = $this->api;
+		$api         = $this->api;
 		$interceptor = function ( $return, $args, $url ) use ( $api ) {
 			if ( $url === $api::REQUIREMENTS_URL . '?IQS-API-KEY=key&formID=form_id' ) {
 				return array(
@@ -60,7 +60,7 @@ class BU_Liaison_Inquiry_Test_Spectrum_API extends WP_UnitTestCase {
 	 * @covers BU\Plugins\Liaison_Inquiry\Spectrum_API::get_requirements
 	 */
 	public function test_get_requirements_api_error() {
-		$api = $this->api;
+		$api         = $this->api;
 		$interceptor = function ( $return, $args, $url ) use ( $api ) {
 			if ( $url === $api::REQUIREMENTS_URL . '?IQS-API-KEY=key&formID=form_id' ) {
 				return new WP_ERROR();
@@ -82,7 +82,7 @@ class BU_Liaison_Inquiry_Test_Spectrum_API extends WP_UnitTestCase {
 	 * @covers BU\Plugins\Liaison_Inquiry\Spectrum_API::get_requirements
 	 */
 	public function test_get_requirements_response_error() {
-		$api = $this->api;
+		$api         = $this->api;
 		$interceptor = function ( $return, $args, $url ) use ( $api ) {
 			if ( $url === $api::REQUIREMENTS_URL . '?IQS-API-KEY=key&formID=form_id' ) {
 				return array(
@@ -108,7 +108,7 @@ class BU_Liaison_Inquiry_Test_Spectrum_API extends WP_UnitTestCase {
 	public function test_post_form() {
 		$form_data = array();
 
-		$api = $this->api;
+		$api         = $this->api;
 		$interceptor = function ( $return, $args, $url ) use ( $api ) {
 			if ( $url === $api::SUBMIT_URL ) {
 				return array(
@@ -150,7 +150,7 @@ class BU_Liaison_Inquiry_Test_Spectrum_API extends WP_UnitTestCase {
 	public function test_post_form_request_error() {
 		$form_data = array();
 
-		$api = $this->api;
+		$api         = $this->api;
 		$interceptor = function ( $return, $args, $url ) use ( $api ) {
 			if ( $url === $api::SUBMIT_URL ) {
 				return new WP_ERROR();
@@ -174,7 +174,7 @@ class BU_Liaison_Inquiry_Test_Spectrum_API extends WP_UnitTestCase {
 	public function test_post_form_response_error() {
 		$form_data = array();
 
-		$api = $this->api;
+		$api         = $this->api;
 		$interceptor = function ( $return, $args, $url ) use ( $api ) {
 			if ( $url === $api::SUBMIT_URL ) {
 				return array(
