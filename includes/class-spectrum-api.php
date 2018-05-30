@@ -47,8 +47,15 @@ class Spectrum_API {
 		$this->api_key   = $api_key;
 	}
 
+	/**
+	 * Get the list of forms from EMP API. The list is always prepended by
+	 * "Inquiry Form" which is missing from API response.
+	 *
+	 * @return array Return the list of forms as an associative array in the format:
+	 *               [(string)'Form Name' => (string|null) 'Form ID']
+	 */
 	public function get_forms_list() {
-		// Default to the inquiry form that always exists
+		// Default to the inquiry form that always exists.
 		$result = array(
 			'Inquiry Form' => null,
 		);
@@ -70,6 +77,7 @@ class Spectrum_API {
 	/**
 	 * Get info from EMP API about the fields that should be displayed for the form.
 	 *
+	 * @param  string|null $form_id Form's ID, null for default one.
 	 * @return array Return "data" field of the decoded JSON response.
 	 *
 	 * @throws \Exception If API response is not successful.
@@ -134,9 +142,9 @@ class Spectrum_API {
 		$remote_submit = wp_remote_post( self::SUBMIT_URL, $post_args );
 
 		if ( is_wp_error( $remote_submit ) ) {
+			$error              = $remote_submit->get_error_message();
 			$return['status']   = 0;
-			$return['response'] = 'Failed submitting to Liaison API. Please retry. Error: ' .
-								  $remote_submit->get_error_message();
+			$return['response'] = 'Failed submitting to Liaison API. Please retry. Error: ' . $error;
 			// @codeCoverageIgnoreStart
 			if ( defined( 'BU_CMS' ) && BU_CMS ) {
 				error_log( sprintf( '%s: %s', __METHOD__, $return['response'] ) );
