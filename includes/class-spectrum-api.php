@@ -48,6 +48,25 @@ class Spectrum_API {
 	}
 
 	/**
+	 * Throw exception and log an error if an instance of WP_Error passed as argument.
+	 *
+	 * @param mixed $var Variable to check.
+	 *
+	 * @throws \Exception If $var is an instance of WP_Error.
+	 */
+	private function throw_on_error( $var ) {
+		// Check for a successful response from external API server.
+		if ( is_wp_error( $var ) ) {
+			$error_message = $var->get_error_message();
+			// @codeCoverageIgnoreStart
+			if ( defined( 'BU_CMS' ) && BU_CMS ) {
+				error_log( 'Liaison form API call failed: ' . $error_message );
+			}// @codeCoverageIgnoreEnd
+			throw new \Exception( 'Error: ' . $error_message );
+		}
+	}
+
+	/**
 	 * Get the list of forms from EMP API. The list is always prepended by
 	 * "Inquiry Form" which is missing from API response.
 	 *
@@ -64,7 +83,8 @@ class Spectrum_API {
 
 		$api_response = wp_remote_get( $api_query );
 
-		// TODO: check if there's an error
+		$this->throw_on_error( $api_response );
+
 		$response_decode = json_decode( $api_response['body'], true );
 
 		if ( isset( $response_decode['data'] ) && isset( $response_decode['data']['sem_forms'] ) ) {
@@ -90,15 +110,7 @@ class Spectrum_API {
 
 		$api_response = wp_remote_get( $api_query );
 
-		// Check for a successful response from external API server.
-		if ( is_wp_error( $api_response ) ) {
-			$error_message = $api_response->get_error_message();
-			// @codeCoverageIgnoreStart
-			if ( defined( 'BU_CMS' ) && BU_CMS ) {
-				error_log( 'Liaison form API call failed: ' . $error_message );
-			}// @codeCoverageIgnoreEnd
-			throw new \Exception( 'Error: ' . $error_message );
-		}
+		$this->throw_on_error( $api_response );
 
 		$inquiry_form_decode = json_decode( $api_response['body'] );
 

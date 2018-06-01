@@ -54,10 +54,15 @@ class Plugin {
 	/**
 	 * Shortcode definition that creates the Liaison inquiry form
 	 *
-	 * @param  array $attrs Attributes specified in the shortcode.
+	 * @param  array|string $attrs Attributes specified in the shortcode.
 	 * @return string Returns full form markup to replace the shortcode.
 	 */
-	public function liaison_inquiry_form( $attrs = [] ) {
+	public function liaison_inquiry_form( $attrs ) {
+		// $attrs will be an empty string when no shortcode attributes were used.
+		// Convert it into an empty array.
+		if ( '' === $attrs ) {
+			$attrs = [];
+		}
 		$form = $this->get_form();
 		return $form->get_html( $attrs );
 	}
