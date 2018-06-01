@@ -152,7 +152,7 @@
 					</optgroup>
 
 				<?php else : ?>
-					<option value="<?php echo $option->id; ?>"><?php echo $option->value; ?></option>
+					<option <?php echo $field->default == $option->id ? 'selected' : ''; ?> value="<?php echo $option->id; ?>"><?php echo $option->value; ?></option>
 				<?php endif; ?>
 			<?php endforeach; ?>
 
