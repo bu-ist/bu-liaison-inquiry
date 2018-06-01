@@ -14,10 +14,30 @@ namespace BU\Plugins\Liaison_Inquiry;
  */
 class Settings {
 
-	const NAME                = 'bu_liaison_inquiry_options';
-	const PAGE_TITLE_SETTING  = 'page_title';
-	const UTM_SETTINGS        = array( 'utm_source', 'utm_campaign', 'utm_content', 'utm_medium', 'utm_term' );
-	const UTM_SETTINGS_TITLES = array( 'Source', 'Campaign Name', 'Content', 'Medium', 'Term' );
+	const NAME               = 'bu_liaison_inquiry_options';
+	const PAGE_TITLE_SETTING = 'page_title';
+	const UTM_SETTINGS       = array( 'utm_source', 'utm_campaign', 'utm_content', 'utm_medium', 'utm_term' );
+
+	static function page_title_values() {
+		$result                             = array();
+		$result[ self::PAGE_TITLE_SETTING ] = self::get( self::PAGE_TITLE_SETTING );
+		return $result;
+	}
+
+	static function list_utm_titles() {
+		$titles = [
+			__( 'Source', 'bu_liaison_inquiry' ),
+			__( 'Campaign Name', 'bu_liaison_inquiry' ),
+			__( 'Content', 'bu_liaison_inquiry' ),
+			__( 'Medium', 'bu_liaison_inquiry' ),
+			__( 'Term', 'bu_liaison_inquiry' ),
+		];
+		$result = array();
+		foreach ( self::UTM_SETTINGS as $index => $setting_name ) {
+			$result[ $setting_name ] = $titles[ $index ];
+		}
+		return $result;
+	}
 
 	static function get( $setting_name ) {
 		$options = get_option( self::NAME );
@@ -33,14 +53,6 @@ class Settings {
 		return $options[ $setting_name ];
 	}
 
-	static function list_utm_titles() {
-		$result = array();
-		foreach ( self::UTM_SETTINGS as $index => $setting_name ) {
-			$result[ $setting_name ] = self::UTM_SETTINGS_TITLES[ $index ];
-		}
-		return $result;
-	}
-
 	static function list_utm_values() {
 		$result = array();
 		foreach ( self::UTM_SETTINGS as $index => $setting_name ) {
@@ -49,12 +61,6 @@ class Settings {
 				$result[ $setting_name ] = $value;
 			}
 		}
-		return $result;
-	}
-
-	static function page_title_values( $default_value ) {
-		$result                             = array();
-		$result[ self::PAGE_TITLE_SETTING ] = self::get( self::PAGE_TITLE_SETTING );
 		return $result;
 	}
 }
