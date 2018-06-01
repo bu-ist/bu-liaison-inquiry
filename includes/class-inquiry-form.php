@@ -99,9 +99,9 @@ class Inquiry_Form {
 	 *
 	 * @param  \stdClass $form_definition Original form definition.
 	 * @param  array     $auto_list List of fields that need to be pre-filled;
-	 *                   format: [(string)'Field ID' => (string)'field_name'].
+	 *                              format: [(string)'Field ID' => (string)'field_name'].
 	 * @param  callable  $callback Function accepting field_name as the argument
-	 *                   and returning field's pre-filled value.
+	 *                             and returning field's pre-filled value.
 	 * @return \stdClass Modified form definition
 	 */
 	public function autofill_fields( $form_definition, $auto_list, $callback ) {
