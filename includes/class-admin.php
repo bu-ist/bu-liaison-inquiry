@@ -27,7 +27,7 @@ class Admin {
 
 		add_settings_field(
 			$setting_name,
-			__( $setting_title, 'bu_liaison_inquiry' ),
+			$setting_title,
 			$callback,
 			'bu_liaison_inquiry',
 			$section_name,
@@ -71,7 +71,7 @@ class Admin {
 		$this->add_setting(
 			'bu_liaison_inquiry_admin_section_key',
 			'APIKey',
-			'API Key',
+			__( 'API Key', 'bu_liaison_inquiry' ),
 			function ( $args ) {
 				echo $this->setting_html_input( Settings::get( 'APIKey' ), 50, $args );
 			},
@@ -81,7 +81,7 @@ class Admin {
 		$this->add_setting(
 			'bu_liaison_inquiry_admin_section_key',
 			'ClientID',
-			'Client ID',
+			__( 'Client ID', 'bu_liaison_inquiry' ),
 			function ( $args ) {
 				echo $this->setting_html_input( Settings::get( 'ClientID' ), 10, $args );
 			},
@@ -113,7 +113,7 @@ class Admin {
 		$this->add_setting(
 			'bu_liaison_inquiry_admin_section_utm',
 			Settings::PAGE_TITLE_SETTING,
-			'Page Title',
+			__( 'Page Title', 'bu_liaison_inquiry' ),
 			function ( $args ) {
 				echo $this->setting_html_input( Settings::get( Settings::PAGE_TITLE_SETTING ), 10, $args );
 			}
