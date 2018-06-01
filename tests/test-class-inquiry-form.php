@@ -30,11 +30,26 @@ class BU_Liaison_Inquiry_Test_Inquiry_Form extends WP_UnitTestCase {
 	 * @return \stdClass Sample form definition
 	 */
 	private function mock_form_definition() {
-		$form_definition                             = new \stdClass();
-		$form_definition->sections                   = [];
-		$form_definition->sections[0]                = new \stdClass();
-		$form_definition->sections[0]->fields[0]     = new \stdClass();
-		$form_definition->sections[0]->fields[0]->id = 1;
+		$field_1           = new stdClass();
+		$field_1->id       = '1';
+		$field_1->required = '1';
+
+		$field_2           = new stdClass();
+		$field_2->id       = '2';
+		$field_2->required = '0';
+
+		$field_3           = new stdClass();
+		$field_3->id       = '3';
+		$field_3->required = '1';
+
+		$field_4           = new stdClass();
+		$field_4->id       = '4';
+		$field_4->required = '1';
+
+		$form_section              = new stdClass();
+		$form_section->fields      = [ $field_1, $field_2, $field_3, $field_4 ];
+		$form_definition           = new stdClass();
+		$form_definition->sections = [ $form_section ];
 
 		return $form_definition;
 	}
@@ -141,26 +156,7 @@ class BU_Liaison_Inquiry_Test_Inquiry_Form extends WP_UnitTestCase {
 	 * @covers BU\Plugins\Liaison_Inquiry\Inquiry_Form::minify_form_definition
 	 */
 	public function test_minify_form_definition() {
-		$field_1           = new stdClass();
-		$field_1->id       = '1';
-		$field_1->required = '1';
-
-		$field_2           = new stdClass();
-		$field_2->id       = '2';
-		$field_2->required = '0';
-
-		$field_3           = new stdClass();
-		$field_3->id       = '3';
-		$field_3->required = '1';
-
-		$field_4           = new stdClass();
-		$field_4->id       = '4';
-		$field_4->required = '1';
-
-		$form_section              = new stdClass();
-		$form_section->fields      = [ $field_1, $field_2, $field_3, $field_4 ];
-		$form_definition           = new stdClass();
-		$form_definition->sections = [ $form_section ];
+		$form_definition = $this->mock_form_definition();
 
 		$attributes = array(
 			'fields' => '1,4',
