@@ -14,6 +14,15 @@ namespace BU\Plugins\Liaison_Inquiry;
  */
 class Admin {
 
+	/**
+	 * Wrapper for WP `add_settings_field`.
+	 *
+	 * @param string   $section_name Slug-name of the section, as in `add_settings_field`.
+	 * @param string   $setting_name Slug-name of the field, as in `add_settings_field`.
+	 * @param string   $setting_title Formatted fitle of the field, as in `add_settings_field`.
+	 * @param callable $callback Function that fills the field, as in `add_settings_field`.
+	 * @param string   $description (Optional) Text description of the field.
+	 */
 	private function add_setting( $section_name, $setting_name, $setting_title, $callback, $description = '' ) {
 		$args = array(
 			'label_for'                      => $setting_name,
