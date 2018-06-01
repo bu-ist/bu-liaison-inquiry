@@ -18,12 +18,6 @@ class Settings {
 	const PAGE_TITLE_SETTING = 'page_title';
 	const UTM_SETTINGS       = array( 'utm_source', 'utm_campaign', 'utm_content', 'utm_medium', 'utm_term' );
 
-	static function page_title_values() {
-		$result                             = array();
-		$result[ self::PAGE_TITLE_SETTING ] = self::get( self::PAGE_TITLE_SETTING );
-		return $result;
-	}
-
 	static function list_utm_titles() {
 		$titles = [
 			__( 'Source', 'bu_liaison_inquiry' ),
@@ -61,6 +55,12 @@ class Settings {
 				$result[ $setting_name ] = $value;
 			}
 		}
+		return $result;
+	}
+
+	static function page_title_values() {
+		$result                             = array();
+		$result[ self::PAGE_TITLE_SETTING ] = self::get( self::PAGE_TITLE_SETTING );
 		return $result;
 	}
 }
