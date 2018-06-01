@@ -35,7 +35,15 @@ class Admin {
 		);
 	}
 
-	private function setting_html_input( $value, $size, $args ) {
+	/**
+	 * Generate HTML for the setting input with an optional description
+	 *
+	 * @param  string  $value Input's value or an empty string.
+	 * @param  integer $size  Input's size.
+	 * @param  array   $args  List of extra settings.
+	 * @return string Resulting HTML
+	 */
+	private function get_setting_html( $value, $size, $args ) {
 		$description = '';
 		if ( $args['description'] ) {
 			$esc_description = esc_html( $args['description'], 'bu_liaison_inquiry' );
@@ -73,7 +81,7 @@ class Admin {
 			'APIKey',
 			__( 'API Key', 'bu_liaison_inquiry' ),
 			function ( $args ) {
-				echo $this->setting_html_input( Settings::get( 'APIKey' ), 50, $args );
+				echo $this->get_setting_html( Settings::get( 'APIKey' ), 50, $args );
 			},
 			'The API Key allows access to SpectrumEMP.'
 		);
@@ -83,7 +91,7 @@ class Admin {
 			'ClientID',
 			__( 'Client ID', 'bu_liaison_inquiry' ),
 			function ( $args ) {
-				echo $this->setting_html_input( Settings::get( 'ClientID' ), 10, $args );
+				echo $this->get_setting_html( Settings::get( 'ClientID' ), 10, $args );
 			},
 			'The Client ID specifies the organizational account.'
 		);
@@ -105,7 +113,7 @@ class Admin {
 				$name,
 				$title,
 				function ( $args ) use ( $name ) {
-					echo $this->setting_html_input( Settings::get( $name ), 10, $args );
+					echo $this->get_setting_html( Settings::get( $name ), 10, $args );
 				}
 			);
 		}
@@ -115,7 +123,7 @@ class Admin {
 			Settings::PAGE_TITLE_SETTING,
 			__( 'Page Title', 'bu_liaison_inquiry' ),
 			function ( $args ) {
-				echo $this->setting_html_input( Settings::get( Settings::PAGE_TITLE_SETTING ), 10, $args );
+				echo $this->get_setting_html( Settings::get( Settings::PAGE_TITLE_SETTING ), 10, $args );
 			}
 		);
 	}
