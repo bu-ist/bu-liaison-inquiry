@@ -14,10 +14,8 @@ namespace BU\Plugins\Liaison_Inquiry;
  */
 class Settings {
 
-	const NAME                = 'bu_liaison_inquiry_options';
-	const PAGE_TITLE_SETTING  = 'page_title';
-	const UTM_SETTINGS        = array( 'utm_source', 'utm_campaign', 'utm_content', 'utm_medium', 'utm_term' );
-	const UTM_SETTINGS_TITLES = array( 'Source', 'Campaign Name', 'Content', 'Medium', 'Term' );
+	const NAME               = 'bu_liaison_inquiry_options';
+	const PAGE_TITLE_SETTING = 'page_title';
 
 	static function get( $setting_name ) {
 		$options = get_option( self::NAME );
@@ -34,11 +32,13 @@ class Settings {
 	}
 
 	static function list_utm_titles() {
-		$result = array();
-		foreach ( self::UTM_SETTINGS as $index => $setting_name ) {
-			$result[ $setting_name ] = self::UTM_SETTINGS_TITLES[ $index ];
-		}
-		return $result;
+		return [
+			'utm_source'   => __( 'Source', 'bu_liaison_inquiry' ),
+			'utm_campaign' => __( 'Campaign Name', 'bu_liaison_inquiry' ),
+			'utm_content'  => __( 'Content', 'bu_liaison_inquiry' ),
+			'utm_medium'   => __( 'Medium', 'bu_liaison_inquiry' ),
+			'utm_term'     => __( 'Term', 'bu_liaison_inquiry' ),
+		];
 	}
 
 	static function list_utm_values() {
