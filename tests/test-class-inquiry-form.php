@@ -64,9 +64,10 @@ class BU_Liaison_Inquiry_Test_Inquiry_Form extends WP_UnitTestCase {
 		$default_form_id = null;
 		$form_id         = 'form_id';
 
-		$shortcode_attributes           = [
+		$shortcode_attributes = [
 			'some' => 'value',
 		];
+
 		$shortcode_attributes_with_form = array_merge(
 			$shortcode_attributes, [
 				'form_id' => $form_id,
