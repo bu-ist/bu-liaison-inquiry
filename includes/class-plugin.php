@@ -35,8 +35,8 @@ class Plugin {
 	 */
 	public function get_api_instance() {
 		// Get API key and Client ID from option settings.
-		$client_id = Settings::get('ClientID');
-		$api_key = Settings::get('APIKey');
+		$client_id = Settings::get( 'ClientID' );
+		$api_key   = Settings::get( 'APIKey' );
 
 		$class = $this->api_class;
 

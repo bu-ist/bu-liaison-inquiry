@@ -75,16 +75,20 @@ class Inquiry_Form {
 			$inquiry_form = $this->minify_form_definition( $inquiry_form, $attrs );
 		}
 
-		$inquiry_form = $this->autofill_parameters( $inquiry_form, Settings::list_utm_values(), function ( $parameter_name ) {
-			if ( isset( $_GET[$parameter_name] ) ) {
-				return $_GET[$parameter_name];
+		$inquiry_form = $this->autofill_parameters(
+			$inquiry_form, Settings::list_utm_values(), function ( $parameter_name ) {
+				if ( isset( $_GET[ $parameter_name ] ) ) {
+					return $_GET[ $parameter_name ];
+				}
+				return '';
 			}
-			return '';
-		} );
+		);
 
-		$inquiry_form = $this->autofill_parameters( $inquiry_form, Settings::page_title_values(), function ( $parameter_name ) {
-			return get_the_title();
-		} );
+		$inquiry_form = $this->autofill_parameters(
+			$inquiry_form, Settings::page_title_values(), function ( $parameter_name ) {
+				return get_the_title();
+			}
+		);
 
 		return $this->render_template( $inquiry_form, $form_id );
 	}
@@ -92,8 +96,8 @@ class Inquiry_Form {
 	public function autofill_parameters( $inquiry_form, $auto_list, $callback ) {
 		foreach ( $inquiry_form->sections as $section ) {
 			foreach ( $section->fields as $field_key => $field ) {
-				if ( in_array($field->id, $auto_list) ) {
-					$field->hidden = true;
+				if ( in_array( $field->id, $auto_list ) ) {
+					$field->hidden       = true;
 					$field->hidden_value = $callback( array_search( $field->id, $auto_list ) );
 				}
 			}

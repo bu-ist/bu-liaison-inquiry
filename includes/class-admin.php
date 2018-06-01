@@ -14,14 +14,14 @@ namespace BU\Plugins\Liaison_Inquiry;
  */
 class Admin {
 
-	private function add_setting( $section_name, $setting_name, $setting_title, $callback, $description='' ) {
+	private function add_setting( $section_name, $setting_name, $setting_title, $callback, $description = '' ) {
 		$args = array(
-			'label_for' => $setting_name,
-			'class' => 'bu_liaison_inquiry_row',
+			'label_for'                      => $setting_name,
+			'class'                          => 'bu_liaison_inquiry_row',
 			'bu_liaison_inquiry_custom_data' => 'custom',
 		);
 
-		if ($description) {
+		if ( $description ) {
 			$args['description'] = $description;
 		}
 
@@ -39,11 +39,11 @@ class Admin {
 		$description = '';
 		if ( $args['description'] ) {
 			$esc_description = esc_html( $args['description'], 'bu_liaison_inquiry' );
-			$description = '<p class="description">' . $esc_description . '</p>';
+			$description     = '<p class="description">' . $esc_description . '</p>';
 		}
 
 		return '<input' .
-		' type="text" size="' . esc_html($size) . '" id="' . esc_attr( $args['label_for'] ) . '"' .
+		' type="text" size="' . esc_html( $size ) . '" id="' . esc_attr( $args['label_for'] ) . '"' .
 		' data-custom="' . esc_attr( $args['bu_liaison_inquiry_custom_data'] ) . '"' .
 		' name="bu_liaison_inquiry_options[' . esc_attr( $args['label_for'] ) . ']"' .
 		' value="' . esc_html( $value ) . '"' .
@@ -73,7 +73,7 @@ class Admin {
 			'APIKey',
 			'API Key',
 			function ( $args ) {
-				echo $this->setting_html_input( Settings::get('APIKey'), 50, $args );
+				echo $this->setting_html_input( Settings::get( 'APIKey' ), 50, $args );
 			},
 			'The API Key allows access to SpectrumEMP.'
 		);
@@ -83,11 +83,10 @@ class Admin {
 			'ClientID',
 			'Client ID',
 			function ( $args ) {
-				echo $this->setting_html_input( Settings::get('ClientID'), 10, $args );
+				echo $this->setting_html_input( Settings::get( 'ClientID' ), 10, $args );
 			},
 			'The Client ID specifies the organizational account.'
 		);
-
 
 		// Register the UTM Parameters section.
 		add_settings_section(
@@ -100,15 +99,15 @@ class Admin {
 			'bu_liaison_inquiry'
 		);
 
-		foreach (Settings::list_utm_titles() as $name => $title) {
+		foreach ( Settings::list_utm_titles() as $name => $title ) {
 			$this->add_setting(
 				'bu_liaison_inquiry_admin_section_utm',
 				$name,
 				$title,
 				function ( $args ) use ( $name ) {
-					echo $this->setting_html_input( Settings::get($name), 10, $args );
+					echo $this->setting_html_input( Settings::get( $name ), 10, $args );
 				}
-			);	
+			);
 		}
 
 		$this->add_setting(
@@ -116,7 +115,7 @@ class Admin {
 			Settings::PAGE_TITLE_SETTING,
 			'Page Title',
 			function ( $args ) {
-				echo $this->setting_html_input( Settings::get(Settings::PAGE_TITLE_SETTING), 10, $args );
+				echo $this->setting_html_input( Settings::get( Settings::PAGE_TITLE_SETTING ), 10, $args );
 			}
 		);
 	}
