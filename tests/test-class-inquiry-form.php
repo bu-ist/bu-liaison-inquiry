@@ -25,6 +25,21 @@ class BU_Liaison_Inquiry_Test_Inquiry_Form extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Generate sample form definition
+	 *
+	 * @return \stdClass Sample form definition
+	 */
+	private function mock_form_definition() {
+		$form_definition                             = new \stdClass();
+		$form_definition->sections                   = [];
+		$form_definition->sections[0]                = new \stdClass();
+		$form_definition->sections[0]->fields[0]     = new \stdClass();
+		$form_definition->sections[0]->fields[0]->id = 1;
+
+		return $form_definition;
+	}
+
+	/**
 	 * Call the method two times, with and without attributes, and check that
 	 * it doesn't try to minify form definition when no attributes were passed
 	 *
@@ -41,14 +56,22 @@ class BU_Liaison_Inquiry_Test_Inquiry_Form extends WP_UnitTestCase {
 				'form_id' => $form_id,
 			]
 		);
-		$form_definition                  = 'form_definition coming from api, non-default form';
-		$form_definition_default          = 'form_definition coming from api, default form';
-		$minified_form_definition         = 'minified form definition, non-default form';
-		$minified_form_definition_default = 'minified form definition, default form';
 		$form_html                        = 'html response, non-default form';
 		$form_html_default                = 'html response, default form';
 		$form_html_mini                   = 'html response mini, non-default form';
 		$form_html_mini_default           = 'html response mini, default form';
+
+		// Mock form_definition coming from api, non-default form.
+		$form_definition = $this->mock_form_definition();
+
+		// Mock form_definition coming from api, default form.
+		$form_definition_default = $this->mock_form_definition();
+
+		// Mock minified form definition, non-default form.
+		$minified_form_definition = $this->mock_form_definition();
+
+		// Mock minified form definition, default form.
+		$minified_form_definition_default = $this->mock_form_definition();
 
 		$form = $this->getMockBuilder( Inquiry_Form::class )
 						->setConstructorArgs( [ $this->spectrum ] )
