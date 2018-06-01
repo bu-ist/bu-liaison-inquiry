@@ -46,32 +46,27 @@ class BU_Liaison_Inquiry_Test_Inquiry_Form extends WP_UnitTestCase {
 	 * @covers BU\Plugins\Liaison_Inquiry\Inquiry_Form::get_html
 	 */
 	public function test_get_html() {
-		$default_form_id                  = null;
-		$form_id                          = 'form_id';
-		$shortcode_attributes             = [
+		$default_form_id = null;
+		$form_id         = 'form_id';
+
+		$shortcode_attributes           = [
 			'some' => 'value',
 		];
-		$shortcode_attributes_with_form   = array_merge(
+		$shortcode_attributes_with_form = array_merge(
 			$shortcode_attributes, [
 				'form_id' => $form_id,
 			]
 		);
-		$form_html                        = 'html response, non-default form';
-		$form_html_default                = 'html response, default form';
-		$form_html_mini                   = 'html response mini, non-default form';
-		$form_html_mini_default           = 'html response mini, default form';
 
-		// Mock form_definition coming from api, non-default form.
-		$form_definition = $this->mock_form_definition();
-
-		// Mock form_definition coming from api, default form.
-		$form_definition_default = $this->mock_form_definition();
-
-		// Mock minified form definition, non-default form.
-		$minified_form_definition = $this->mock_form_definition();
-
-		// Mock minified form definition, default form.
+		$form_definition                  = $this->mock_form_definition();
+		$form_definition_default          = $this->mock_form_definition();
+		$minified_form_definition         = $this->mock_form_definition();
 		$minified_form_definition_default = $this->mock_form_definition();
+
+		$form_html              = 'html response, non-default form';
+		$form_html_default      = 'html response, default form';
+		$form_html_mini         = 'html response mini, non-default form';
+		$form_html_mini_default = 'html response mini, default form';
 
 		$form = $this->getMockBuilder( Inquiry_Form::class )
 						->setConstructorArgs( [ $this->spectrum ] )
