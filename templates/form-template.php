@@ -55,7 +55,7 @@
 
 			<?php
 			// Mini form needs to pass dummy values to otherwise required fields; insert them here as hidden inputs.
-			if ( isset( $field->hidden ) && $field->hidden && 'select' !== $field->htmlElement ) : ?>
+			if ( isset( $field->hidden ) && $field->hidden && ('select' !== $field->htmlElement || $field->hidden_value) ) : ?>
 				<input type="hidden" name="<?php echo $field->id;?>" value="<?php echo $field->hidden_value;?>">
 			<?php
 			// Begin handler for two types of html elements: input-text or select.
