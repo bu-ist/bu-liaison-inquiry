@@ -190,8 +190,9 @@ class Admin {
 		if ( ! empty( $options['APIKey'] ) ) {
 			$api = new Spectrum_API( null, $options['APIKey'] );
 		?>
+		<hr>
 		<h2>Select Liaison Form</h2>
-
+		<p>Select a form below to see the list of field IDs that it contains. </p>
 		<?php
 		try {
 			$forms_list = $api->get_forms_list();
