@@ -29,7 +29,7 @@ class Admin {
 			'bu_liaison_inquiry'
 		);
 
-		// Register a new field in the "bu_liaison_inquiry_admin_section_key" section, inside the "bu_liaison_inquiry" page.
+		// Register the API Key field.
 		add_settings_field(
 			'APIKey',
 			__( 'API Key', 'bu_liaison_inquiry' ),
@@ -64,7 +64,7 @@ class Admin {
 	 * @param array $args Contains keys for title, id, callback.
 	 */
 	function bu_liaison_inquiry_admin_section_key_callback( $args ) {
-		echo "<p id='" . esc_attr( $args['id'] ) . "'>" . esc_html__( 'Set the parameters for your organization to fetch the correct form.', 'bu_liaison_inquiry' ) . '</p>';
+		echo "<p id='" . esc_attr( $args['id'] ) . "'>" . esc_html__( 'Set the parameters for your organization to fetch the correct forms.', 'bu_liaison_inquiry' ) . '</p>';
 	}
 
 	/**
@@ -167,12 +167,59 @@ class Admin {
 		// If there is already a key set, use it to fetch and display a field inventory.
 		$options = get_option( 'bu_liaison_inquiry_options' );
 		if ( ! empty( $options['APIKey'] ) ) {
+			$api = new Spectrum_API( null, $options['APIKey'] );
 		?>
+		<hr>
+		<h2>Select Liaison Form</h2>
+		<p>Select a form below to see the list of field IDs that it contains. </p>
+		<?php
+		try {
+			$forms_list = $api->get_forms_list();
+		} catch ( \Exception $e ) {
+			echo esc_html( $e->getMessage() );
+			return;
+		}
+		?>
+
+		<script>
+			jQuery(document).ready(function(){
+				jQuery('#select_form').change(function () {
+					// Hide inventory of every form
+					jQuery('[id^=form_]').hide();
+					var selected = jQuery('#select_form').val();
+					jQuery('#form_' + selected).show();
+				});
+
+				// Hide inventory of every form
+				jQuery('[id^=form_]').hide();
+				// Show the default one
+				jQuery('#form_default').show();
+			});
+		</script>
+
+		<select id="select_form">
+		<?php
+		foreach ( $forms_list as $name => $form_id ) {
+			$caption  = $name . ( $form_id ? ': ' . $form_id : '' );
+			$value    = $form_id ? $form_id : 'default';
+			$selected = $form_id ? '' : 'selected';
+		?>
+		<option value="<?php echo $value; ?>" <?php echo $selected; ?>><?php echo $caption; ?></option>
+		<?php } ?>
+		</select>
+		<?php
+		foreach ( $forms_list as $name => $form_id ) {
+		?>
+		<div id="form_<?php echo $form_id ? $form_id : 'default'; ?>">
+		<h2>Sample shortcode</h2>
+
+		[liaison_inquiry_form<?php echo $form_id ? ' form_id="' . $form_id . '"' : ''; ?>]
+
+
 		<h2>Field inventory</h2>
 		<?php
-		$api = new Spectrum_API( null, $options['APIKey'] );
 		try {
-			$inquiry_form = $api->get_requirements();
+			$inquiry_form = $api->get_requirements( $form_id );
 		} catch ( \Exception $e ) {
 			echo esc_html( $e->getMessage() );
 			return;
@@ -182,6 +229,10 @@ class Admin {
 			foreach ( $section->fields as $field_key => $field ) {
 				echo '<p>' . esc_html( $field->displayName ) . ' = ' . esc_html( $field->id ) . '</p>';
 			}
+		}
+		?>
+		</div>
+		<?php
 		}
 		}
 	}

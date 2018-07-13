@@ -25,6 +25,9 @@
 <form id="form_example" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post">
 
 <?php
+	// Include form ID if available.
+	echo $form_id ? '<input type="hidden" name="formID" value="' . $form_id .'">' : '';
+
 	// Initialize modal and phone fields.
 	$modals = array();
 	$phone_fields = array();

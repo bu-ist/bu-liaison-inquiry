@@ -58,8 +58,15 @@ class Inquiry_Form {
 	 * @return string Form HTML
 	 */
 	public function get_html( $attrs ) {
+		if ( isset( $attrs['form_id'] ) ) {
+			$form_id = $attrs['form_id'];
+		} else {
+			$form_id = null;
+		}
+		unset( $attrs['form_id'] );
+
 		try {
-			$inquiry_form = $this->api->get_requirements();
+			$inquiry_form = $this->api->get_requirements( $form_id );
 		} catch ( \Exception $e ) {
 			return $e->getMessage();
 		}
@@ -68,7 +75,7 @@ class Inquiry_Form {
 			$inquiry_form = $this->minify_form_definition( $inquiry_form, $attrs );
 		}
 
-		return $this->render_template( $inquiry_form );
+		return $this->render_template( $inquiry_form, $form_id );
 	}
 
 	/**
@@ -169,9 +176,9 @@ class Inquiry_Form {
 						error_log( $warning );
 					}// @codeCoverageIgnoreEnd
 				} else {
-					$hidden_field = new \stdClass();
-					$hidden_field->hidden = true;
-					$hidden_field->id = $preset_key;
+					$hidden_field               = new \stdClass();
+					$hidden_field->hidden       = true;
+					$hidden_field->id           = $preset_key;
 					$hidden_field->hidden_value = $preset_val;
 					array_unshift(
 						$inquiry_form->sections[0]->fields,
@@ -187,10 +194,11 @@ class Inquiry_Form {
 	/**
 	 * Render the form via a template
 	 *
-	 * @param stdClass $inquiry_form Object representing the form.
+	 * @param  stdClass    $inquiry_form Object representing the form.
+	 * @param  string|null $form_id Form's ID, null for default one.
 	 * @return string Returns full form markup
 	 */
-	public function render_template( $inquiry_form ) {
+	public function render_template( $inquiry_form, $form_id ) {
 		// Setup nonce for form to protect against various possible attacks.
 		$nonce = wp_nonce_field(
 			self::$nonce_name,
@@ -215,8 +223,8 @@ class Inquiry_Form {
 	 */
 	public function handle_liaison_inquiry() {
 		if ( ! $this->verify_nonce() ) {
-			$return = array();
-			$return['status'] = 0;
+			$return             = array();
+			$return['status']   = 0;
 			$return['response'] = 'There was a problem with the form nonce, please reload the page';
 			return $return;
 		}

@@ -17,7 +17,7 @@ namespace BU\Plugins\Liaison_Inquiry;
  */
 class Sample_Spectrum_API {
 
-	const CLIENT_RULES_URL = 'https://www.spectrumemp.com/api/field_rules/client_rules';
+	const CLIENT_RULES_URL  = 'https://www.spectrumemp.com/api/field_rules/client_rules';
 	const FIELD_OPTIONS_URL = 'https://www.spectrumemp.com/api/field_rules/field_options';
 
 	/**
