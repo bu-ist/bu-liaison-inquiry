@@ -18,7 +18,11 @@ class Settings {
 	const PAGE_TITLE_SETTING = 'page_title';
 	const UTM_SETTINGS       = array( 'utm_source', 'utm_campaign', 'utm_content', 'utm_medium', 'utm_term' );
 
-	static function list_utm_titles() {
+	/**
+	 * Return an associative array of UTM parameter captions
+	 * with UTM parameter names as keys.
+	 */
+	public static function list_utm_titles() {
 		$titles = [
 			__( 'Source', 'bu_liaison_inquiry' ),
 			__( 'Campaign Name', 'bu_liaison_inquiry' ),
@@ -33,7 +37,14 @@ class Settings {
 		return $result;
 	}
 
-	static function get( $setting_name ) {
+	/**
+	 * Get the option value for the given setting name or empty string
+	 * if the option with this name doesn't exist.
+	 *
+	 * @param  string $setting_name Setting name.
+	 * @return string Option value
+	 */
+	public static function get( $setting_name ) {
 		$options = get_option( self::NAME );
 
 		if ( ! $options ) {
@@ -47,7 +58,11 @@ class Settings {
 		return $options[ $setting_name ];
 	}
 
-	static function list_utm_values() {
+	/**
+	 * Return an associative array of UTM parameter field IDs
+	 * with UTM parameter names as keys.
+	 */
+	public static function list_utm_values() {
 		$result = array();
 		foreach ( self::UTM_SETTINGS as $index => $setting_name ) {
 			$value = self::get( $setting_name );
@@ -58,7 +73,11 @@ class Settings {
 		return $result;
 	}
 
-	static function page_title_values() {
+	/**
+	 * Return UTM page title field ID as a member of associative array
+	 * with page title setting name as the key.
+	 */
+	public static function page_title_values() {
 		$result                             = array();
 		$result[ self::PAGE_TITLE_SETTING ] = self::get( self::PAGE_TITLE_SETTING );
 		return $result;
