@@ -26,7 +26,7 @@
 
 <?php
 	// Include form ID if available.
-	echo $form_id ? '<input type="hidden" name="formID" value="' . $form_id .'">' : '';
+	echo $form_id ? '<input type="hidden" name="formID" value="' . esc_attr($form_id) .'">' : '';
 
 	// Initialize modal and phone fields.
 	$modals = array();
@@ -75,12 +75,12 @@
 
 				<div class="row">
 					<div class="form-group">
-						<label for="<?php echo $field->id; ?>" class="col-sm-4 control-label"><?php echo $label . ( ( $field->required ) ? ' <span class="asterisk">*</span>' : '' ); ?></label>
+						<label for="<?php esc_attr_e( $field->id ); ?>" class="col-sm-4 control-label"><?php echo $label . ( ( $field->required ) ? ' <span class="asterisk">*</span>' : '' ); ?></label>
 						<div class="col-sm-6 col-md-5">
 							<input type="text"
-								name="<?php echo $field->id; ?>"
-								id="<?php echo $field->id; ?>"
-								class="form-control<?php echo ( ( $field->required ) ? ' required' : '' ) . $class; ?>" placeholder="<?php echo $field->displayName; ?>" />
+								name="<?php esc_attr_e($field->id); ?>"
+								id="<?php esc_attr_e($field->id); ?>"
+								class="form-control<?php echo ( ( $field->required ) ? ' required' : '' ) . esc_attr($class); ?>" placeholder="<?php esc_attr_e($field->displayName); ?>" />
 
 				<?php
 				// Begin phone field specific handler.
@@ -101,8 +101,8 @@
 						';
 				?>
 
-						<input type="checkbox" name="<?php echo $element_id; ?>" id="<?php echo $element_id; ?>">
-						<label id="label-<?php echo $element_id; ?>" for="<?php echo $element_id; ?>"><?php echo $label_text; ?></label>
+						<input type="checkbox" name="<?php esc_attr_e( $element_id ); ?>" id="<?php esc_attr_e( $element_id ); ?>">
+						<label id="label-<?php esc_attr_e( $element_id ); ?>" for="<?php esc_attr_e( $element_id ); ?>"><?php echo ( $label_text ); ?></label>
 
 				<?php endif;
 				// End phone field specific handler.
@@ -110,7 +110,7 @@
 
 
 				<?php if ( '' !== $field->helpText ) :?>
-					<p class="help-block"><?php echo $field->helpText; ?></p>
+					<p class="help-block"><?php esc_html_e( $field->helpText ); ?></p>
 				<?php endif; ?>
 
 
@@ -183,7 +183,7 @@
 		<button type="submit" class="btn btn-primary">Go <i class="icon-chevron-right icon-white"></i></button>
 	</div>
 
-	<input type="hidden" id="phone_fields" name="phone_fields" value="<?php echo implode(',', $phone_fields); ?>" />
+	<input type="hidden" id="phone_fields" name="phone_fields" value="<?php esc_attr_e( implode(',', $phone_fields) ); ?>" />
 
 	<div class="clear"></div>
 
