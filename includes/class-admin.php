@@ -166,7 +166,7 @@ class Admin {
 	/**
 	 * Outputs the form on the admin page using the defined actions.
 	 */
-	private function bu_liaison_inquiry_options_page_html() {
+	public function bu_liaison_inquiry_options_page_html() {
 		// Check user capabilities.
 		if ( ! current_user_can( 'manage_categories' ) ) {
 			return;
