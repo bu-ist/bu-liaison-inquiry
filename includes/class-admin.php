@@ -15,11 +15,31 @@ namespace BU\Plugins\Liaison_Inquiry;
 class Admin {
 
 	/**
+	 * Wrapper for WP `add_settings_section`.
+	 *
+	 * @param string $id String for use in the "id" attribute for tags,
+	 *                   as in `add_settings_section`.
+	 * @param string $title Title of the section, as in `add_settings_section`.
+	 * @param string $description Description of the section.
+	 */
+	private function add_section( $id, $title, $description ) {
+		add_settings_section(
+			$id,
+			$title,
+			function ( $args ) {
+				$escaped_description = esc_html( $description );
+				echo wp_kses( "<p id='" . esc_attr( $args['id'] ) . "'>" . $escaped_description . '</p>', [ 'p' => [ 'id' => [] ] ] );
+			},
+			'bu_liaison_inquiry'
+		);
+	}
+
+	/**
 	 * Wrapper for WP `add_settings_field`.
 	 *
 	 * @param string   $section_name Slug-name of the section, as in `add_settings_field`.
 	 * @param string   $setting_name Slug-name of the field, as in `add_settings_field`.
-	 * @param string   $setting_title Formatted fitle of the field, as in `add_settings_field`.
+	 * @param string   $setting_title Formatted title of the field, as in `add_settings_field`.
 	 * @param callable $callback Function that fills the field, as in `add_settings_field`.
 	 * @param string   $description (Optional) Text description of the field.
 	 */
@@ -88,14 +108,10 @@ class Admin {
 		register_setting( 'bu_liaison_inquiry', 'bu_liaison_inquiry_options' );
 
 		// Register the API Key and Client ID section.
-		add_settings_section(
+		$this->add_section(
 			'bu_liaison_inquiry_admin_section_key',
 			__( 'Enter SpectrumEMP API Key and Client ID', 'bu_liaison_inquiry' ),
-			function ( $args ) {
-				$escaped_description = esc_html__( 'Set the parameters for your organization to fetch the correct forms.', 'bu_liaison_inquiry' );
-				echo wp_kses( "<p id='" . esc_attr( $args['id'] ) . "'>" . $escaped_description . '</p>', [ 'p' => [ 'id' => [] ] ] );
-			},
-			'bu_liaison_inquiry'
+			__( 'Set the parameters for your organization to fetch the correct forms.', 'bu_liaison_inquiry' )
 		);
 
 		$this->add_setting(
@@ -119,14 +135,10 @@ class Admin {
 		);
 
 		// Register the UTM Parameters section.
-		add_settings_section(
+		$this->add_section(
 			'bu_liaison_inquiry_admin_section_utm',
 			__( 'UTM Parameters', 'bu_liaison_inquiry' ),
-			function ( $args ) {
-				$escaped_description = esc_html__( 'Specify Spectrum EMP field IDs associated with UTM parameters.', 'bu_liaison_inquiry' );
-				echo wp_kses( "<p id='" . esc_attr( $args['id'] ) . "'>" . $escaped_description . '</p>', [ 'p' => [ 'id' => [] ] ] );
-			},
-			'bu_liaison_inquiry'
+			__( 'Specify Spectrum EMP field IDs associated with UTM parameters.', 'bu_liaison_inquiry' )
 		);
 
 		foreach ( Settings::list_utm_titles() as $name => $title ) {
