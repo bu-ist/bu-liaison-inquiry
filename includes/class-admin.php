@@ -189,18 +189,18 @@ class Admin {
 		$options = get_option( 'bu_liaison_inquiry_options' );
 		if ( ! empty( $options['APIKey'] ) ) {
 			$api = new Spectrum_API( null, $options['APIKey'] );
-		?>
+			?>
 		<hr>
 		<h2>Select Liaison Form</h2>
 		<p>Select a form below to see the list of field IDs that it contains. </p>
-		<?php
-		try {
-			$forms_list = $api->get_forms_list();
-		} catch ( \Exception $e ) {
-			echo esc_html( $e->getMessage() );
-			return;
-		}
-		?>
+			<?php
+			try {
+				$forms_list = $api->get_forms_list();
+			} catch ( \Exception $e ) {
+				echo esc_html( $e->getMessage() );
+				return;
+			}
+			?>
 
 		<script>
 			jQuery(document).ready(function(){
@@ -219,18 +219,18 @@ class Admin {
 		</script>
 
 		<select id="select_form">
-		<?php
-		foreach ( $forms_list as $name => $form_id ) {
-			$caption  = $name . ( $form_id ? ': ' . $form_id : '' );
-			$value    = $form_id ? $form_id : 'default';
-			$selected = $form_id ? '' : 'selected';
-		?>
+			<?php
+			foreach ( $forms_list as $name => $form_id ) {
+				$caption  = $name . ( $form_id ? ': ' . $form_id : '' );
+				$value    = $form_id ? $form_id : 'default';
+				$selected = $form_id ? '' : 'selected';
+				?>
 		<option value="<?php echo $value; ?>" <?php echo $selected; ?>><?php echo $caption; ?></option>
 		<?php } ?>
 		</select>
-		<?php
-		foreach ( $forms_list as $name => $form_id ) {
-		?>
+			<?php
+			foreach ( $forms_list as $name => $form_id ) {
+				?>
 		<div id="form_<?php echo $form_id ? $form_id : 'default'; ?>">
 		<h2>Sample shortcode</h2>
 
@@ -238,23 +238,23 @@ class Admin {
 
 
 		<h2>Field inventory</h2>
-		<?php
-		try {
-			$inquiry_form = $api->get_requirements( $form_id );
-		} catch ( \Exception $e ) {
-			echo esc_html( $e->getMessage() );
-			return;
-		}
+				<?php
+				try {
+					$inquiry_form = $api->get_requirements( $form_id );
+				} catch ( \Exception $e ) {
+					echo esc_html( $e->getMessage() );
+					return;
+				}
 
-		foreach ( $inquiry_form->sections as $section ) {
-			foreach ( $section->fields as $field_key => $field ) {
-				echo '<p>' . esc_html( $field->displayName ) . ' = ' . esc_html( $field->id ) . '</p>';
-			}
-		}
-		?>
+				foreach ( $inquiry_form->sections as $section ) {
+					foreach ( $section->fields as $field_key => $field ) {
+						echo '<p>' . esc_html( $field->displayName ) . ' = ' . esc_html( $field->id ) . '</p>';
+					}
+				}
+				?>
 		</div>
-		<?php
-		}
+				<?php
+			}
 		}
 	}
 
