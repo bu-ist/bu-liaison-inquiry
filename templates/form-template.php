@@ -110,7 +110,7 @@
 
 
 				<?php if ( '' !== $field->helpText ) :?>
-					<p class="help-block"><?php esc_html_e( $field->helpText ); ?></p>
+					<p class="help-block"><?php echo esc_html( $field->helpText ); ?></p>
 				<?php endif; ?>
 
 
