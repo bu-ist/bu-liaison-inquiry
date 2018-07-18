@@ -50,27 +50,40 @@ class Admin {
 	 * @param  string  $value Input's value or an empty string.
 	 * @param  integer $size  Input's size.
 	 * @param  array   $args  List of extra settings.
-	 * @return string Resulting HTML
+	 * @return void
 	 */
-	private function get_setting_html( $value, $size, $args ) {
+	private function echo_setting_html( $value, $size, $args ) {
 		$description = '';
 		if ( $args['description'] ) {
 			$esc_description = esc_html( $args['description'], 'bu_liaison_inquiry' );
 			$description     = '<p class="description">' . $esc_description . '</p>';
 		}
 
-		return '<input' .
-		' type="text" size="' . esc_html( $size ) . '" id="' . esc_attr( $args['label_for'] ) . '"' .
-		' data-custom="' . esc_attr( $args['bu_liaison_inquiry_custom_data'] ) . '"' .
-		' name="bu_liaison_inquiry_options[' . esc_attr( $args['label_for'] ) . ']"' .
-		' value="' . esc_html( $value ) . '"' .
-		'>' . $description;
+		echo wp_kses(
+			'<input' .
+			' type="text" size="' . esc_html( $size ) . '" id="' . esc_attr( $args['label_for'] ) . '"' .
+			' data-custom="' . esc_attr( $args['bu_liaison_inquiry_custom_data'] ) . '"' .
+			' name="bu_liaison_inquiry_options[' . esc_attr( $args['label_for'] ) . ']"' .
+			' value="' . esc_html( $value ) . '"' .
+			'>' . $description,
+			[
+				'p'     => [ 'class' => [] ],
+				'input' => [
+					'type'        => [],
+					'id'          => [],
+					'size'        => [],
+					'data-custom' => [],
+					'name'        => [],
+					'value'       => [],
+				],
+			]
+		);
 	}
 
 	/**
 	 * Register the settings option and define the settings page
 	 */
-	function bu_liaison_inquiry_settings_init() {
+	public function bu_liaison_inquiry_settings_init() {
 		// Register a new setting for "bu_liaison_inquiry" page.
 		register_setting( 'bu_liaison_inquiry', 'bu_liaison_inquiry_options' );
 
@@ -80,7 +93,7 @@ class Admin {
 			__( 'Enter SpectrumEMP API Key and Client ID', 'bu_liaison_inquiry' ),
 			function ( $args ) {
 				$escaped_description = esc_html__( 'Set the parameters for your organization to fetch the correct forms.', 'bu_liaison_inquiry' );
-				echo "<p id='" . esc_attr( $args['id'] ) . "'>" . $escaped_description . '</p>';
+				echo wp_kses( "<p id='" . esc_attr( $args['id'] ) . "'>" . $escaped_description . '</p>', [ 'p' => [ 'id' => [] ] ] );
 			},
 			'bu_liaison_inquiry'
 		);
@@ -90,7 +103,7 @@ class Admin {
 			'APIKey',
 			__( 'API Key', 'bu_liaison_inquiry' ),
 			function ( $args ) {
-				echo $this->get_setting_html( Settings::get( 'APIKey' ), 50, $args );
+				$this->echo_setting_html( Settings::get( 'APIKey' ), 50, $args );
 			},
 			'The API Key allows access to SpectrumEMP.'
 		);
@@ -100,7 +113,7 @@ class Admin {
 			'ClientID',
 			__( 'Client ID', 'bu_liaison_inquiry' ),
 			function ( $args ) {
-				echo $this->get_setting_html( Settings::get( 'ClientID' ), 10, $args );
+				$this->echo_setting_html( Settings::get( 'ClientID' ), 10, $args );
 			},
 			'The Client ID specifies the organizational account.'
 		);
@@ -111,7 +124,7 @@ class Admin {
 			__( 'UTM Parameters', 'bu_liaison_inquiry' ),
 			function ( $args ) {
 				$escaped_description = esc_html__( 'Specify Spectrum EMP field IDs associated with UTM parameters.', 'bu_liaison_inquiry' );
-				echo "<p id='" . esc_attr( $args['id'] ) . "'>" . $escaped_description . '</p>';
+				echo wp_kses( "<p id='" . esc_attr( $args['id'] ) . "'>" . $escaped_description . '</p>', [ 'p' => [ 'id' => [] ] ] );
 			},
 			'bu_liaison_inquiry'
 		);
@@ -122,7 +135,7 @@ class Admin {
 				$name,
 				$title,
 				function ( $args ) use ( $name ) {
-					echo $this->get_setting_html( Settings::get( $name ), 10, $args );
+					$this->echo_setting_html( Settings::get( $name ), 10, $args );
 				}
 			);
 		}
@@ -132,7 +145,7 @@ class Admin {
 			Settings::PAGE_TITLE_SETTING,
 			__( 'Page Title', 'bu_liaison_inquiry' ),
 			function ( $args ) {
-				echo $this->get_setting_html( Settings::get( Settings::PAGE_TITLE_SETTING ), 10, $args );
+				$this->echo_setting_html( Settings::get( Settings::PAGE_TITLE_SETTING ), 10, $args );
 			}
 		);
 	}
@@ -140,8 +153,7 @@ class Admin {
 	/**
 	 * Create an admin page.
 	 */
-	function bu_liaison_inquiry_options_page() {
-
+	public function bu_liaison_inquiry_options_page() {
 		add_options_page(
 			'Liaison API Keys',
 			'Liaison API Keys',
@@ -154,7 +166,7 @@ class Admin {
 	/**
 	 * Outputs the form on the admin page using the defined actions.
 	 */
-	function bu_liaison_inquiry_options_page_html() {
+	private function bu_liaison_inquiry_options_page_html() {
 		// Check user capabilities.
 		if ( ! current_user_can( 'manage_categories' ) ) {
 			return;
@@ -225,16 +237,16 @@ class Admin {
 				$value    = $form_id ? $form_id : 'default';
 				$selected = $form_id ? '' : 'selected';
 				?>
-		<option value="<?php echo $value; ?>" <?php echo $selected; ?>><?php echo $caption; ?></option>
+		<option value="<?php echo esc_attr( $value ); ?>" <?php echo esc_attr( $selected ); ?>><?php echo esc_html( $caption ); ?></option>
 		<?php } ?>
 		</select>
 			<?php
 			foreach ( $forms_list as $name => $form_id ) {
 				?>
-		<div id="form_<?php echo $form_id ? $form_id : 'default'; ?>">
+		<div id="form_<?php echo $form_id ? esc_attr( $form_id ) : 'default'; ?>">
 		<h2>Sample shortcode</h2>
 
-		[liaison_inquiry_form<?php echo $form_id ? ' form_id="' . $form_id . '"' : ''; ?>]
+		[liaison_inquiry_form<?php echo $form_id ? ' form_id="' . esc_attr( $form_id ) . '"' : ''; ?>]
 
 
 		<h2>Field inventory</h2>
