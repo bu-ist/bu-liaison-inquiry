@@ -52,7 +52,7 @@ class Inquiry_Form {
 	}
 
 	/**
-	 * Retrievs form definition from the API and builds the form
+	 * Retrieve form definition from the API and build the form
 	 *
 	 * @param  array $attrs Attributes specified in the shortcode.
 	 * @return string Form HTML
@@ -66,21 +66,59 @@ class Inquiry_Form {
 		unset( $attrs['form_id'] );
 
 		try {
-			$inquiry_form = $this->api->get_requirements( $form_id );
+			$form_definition = $this->api->get_requirements( $form_id );
 		} catch ( \Exception $e ) {
 			return $e->getMessage();
 		}
 
 		if ( count( $attrs ) ) {
-			$inquiry_form = $this->minify_form_definition( $inquiry_form, $attrs );
+			$form_definition = $this->minify_form_definition( $form_definition, $attrs );
 		}
 
-		return $this->render_template( $inquiry_form, $form_id );
+		$form_definition = $this->autofill_fields(
+			$form_definition, Settings::list_utm_values(), function ( $field_name ) {
+				if ( isset( $_GET[ $field_name ] ) ) {
+					return $_GET[ $field_name ];
+				}
+				return '';
+			}
+		);
+
+		$form_definition = $this->autofill_fields(
+			$form_definition, Settings::page_title_values(), function ( $field_name ) {
+				return get_the_title();
+			}
+		);
+
+		return $this->render_template( $form_definition, $form_id );
 	}
 
 	/**
-	 * Takes the form definition returned by the Liaison API, strips out any unspecified fields for the mini form,
-	 * and sets hidden defaults for required fields
+	 * Find fields of the form that need to be pre-filled and assign a value to them
+	 * returned by the callback.
+	 *
+	 * @param  \stdClass $form_definition Original form definition.
+	 * @param  array     $auto_list List of fields that need to be pre-filled;
+	 *                              format: [(string)'Field ID' => (string)'field_name'].
+	 * @param  callable  $callback Function accepting field_name as the argument
+	 *                             and returning field's pre-filled value.
+	 * @return \stdClass Modified form definition
+	 */
+	public function autofill_fields( $form_definition, $auto_list, $callback ) {
+		foreach ( $form_definition->sections as $section ) {
+			foreach ( $section->fields as $field_key => $field ) {
+				if ( in_array( $field->id, $auto_list ) ) {
+					$field->hidden       = true;
+					$field->hidden_value = $callback( array_search( $field->id, $auto_list ) );
+				}
+			}
+		}
+		return $form_definition;
+	}
+
+	/**
+	 * Take the form definition returned by the Liaison API, strip out any
+	 * unspecified fields for the mini form, and set hidden defaults for required fields
 	 *
 	 * @param  array $inquiry_form Parsed JSON data from Liaison API.
 	 * @param  array $atts Attributes specified in the shortcode.

@@ -15,107 +15,128 @@ namespace BU\Plugins\Liaison_Inquiry;
 class Admin {
 
 	/**
+	 * Wrapper for WP `add_settings_field`.
+	 *
+	 * @param string   $section_name Slug-name of the section, as in `add_settings_field`.
+	 * @param string   $setting_name Slug-name of the field, as in `add_settings_field`.
+	 * @param string   $setting_title Formatted fitle of the field, as in `add_settings_field`.
+	 * @param callable $callback Function that fills the field, as in `add_settings_field`.
+	 * @param string   $description (Optional) Text description of the field.
+	 */
+	private function add_setting( $section_name, $setting_name, $setting_title, $callback, $description = '' ) {
+		$args = array(
+			'label_for'                      => $setting_name,
+			'class'                          => 'bu_liaison_inquiry_row',
+			'bu_liaison_inquiry_custom_data' => 'custom',
+		);
+
+		if ( $description ) {
+			$args['description'] = $description;
+		}
+
+		add_settings_field(
+			$setting_name,
+			$setting_title,
+			$callback,
+			'bu_liaison_inquiry',
+			$section_name,
+			$args
+		);
+	}
+
+	/**
+	 * Generate HTML for the setting input with an optional description
+	 *
+	 * @param  string  $value Input's value or an empty string.
+	 * @param  integer $size  Input's size.
+	 * @param  array   $args  List of extra settings.
+	 * @return string Resulting HTML
+	 */
+	private function get_setting_html( $value, $size, $args ) {
+		$description = '';
+		if ( $args['description'] ) {
+			$esc_description = esc_html( $args['description'], 'bu_liaison_inquiry' );
+			$description     = '<p class="description">' . $esc_description . '</p>';
+		}
+
+		return '<input' .
+		' type="text" size="' . esc_html( $size ) . '" id="' . esc_attr( $args['label_for'] ) . '"' .
+		' data-custom="' . esc_attr( $args['bu_liaison_inquiry_custom_data'] ) . '"' .
+		' name="bu_liaison_inquiry_options[' . esc_attr( $args['label_for'] ) . ']"' .
+		' value="' . esc_html( $value ) . '"' .
+		'>' . $description;
+	}
+
+	/**
 	 * Register the settings option and define the settings page
 	 */
 	function bu_liaison_inquiry_settings_init() {
 		// Register a new setting for "bu_liaison_inquiry" page.
 		register_setting( 'bu_liaison_inquiry', 'bu_liaison_inquiry_options' );
 
-		// Register a new section in the "bu_liaison_inquiry" page.
+		// Register the API Key and Client ID section.
 		add_settings_section(
 			'bu_liaison_inquiry_admin_section_key',
 			__( 'Enter SpectrumEMP API Key and Client ID', 'bu_liaison_inquiry' ),
-			array( $this, 'bu_liaison_inquiry_admin_section_key_callback' ),
+			function ( $args ) {
+				$escaped_description = esc_html__( 'Set the parameters for your organization to fetch the correct forms.', 'bu_liaison_inquiry' );
+				echo "<p id='" . esc_attr( $args['id'] ) . "'>" . $escaped_description . '</p>';
+			},
 			'bu_liaison_inquiry'
 		);
 
-		// Register the API Key field.
-		add_settings_field(
+		$this->add_setting(
+			'bu_liaison_inquiry_admin_section_key',
 			'APIKey',
 			__( 'API Key', 'bu_liaison_inquiry' ),
-			array( $this, 'bu_liaison_inquiry_field_apikey_callback' ),
-			'bu_liaison_inquiry',
-			'bu_liaison_inquiry_admin_section_key',
-			array(
-				'label_for' => 'APIKey',
-				'class' => 'bu_liaison_inquiry_row',
-				'bu_liaison_inquiry_custom_data' => 'custom',
-			)
+			function ( $args ) {
+				echo $this->get_setting_html( Settings::get( 'APIKey' ), 50, $args );
+			},
+			'The API Key allows access to SpectrumEMP.'
 		);
 
-		// Register the ClientID field.
-		add_settings_field(
+		$this->add_setting(
+			'bu_liaison_inquiry_admin_section_key',
 			'ClientID',
 			__( 'Client ID', 'bu_liaison_inquiry' ),
-			array( $this, 'bu_liaison_inquiry_field_clientid_callback' ),
-			'bu_liaison_inquiry',
-			'bu_liaison_inquiry_admin_section_key',
-			array(
-				'label_for' => 'ClientID',
-				'class' => 'bu_liaison_inquiry_row',
-				'bu_liaison_inquiry_custom_data' => 'custom',
-			)
+			function ( $args ) {
+				echo $this->get_setting_html( Settings::get( 'ClientID' ), 10, $args );
+			},
+			'The Client ID specifies the organizational account.'
+		);
+
+		// Register the UTM Parameters section.
+		add_settings_section(
+			'bu_liaison_inquiry_admin_section_utm',
+			__( 'UTM Parameters', 'bu_liaison_inquiry' ),
+			function ( $args ) {
+				$escaped_description = esc_html__( 'Specify Spectrum EMP field IDs associated with UTM parameters.', 'bu_liaison_inquiry' );
+				echo "<p id='" . esc_attr( $args['id'] ) . "'>" . $escaped_description . '</p>';
+			},
+			'bu_liaison_inquiry'
+		);
+
+		foreach ( Settings::list_utm_titles() as $name => $title ) {
+			$this->add_setting(
+				'bu_liaison_inquiry_admin_section_utm',
+				$name,
+				$title,
+				function ( $args ) use ( $name ) {
+					echo $this->get_setting_html( Settings::get( $name ), 10, $args );
+				}
+			);
+		}
+
+		$this->add_setting(
+			'bu_liaison_inquiry_admin_section_utm',
+			Settings::PAGE_TITLE_SETTING,
+			__( 'Page Title', 'bu_liaison_inquiry' ),
+			function ( $args ) {
+				echo $this->get_setting_html( Settings::get( Settings::PAGE_TITLE_SETTING ), 10, $args );
+			}
 		);
 	}
 
-	/**
-	 * Outputs a section header for the admin page, called by add_settings_section()
-	 *
-	 * @param array $args Contains keys for title, id, callback.
-	 */
-	function bu_liaison_inquiry_admin_section_key_callback( $args ) {
-		echo "<p id='" . esc_attr( $args['id'] ) . "'>" . esc_html__( 'Set the parameters for your organization to fetch the correct forms.', 'bu_liaison_inquiry' ) . '</p>';
-	}
-
-	/**
-	 * Outputs the form field for the API Key, called by add_settings_field()
-	 *
-	 * @param array $args Contains keys for label_for, class, bu_liaison_inquiry_custom_data.
-	 */
-	function bu_liaison_inquiry_field_apikey_callback( $args ) {
-		// Get the value of the setting registered with register_setting().
-		$options = get_option( 'bu_liaison_inquiry_options' );
-
-		// Output the field.
-	?>
-	<input type="text" size="50" id="<?php echo esc_attr( $args['label_for'] ); ?>"
-			data-custom="<?php echo esc_attr( $args['bu_liaison_inquiry_custom_data'] ); ?>"
-			name="bu_liaison_inquiry_options[<?php echo esc_attr( $args['label_for'] ); ?>]"
-			value="<?php echo esc_html( $options['APIKey'] ); ?>"
-	>
-
-	<p class="description">
-		<?php echo esc_html( 'The API Key allows access to SpectrumEMP.', 'bu_liaison_inquiry' ); ?>
-	</p>
-
-
-	<?php
-	}
-
-	/**
-	 * Outputs the form field for the Client ID, called by add_settings_field()
-	 *
-	 * @param array $args Contains keys for label_for, class, bu_liaison_inquiry_custom_data.
-	 */
-	function bu_liaison_inquiry_field_clientid_callback( $args ) {
-		// Get the value of the setting registered with register_setting().
-		$options = get_option( 'bu_liaison_inquiry_options' );
-
-		// Output the field.
-	?>
-	<input type="text" size="10" id="<?php echo esc_attr( $args['label_for'] ); ?>"
-			data-custom="<?php echo esc_attr( $args['bu_liaison_inquiry_custom_data'] ); ?>"
-			name="bu_liaison_inquiry_options[<?php echo esc_attr( $args['label_for'] ); ?>]"
-			value="<?php echo esc_html( $options['ClientID'] ); ?>"
-	>
-
-	<p class="description">
-		<?php echo esc_html( 'The Client ID specifies the organizational account.', 'bu_liaison_inquiry' ); ?>
-	</p>
-
-
-	<?php
-	}
 	/**
 	 * Create an admin page.
 	 */

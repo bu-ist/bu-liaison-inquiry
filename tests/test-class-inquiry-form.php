@@ -25,30 +25,64 @@ class BU_Liaison_Inquiry_Test_Inquiry_Form extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Generate sample form definition
+	 *
+	 * @return \stdClass Sample form definition
+	 */
+	private function mock_form_definition() {
+		$field_1           = new stdClass();
+		$field_1->id       = '1';
+		$field_1->required = '1';
+
+		$field_2           = new stdClass();
+		$field_2->id       = '2';
+		$field_2->required = '0';
+
+		$field_3           = new stdClass();
+		$field_3->id       = '3';
+		$field_3->required = '1';
+
+		$field_4           = new stdClass();
+		$field_4->id       = '4';
+		$field_4->required = '1';
+
+		$form_section              = new stdClass();
+		$form_section->fields      = [ $field_1, $field_2, $field_3, $field_4 ];
+		$form_definition           = new stdClass();
+		$form_definition->sections = [ $form_section ];
+
+		return $form_definition;
+	}
+
+	/**
 	 * Call the method two times, with and without attributes, and check that
 	 * it doesn't try to minify form definition when no attributes were passed
 	 *
 	 * @covers BU\Plugins\Liaison_Inquiry\Inquiry_Form::get_html
 	 */
 	public function test_get_html() {
-		$default_form_id                  = null;
-		$form_id                          = 'form_id';
-		$shortcode_attributes             = [
+		$default_form_id = null;
+		$form_id         = 'form_id';
+
+		$shortcode_attributes = [
 			'some' => 'value',
 		];
-		$shortcode_attributes_with_form   = array_merge(
+
+		$shortcode_attributes_with_form = array_merge(
 			$shortcode_attributes, [
 				'form_id' => $form_id,
 			]
 		);
-		$form_definition                  = 'form_definition coming from api, non-default form';
-		$form_definition_default          = 'form_definition coming from api, default form';
-		$minified_form_definition         = 'minified form definition, non-default form';
-		$minified_form_definition_default = 'minified form definition, default form';
-		$form_html                        = 'html response, non-default form';
-		$form_html_default                = 'html response, default form';
-		$form_html_mini                   = 'html response mini, non-default form';
-		$form_html_mini_default           = 'html response mini, default form';
+
+		$form_definition                  = $this->mock_form_definition();
+		$form_definition_default          = $this->mock_form_definition();
+		$minified_form_definition         = $this->mock_form_definition();
+		$minified_form_definition_default = $this->mock_form_definition();
+
+		$form_html              = 'html response, non-default form';
+		$form_html_default      = 'html response, default form';
+		$form_html_mini         = 'html response mini, non-default form';
+		$form_html_mini_default = 'html response mini, default form';
 
 		$form = $this->getMockBuilder( Inquiry_Form::class )
 						->setConstructorArgs( [ $this->spectrum ] )
@@ -123,26 +157,7 @@ class BU_Liaison_Inquiry_Test_Inquiry_Form extends WP_UnitTestCase {
 	 * @covers BU\Plugins\Liaison_Inquiry\Inquiry_Form::minify_form_definition
 	 */
 	public function test_minify_form_definition() {
-		$field_1           = new stdClass();
-		$field_1->id       = '1';
-		$field_1->required = '1';
-
-		$field_2           = new stdClass();
-		$field_2->id       = '2';
-		$field_2->required = '0';
-
-		$field_3           = new stdClass();
-		$field_3->id       = '3';
-		$field_3->required = '1';
-
-		$field_4           = new stdClass();
-		$field_4->id       = '4';
-		$field_4->required = '1';
-
-		$form_section              = new stdClass();
-		$form_section->fields      = [ $field_1, $field_2, $field_3, $field_4 ];
-		$form_definition           = new stdClass();
-		$form_definition->sections = [ $form_section ];
+		$form_definition = $this->mock_form_definition();
 
 		$attributes = array(
 			'fields' => '1,4',
