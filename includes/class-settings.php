@@ -20,7 +20,7 @@ class Settings {
 
 	/**
 	 * Return an associative array of UTM parameter titles.
-	 * 
+	 *
 	 * @return array Format: [(string)'name' => (string)'title']
 	 */
 	public static function list_utm_titles() {
@@ -61,8 +61,8 @@ class Settings {
 
 	/**
 	 * Return an associative array of UTM parameter field IDs.
-	 * 
-	 * @return array Format: [(string)'name' => (string)'field ID'].
+	 *
+	 * @return array Format: [(string)'name' => (string)'field ID']
 	 */
 	public static function list_utm_values() {
 		$result = array();
@@ -77,8 +77,8 @@ class Settings {
 
 	/**
 	 * Return UTM page title field ID as associative array.
-	 * 
-	 * @return array Format: [(string)'page title setting name' => (string)'field ID'].
+	 *
+	 * @return array Format: [(string)'page title setting name' => (string)'field ID']
 	 */
 	public static function page_title_values() {
 		$result                             = array();
