@@ -19,8 +19,9 @@ class Settings {
 	const UTM_SETTINGS       = array( 'utm_source', 'utm_campaign', 'utm_content', 'utm_medium', 'utm_term' );
 
 	/**
-	 * Return an associative array of UTM parameter captions
-	 * with UTM parameter names as keys.
+	 * Return an associative array of UTM parameter titles.
+	 * 
+	 * @return array Format: [(string)'name' => (string)'title']
 	 */
 	public static function list_utm_titles() {
 		$titles = [
@@ -59,8 +60,9 @@ class Settings {
 	}
 
 	/**
-	 * Return an associative array of UTM parameter field IDs
-	 * with UTM parameter names as keys.
+	 * Return an associative array of UTM parameter field IDs.
+	 * 
+	 * @return array Format: [(string)'name' => (string)'field ID'].
 	 */
 	public static function list_utm_values() {
 		$result = array();
@@ -74,8 +76,9 @@ class Settings {
 	}
 
 	/**
-	 * Return UTM page title field ID as a member of associative array
-	 * with page title setting name as the key.
+	 * Return UTM page title field ID as associative array.
+	 * 
+	 * @return array Format: [(string)'page title setting name' => (string)'field ID'].
 	 */
 	public static function page_title_values() {
 		$result                             = array();
