@@ -1,4 +1,6 @@
 # BU Liaison Inquiry #
+[![Maintainability](https://api.codeclimate.com/v1/badges/11de6480ba45af88d7e1/maintainability)](https://codeclimate.com/github/bu-ist/bu-liaison-inquiry/maintainability)
+
 Inquiry form for Liaison Inc.'s SpectrumEMP enrollment CRM
 ## Description
 This WordPress plugin provides an inquiry form for prospective students.  It uses the SpectrumEMP API to get the form parameters from Liaison, and submit the form data back to Liaison. It is based on example code from `https://github.com/Liaison-Intl/EMP_API-Example`
