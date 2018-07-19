@@ -56,7 +56,7 @@
 			<?php
 			// Mini form needs to pass dummy values to otherwise required fields; insert them here as hidden inputs.
 			if ( isset( $field->hidden ) && $field->hidden && ('select' !== $field->htmlElement || $field->hidden_value) ) : ?>
-				<input type="hidden" name="<?php esc_attr_e($field->id);?>" value="<?php esc_attr_e($field->hidden_value);?>">
+				<input type="hidden" name="<?php echo esc_attr($field->id);?>" value="<?php echo esc_attr($field->hidden_value);?>">
 			<?php
 			// Begin handler for two types of html elements: input-text or select.
 			elseif ( 'input-text' == $field->htmlElement ) :
@@ -75,12 +75,12 @@
 
 				<div class="row">
 					<div class="form-group">
-						<label for="<?php esc_attr_e( $field->id ); ?>" class="col-sm-4 control-label"><?php echo $label . ( ( $field->required ) ? ' <span class="asterisk">*</span>' : '' ); ?></label>
+						<label for="<?php echo esc_attr( $field->id ); ?>" class="col-sm-4 control-label"><?php echo $label . ( ( $field->required ) ? ' <span class="asterisk">*</span>' : '' ); ?></label>
 						<div class="col-sm-6 col-md-5">
 							<input type="text"
-								name="<?php esc_attr_e($field->id); ?>"
-								id="<?php esc_attr_e($field->id); ?>"
-								class="form-control<?php echo ( ( $field->required ) ? ' required' : '' ) . esc_attr($class); ?>" placeholder="<?php esc_attr_e($field->displayName); ?>" />
+								name="<?php echo esc_attr($field->id); ?>"
+								id="<?php echo esc_attr($field->id); ?>"
+								class="form-control<?php echo ( ( $field->required ) ? ' required' : '' ) . esc_attr($class); ?>" placeholder="<?php echo esc_attr($field->displayName); ?>" />
 
 				<?php
 				// Begin phone field specific handler.
@@ -101,8 +101,8 @@
 						';
 				?>
 
-						<input type="checkbox" name="<?php esc_attr_e( $element_id ); ?>" id="<?php esc_attr_e( $element_id ); ?>">
-						<label id="label-<?php esc_attr_e( $element_id ); ?>" for="<?php esc_attr_e( $element_id ); ?>"><?php echo ( $label_text ); ?></label>
+						<input type="checkbox" name="<?php echo esc_attr( $element_id ); ?>" id="<?php echo esc_attr( $element_id ); ?>">
+						<label id="label-<?php echo esc_attr( $element_id ); ?>" for="<?php echo esc_attr( $element_id ); ?>"><?php echo ( $label_text ); ?></label>
 
 				<?php endif;
 				// End phone field specific handler.
@@ -110,7 +110,7 @@
 
 
 				<?php if ( '' !== $field->helpText ) :?>
-					<p class="help-block"><?php esc_html_e( $field->helpText ); ?></p>
+					<p class="help-block"><?php echo esc_html( $field->helpText ); ?></p>
 				<?php endif; ?>
 
 
@@ -183,7 +183,7 @@
 		<button type="submit" class="btn btn-primary">Go <i class="icon-chevron-right icon-white"></i></button>
 	</div>
 
-	<input type="hidden" id="phone_fields" name="phone_fields" value="<?php esc_attr_e( implode(',', $phone_fields) ); ?>" />
+	<input type="hidden" id="phone_fields" name="phone_fields" value="<?php echo esc_attr( implode(',', $phone_fields) ); ?>" />
 
 	<div class="clear"></div>
 
