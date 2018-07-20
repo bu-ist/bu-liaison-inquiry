@@ -16,10 +16,10 @@ cache:
 
 before_install:
   - composer self-update
+  - bundle install
 
 install:
   - composer install --prefer-dist
-  - bundle install
 
 before_script:
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
