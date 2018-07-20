@@ -1,5 +1,7 @@
-# BU Liaison Inquiry #
+# BU Liaison Inquiry
+[![Build Status](https://travis-ci.org/bu-ist/bu-liaison-inquiry.svg?branch=develop)](https://travis-ci.org/bu-ist/bu-liaison-inquiry)
 [![Maintainability](https://api.codeclimate.com/v1/badges/11de6480ba45af88d7e1/maintainability)](https://codeclimate.com/github/bu-ist/bu-liaison-inquiry/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/11de6480ba45af88d7e1/test_coverage)](https://codeclimate.com/github/bu-ist/bu-liaison-inquiry/test_coverage)
 
 Inquiry form for Liaison Inc.'s SpectrumEMP enrollment CRM
 ## Description
