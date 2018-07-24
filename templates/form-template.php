@@ -1,15 +1,33 @@
+<?php
+	// Enqueue the validation scripts.
+	wp_enqueue_script( 'jquery-ui' );
+	wp_enqueue_script( 'jquery-masked' );
+	wp_enqueue_script( 'jquery-pubsub' );
+	wp_enqueue_script( 'iqs-validate' );
+	wp_enqueue_script( 'bu-liaison-main' );
+	wp_enqueue_script( 'field_rules_form_library' );
+	wp_enqueue_script( 'field_rules_handler' );
+
+	// Enqueue form specific CSS.
+	wp_enqueue_style( 'liason-form-style' );
+	wp_enqueue_style( 'jquery-ui-css' );
+?>
+
 <script type='text/javascript'>
 	var SITE = {};
 	SITE.data = {
-		client_rules_url: "<?php echo self::$client_rules_url; ?>",
-		field_options_url: "<?php echo self::$field_options_url; ?>",
-		client_id: "<?php echo $client_id; ?>"
+		client_rules_url: "<?php echo $this->api::CLIENT_RULES_URL; ?>",
+		field_options_url: "<?php echo $this->api::FIELD_OPTIONS_URL; ?>",
+		client_id: "<?php echo $this->api->client_id; ?>"
 	};
 </script>
 
 <form id="form_example" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post">
 
 <?php
+	// Include form ID if available.
+	echo $form_id ? '<input type="hidden" name="formID" value="' . esc_attr($form_id) .'">' : '';
+
 	// Initialize modal and phone fields.
 	$modals = array();
 	$phone_fields = array();
@@ -37,8 +55,8 @@
 
 			<?php
 			// Mini form needs to pass dummy values to otherwise required fields; insert them here as hidden inputs.
-			if ( isset( $field->hidden ) && $field->hidden ) : ?>
-				<input type="hidden" name="<?php echo $field->id;?>" value="<?php echo $field->hidden_value;?>">
+			if ( isset( $field->hidden ) && $field->hidden && ('select' !== $field->htmlElement || $field->hidden_value) ) : ?>
+				<input type="hidden" name="<?php echo esc_attr($field->id);?>" value="<?php echo esc_attr($field->hidden_value);?>">
 			<?php
 			// Begin handler for two types of html elements: input-text or select.
 			elseif ( 'input-text' == $field->htmlElement ) :
@@ -57,12 +75,12 @@
 
 				<div class="row">
 					<div class="form-group">
-						<label for="<?php echo $field->id; ?>" class="col-sm-4 control-label"><?php echo $label . ( ( $field->required ) ? ' <span class="asterisk">*</span>' : '' ); ?></label>
+						<label for="<?php echo esc_attr( $field->id ); ?>" class="col-sm-4 control-label"><?php echo $label . ( ( $field->required ) ? ' <span class="asterisk">*</span>' : '' ); ?></label>
 						<div class="col-sm-6 col-md-5">
 							<input type="text"
-								name="<?php echo $field->id; ?>"
-								id="<?php echo $field->id; ?>"
-								class="form-control<?php echo ( ( $field->required ) ? ' required' : '' ) . $class; ?>" placeholder="<?php echo $field->displayName; ?>" />
+								name="<?php echo esc_attr($field->id); ?>"
+								id="<?php echo esc_attr($field->id); ?>"
+								class="form-control<?php echo ( ( $field->required ) ? ' required' : '' ) . esc_attr($class); ?>" placeholder="<?php echo esc_attr($field->displayName); ?>" />
 
 				<?php
 				// Begin phone field specific handler.
@@ -83,8 +101,8 @@
 						';
 				?>
 
-						<input type="checkbox" name="<?php echo $element_id; ?>" id="<?php echo $element_id; ?>">
-						<label id="label-<?php echo $element_id; ?>" for="<?php echo $element_id; ?>"><?php echo $label_text; ?></label>
+						<input type="checkbox" name="<?php echo esc_attr( $element_id ); ?>" id="<?php echo esc_attr( $element_id ); ?>">
+						<label id="label-<?php echo esc_attr( $element_id ); ?>" for="<?php echo esc_attr( $element_id ); ?>"><?php echo ( $label_text ); ?></label>
 
 				<?php endif;
 				// End phone field specific handler.
@@ -92,7 +110,7 @@
 
 
 				<?php if ( '' !== $field->helpText ) :?>
-					<p class="help-block"><?php echo $field->helpText; ?></p>
+					<p class="help-block"><?php echo esc_html( $field->helpText ); ?></p>
 				<?php endif; ?>
 
 
@@ -134,7 +152,7 @@
 					</optgroup>
 
 				<?php else : ?>
-					<option value="<?php echo $option->id; ?>"><?php echo $option->value; ?></option>
+					<option <?php echo $field->default == $option->id ? 'selected' : ''; ?> value="<?php echo $option->id; ?>"><?php echo $option->value; ?></option>
 				<?php endif; ?>
 			<?php endforeach; ?>
 
@@ -165,7 +183,7 @@
 		<button type="submit" class="btn btn-primary">Go <i class="icon-chevron-right icon-white"></i></button>
 	</div>
 
-	<input type="hidden" id="phone_fields" name="phone_fields" value="<?php echo implode(',', $phone_fields); ?>" />
+	<input type="hidden" id="phone_fields" name="phone_fields" value="<?php echo esc_attr( implode(',', $phone_fields) ); ?>" />
 
 	<div class="clear"></div>
 

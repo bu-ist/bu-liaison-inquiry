@@ -1,0 +1,106 @@
+{
+    "form": {
+        "name": "Inquiry Form",
+        "pageTitle": "Sample page title",
+        "metaDescription": "",
+        "header": "Sample header",
+        "subHeader": "Sample subheader\n\nMay contain newlines"
+    },
+    "sections": [{
+        "name": "",
+        "description": "",
+        "order": "0",
+        "fields": [{
+            "order": "0",
+            "required": "1",
+            "helpText": "",
+            "hasOptions": 0,
+            "id": "12",
+            "displayName": "Email",
+            "description": "Accepts valid email addresses in the format: email@provider.com.",
+            "htmlElement": "input-text"
+        }, {
+            "order": "1",
+            "required": "1",
+            "helpText": "",
+            "hasOptions": 0,
+            "id": "3",
+            "displayName": "Name",
+            "description": "Accepts any non empty text string.",
+            "htmlElement": "input-text"
+        }, {
+            "order": "3",
+            "required": "1",
+            "helpText": "We infer city and state from the zip code. ",
+            "hasOptions": 0,
+            "id": "10",
+            "displayName": "Zip Code",
+            "description": "Accepts postal codes in the following formats: 5 digits with optional hyphen and 4 digit extension (99999-9999), 3 to 5 digits (999, 9999, or 99999), or 4 to 9 alphanumeric characters including dashes and spaces (for international postal codes).",
+            "htmlElement": "input-text"
+        }, {
+            "order": "4",
+            "required": "1",
+            "helpText": "Required text",
+            "hasOptions": 0,
+            "id": "6",
+            "displayName": "Address Line 1",
+            "description": "Accepts any non empty text string.",
+            "htmlElement": "input-text"
+        }, {
+            "order": "5",
+            "required": "0",
+            "helpText": "Optional text",
+            "hasOptions": 0,
+            "id": "7",
+            "displayName": "Address Line 2",
+            "description": "Accepts any non empty text string.",
+            "htmlElement": "input-text"
+        }, {
+            "order": "7",
+            "required": "1",
+            "helpText": "Select year",
+            "hasOptions": 1,
+            "options": [{
+                "id": "2018",
+                "value": "2018"
+            }, {
+                "id": "2019",
+                "value": "2019"
+            }, {
+                "id": "2020",
+                "value": "2020"
+            }, {
+                "id": "2021",
+                "value": "2021"
+            }],
+            "isAssetField": 0,
+            "id": "17",
+            "displayName": "Select",
+            "description": "Accepts id values in the range of available options.",
+            "htmlElement": "select"
+        }, {
+            "order": "9",
+            "required": "0",
+            "helpText": "",
+            "hasOptions": 0,
+            "id": "13",
+            "displayName": "Phone",
+            "description": "Accepts phone numbers in the format: +18454734400 (E.164 format, http:\/\/en.wikipedia.org\/wiki\/E.164).",
+            "htmlElement": "input-text"
+        }, {
+            "order": "9.1",
+            "required": "0",
+            "helpText": "Sample policy that describes opt-in conditions",
+            "hasOptions": 1,
+            "options": [],
+            "isAssetField": 0,
+            "id": "13-text-opt-in",
+            "displayName": "I'd like to receive text messages to this number and I have read the following opt-in policy.",
+            "description": "Accepts a boolean flag in the format: 1 or 0.",
+            "htmlElement": "input-checkbox"
+        }]
+    }],
+    "assetDependencies": {
+        "10001": [10001]
+    }
+}

@@ -1,4 +1,8 @@
-# BU Liaison Inquiry #
+# BU Liaison Inquiry
+[![Build Status](https://travis-ci.org/bu-ist/bu-liaison-inquiry.svg?branch=develop)](https://travis-ci.org/bu-ist/bu-liaison-inquiry)
+[![Maintainability](https://api.codeclimate.com/v1/badges/11de6480ba45af88d7e1/maintainability)](https://codeclimate.com/github/bu-ist/bu-liaison-inquiry/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/11de6480ba45af88d7e1/test_coverage)](https://codeclimate.com/github/bu-ist/bu-liaison-inquiry/test_coverage)
+
 Inquiry form for Liaison Inc.'s SpectrumEMP enrollment CRM
 ## Description
 This WordPress plugin provides an inquiry form for prospective students.  It uses the SpectrumEMP API to get the form parameters from Liaison, and submit the form data back to Liaison. It is based on example code from `https://github.com/Liaison-Intl/EMP_API-Example`
@@ -27,3 +31,20 @@ Any other values can be set by including a shortcode attribute of the form `fiel
 
 ### SOURCE
 Liaison uses a special field called `source` that can track where a lead originated.  It appears to be the only field in the Liaison forms that uses something other than an integer for the field id.  The source can be set in a shortcode attribute like any other field like this: `source="12345"`.
+
+## Dev Mode
+
+The plugin may be switched to dev mode. In this mode, no requests to the SpectrumEMP API will be sent. It is useful mostly for developers working on new features, but also for plugin users who want to try the plugin out prior obtaining Liaison API Keys.
+
+To switch to dev mode, add the following to `wp-config.php`:
+
+```php
+define('BU_LIAISON_INQUIRY_SAMPLE', true);
+```
+
+By default, any submission of the form will be considered successful. To change this behavior, define one of following in `wp-config.php`:
+
+| Constant Name                                      | Description               |
+|----------------------------------------------------|---------------------------|
+| define('BU_LIAISON_INQUIRY_POST_FAIL', true);      | Some fields are invalid   |
+| define('BU_LIAISON_INQUIRY_POST_DUPLICATE', true); | Such email already exists |
