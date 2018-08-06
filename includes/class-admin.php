@@ -176,6 +176,18 @@ class Admin {
 	}
 
 	/**
+	 * Check if the current user can edit settings.
+	 *
+	 * @return boolean
+	 */
+	public function check_edit_capability() {
+		$required_capabilty = apply_filters(
+			'option_page_capability_bu_liaison_inquiry', 'manage_options'
+		);
+		return current_user_can( $required_capabilty );
+	}
+
+	/**
 	 * Outputs the form on the admin page using the defined actions.
 	 */
 	public function bu_liaison_inquiry_options_page_html() {
@@ -193,28 +205,30 @@ class Admin {
 
 		// Show status messages.
 		settings_errors( 'bu_liaison_inquiry_messages' );
-		?>
-		<div class="wrap">
-		<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
-		<form action="options.php" method="post">
-			<?php
-			// Output security fields for the registered setting.
-			settings_fields( 'bu_liaison_inquiry' );
-			// Output setting sections and their fields.
-			// (sections are registered for "bu_liaison_inquiry", each field is registered to a specific section).
-			do_settings_sections( 'bu_liaison_inquiry' );
-			// Output save settings button.
-			submit_button( 'Save Settings' );
+		if ( $this->check_edit_capability() ) :
 			?>
-			</form>
-		</div>
-		<?php
+			<div class="wrap">
+			<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
+			<form action="options.php" method="post">
+				<?php
+				// Output security fields for the registered setting.
+				settings_fields( 'bu_liaison_inquiry' );
+				// Output setting sections and their fields.
+				// (sections are registered for "bu_liaison_inquiry", each field is registered to a specific section).
+				do_settings_sections( 'bu_liaison_inquiry' );
+				// Output save settings button.
+				submit_button( 'Save Settings' );
+				?>
+				</form>
+				<hr>
+			</div>
+			<?php
+		endif;
 		// If there is already a key set, use it to fetch and display a field inventory.
 		$options = get_option( 'bu_liaison_inquiry_options' );
 		if ( ! empty( $options['APIKey'] ) ) {
 			$api = new Spectrum_API( null, $options['APIKey'] );
 			?>
-		<hr>
 		<h2>Select Liaison Form</h2>
 		<p>Select a form below to see the list of field IDs that it contains. </p>
 			<?php
