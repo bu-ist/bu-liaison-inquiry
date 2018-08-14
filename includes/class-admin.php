@@ -167,8 +167,8 @@ class Admin {
 	 */
 	public function bu_liaison_inquiry_options_page() {
 		add_options_page(
-			'Liaison API Keys',
-			'Liaison API Keys',
+			'Liaison Forms',
+			'Liaison Forms',
 			'manage_categories',
 			'bu_liaison_inquiry',
 			array( $this, 'bu_liaison_inquiry_options_page_html' )
