@@ -196,13 +196,6 @@ class Admin {
 			return;
 		}
 
-		// Add status messages.
-		// WordPress will add the "settings-updated" $_GET parameter to the url.
-		if ( isset( $_GET['settings-updated'] ) ) {
-			// Add settings saved message with the class of "updated".
-			add_settings_error( 'bu_liaison_inquiry_messages', 'bu_liaison_inquiry_message', __( 'Settings Saved', 'bu_liaison_inquiry' ), 'updated' );
-		}
-
 		// Show status messages.
 		settings_errors( 'bu_liaison_inquiry_messages' );
 			?>
