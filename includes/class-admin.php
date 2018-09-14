@@ -167,12 +167,24 @@ class Admin {
 	 */
 	public function bu_liaison_inquiry_options_page() {
 		add_options_page(
-			'Liaison API Keys',
-			'Liaison API Keys',
+			'Liaison Forms',
+			'Liaison Forms',
 			'manage_categories',
 			'bu_liaison_inquiry',
 			array( $this, 'bu_liaison_inquiry_options_page_html' )
 		);
+	}
+
+	/**
+	 * Check if the current user can edit settings.
+	 *
+	 * @return boolean
+	 */
+	public function check_edit_capability() {
+		$required_capabilty = apply_filters(
+			'option_page_capability_bu_liaison_inquiry', 'manage_options'
+		);
+		return current_user_can( $required_capabilty );
 	}
 
 	/**
@@ -193,28 +205,34 @@ class Admin {
 
 		// Show status messages.
 		settings_errors( 'bu_liaison_inquiry_messages' );
-		?>
-		<div class="wrap">
-		<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
-		<form action="options.php" method="post">
-			<?php
-			// Output security fields for the registered setting.
-			settings_fields( 'bu_liaison_inquiry' );
-			// Output setting sections and their fields.
-			// (sections are registered for "bu_liaison_inquiry", each field is registered to a specific section).
-			do_settings_sections( 'bu_liaison_inquiry' );
-			// Output save settings button.
-			submit_button( 'Save Settings' );
 			?>
-			</form>
-		</div>
+			<div class="wrap">
+				<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
+				<?php if ( $this->check_edit_capability() ) : ?>
+					<form action="options.php" method="post">
+						<?php
+						// Output security fields for the registered setting.
+						settings_fields( 'bu_liaison_inquiry' );
+						// Output setting sections and their fields.
+						// (sections are registered for "bu_liaison_inquiry", each field is registered to a specific section).
+						do_settings_sections( 'bu_liaison_inquiry' );
+						// Output save settings button.
+						submit_button( 'Save Settings' );
+						?>
+					</form>
+				<hr>
+				<?php else : ?>
+					<div class="notice notice-info">
+							<p><?php echo esc_html( 'To change settings, please contact Administrator.', 'bu_liaison_inquiry' ); ?></p>
+					</div>
+				<?php endif; ?>
+			</div>
 		<?php
 		// If there is already a key set, use it to fetch and display a field inventory.
 		$options = get_option( 'bu_liaison_inquiry_options' );
 		if ( ! empty( $options['APIKey'] ) ) {
 			$api = new Spectrum_API( null, $options['APIKey'] );
 			?>
-		<hr>
 		<h2>Select Liaison Form</h2>
 		<p>Select a form below to see the list of field IDs that it contains. </p>
 			<?php
