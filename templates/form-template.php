@@ -126,7 +126,7 @@
 			$class = ' iqs-form-single-select';
 			?>
 
-				<div class="row">
+				<div class="row <?php echo (isset( $field->hidden ) && $field->hidden) ? 'hidden-liaison-form-row' : '' ?>">
 					<div class="form-group">
 						<label for="<?php echo $field->id; ?>" class="col-sm-4 control-label"><?php echo $label . (($field->required) ? ' <span class="asterisk">*</span>' : ''); ?></label>
 						<div class="col-sm-6 col-md-5">

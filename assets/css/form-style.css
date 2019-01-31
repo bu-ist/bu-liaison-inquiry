@@ -1,3 +1,7 @@
 .error {
     color: #ff0000 !important;
 }
+
+.hidden-liaison-form-row {
+	display: none;
+}
