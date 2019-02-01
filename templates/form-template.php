@@ -58,6 +58,9 @@
 			if ( isset( $field->hidden ) && $field->hidden && ('select' !== $field->htmlElement || $field->hidden_value) ) : ?>
 				<input type="hidden" name="<?php echo esc_attr($field->id);?>" value="<?php echo esc_attr($field->hidden_value);?>">
 			<?php
+			elseif ( isset( $field->hidden ) && $field->hidden && 'select' == $field->htmlElement && isset( $field->default ) && $field->default ): ?>
+				<input type="hidden" name="<?php echo esc_attr($field->id);?>" value="<?php echo esc_attr($field->default);?>">
+			<?php
 			// Begin handler for two types of html elements: input-text or select.
 			elseif ( 'input-text' == $field->htmlElement ) :
 				// Begin input text handler.
