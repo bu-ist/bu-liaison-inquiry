@@ -12,7 +12,7 @@ function main($) {
 		//	'placement':'top'
 		//});
 
-		$(".modal").dialog({
+		$(".bu-liaison-modal").dialog({
 			autoOpen: false,
 			show: {
 				effect: "fade",

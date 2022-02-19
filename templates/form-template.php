@@ -96,7 +96,7 @@
 						$label_text = str_ireplace( 'opt-in policy', $opt_in_text, $label_text );
 
 						$modals[] = '
-							<div id="text-message-opt-in-modal" title="Text Message Opt-in Policy" class="modal">
+							<div id="text-message-opt-in-modal" title="Text Message Opt-in Policy" class="bu-liaison-modal">
 								<div class="modal-body">
 											 ' . $section->fields[ $field_index + 1 ]->helpText . '
 								</div>
