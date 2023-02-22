@@ -81,10 +81,7 @@ SITE.field_rules_handler = (function($) {
 				// checkboxes need to have a name like 658[] whereas radios can just be 658
 				if ($field.hasClass('iqs-form-checkbox')) {
 					type = 'checkbox';
-					// Hotfix for Liaison Form with Checkbox Field
-					if (name !== '67575') {
-						name_str = '[]';
-					}
+					name_str = '[]';
 				} else {
 					type = 'radio';
 				}
