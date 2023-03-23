@@ -61,7 +61,7 @@
 			elseif ( isset( $field->hidden ) && $field->hidden && 'select' == $field->htmlElement && isset( $field->default ) && $field->default ): ?>
 				<input type="hidden" name="<?php echo esc_attr($field->id);?>" value="<?php echo esc_attr($field->default);?>">
 			<?php
-			// Begin handler for two types of html elements: input-text or select.
+			// Begin handler for three types of html elements: input-text, select, or checkbox.
 			elseif ( 'input-text' == $field->htmlElement ) :
 				// Begin input text handler.
 				$class = '';
@@ -165,8 +165,7 @@
 					</div><!-- end class="form-group" -->
 				</div><!-- end class="row" -->
 				<!-- End select field handler. -->
-				<!-- If this form is using a checkbox with field Id 67575 (Online MPH Information = 67575) -->
-		<?php elseif ( 'input-checkbox' == $field->htmlElement && $field->id == '67575' ) : ?>
+		<?php elseif ( 'input-checkbox' == $field->htmlElement && $field->type == 'Checkbox' && $field->id != '13-text-opt-in' ) : // Begin checkbox field handler ?>
 		<div class="row">
 			<?php
 				$class = ' iqs-form-checkbox';
@@ -181,7 +180,7 @@
 				</div>
 			</div>
 		</div>
-		<?php endif; // End section form 67575 checkbox.?>
+		<?php endif; // End checkbox handler ?>
 	<?php endforeach; // End field handler.?>
 
 		</div><!-- end class="section" -->
