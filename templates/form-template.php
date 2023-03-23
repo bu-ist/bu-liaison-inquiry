@@ -61,7 +61,7 @@
 			elseif ( isset( $field->hidden ) && $field->hidden && 'select' == $field->htmlElement && isset( $field->default ) && $field->default ): ?>
 				<input type="hidden" name="<?php echo esc_attr($field->id);?>" value="<?php echo esc_attr($field->default);?>">
 			<?php
-			// Begin handler for two types of html elements: input-text or select.
+			// Begin handler for three types of html elements: input-text, select, or checkbox.
 			elseif ( 'input-text' == $field->htmlElement ) :
 				// Begin input text handler.
 				$class = '';
@@ -164,10 +164,24 @@
 						</div>
 					</div><!-- end class="form-group" -->
 				</div><!-- end class="row" -->
-
-		<?php endif; // End select field handler.?>
+				<!-- End select field handler. -->
+		<?php elseif ( 'input-checkbox' == $field->htmlElement && $field->type == 'Checkbox' && $field->id != '13-text-opt-in' ) : // Begin checkbox field handler ?>
+		<div class="row">
+			<?php
+				$class = ' iqs-form-checkbox';
+				
+			?>
+			<div class="form-group">
+				<label for="<?php echo $field->id; ?>" class="col-sm-4 control-label"><?php echo $label . (($field->required) ? ' <span class="asterisk">*</span>' : ''); ?></label>
+				<div class="col-sm-6 col-md-5">
+					<label for="<?php echo $field->id; ?>">
+						<input type="checkbox" class="<?php echo $class; ?>" name="<?php echo esc_attr( $field->id ) . '[]'; ?>" id="<?php echo esc_attr( $field->id ); ?>" value="<?php echo esc_attr($field->options[0]->id); ?>" aria-required="true">
+					</label>
+				</div>
+			</div>
+		</div>
+		<?php endif; // End checkbox handler ?>
 	<?php endforeach; // End field handler.?>
-
 
 		</div><!-- end class="section" -->
 
