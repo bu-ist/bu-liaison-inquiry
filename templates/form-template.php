@@ -180,7 +180,36 @@
 				</div>
 			</div>
 		</div>
-		<?php endif; // End checkbox handler ?>
+		<?php elseif ('select-multiple' == $field->htmlElement) : // Begin select-multiple handler ?>
+			<div class="row">
+				<?php $class = ' iqs-form-multi-select'; ?>
+				<div class="form-group">
+					<label for="<?php echo $field->id; ?>" class="col-sm-4 control-label"><?php echo $label . (($field->required) ? ' <span class="asterisk">*</span>' : ''); ?></label>
+					<div class="col-sm-6 col-md-5">
+					<select
+						multiple
+						name="<?php echo $field->id; ?>"
+						id="<?php echo $field->id; ?>"
+						class="input-sm form-control<?php echo (($field->required) ? ' required' : '') . $class; ?>">
+			<?php foreach ( $field->options as $option ) : ?>
+				<?php if ( isset( $option->options ) ) : ?>
+					<optgroup label="<?php echo $option->label; ?>">
+
+					<?php foreach ( $option->options as $sub_option ) : ?>
+						<option value="<?php echo $sub_option->id; ?>"><?php echo $sub_option->value; ?></option>
+					<?php endforeach; ?>
+
+					</optgroup>
+
+				<?php else : ?>
+					<option <?php echo $field->default == $option->id ? 'selected' : ''; ?> value="<?php echo $option->id; ?>"><?php echo $option->value; ?></option>
+				<?php endif; ?>
+			<?php endforeach; ?>
+					</select>
+					</div>
+				</div>
+			</div>
+		<?php endif; ?>
 	<?php endforeach; // End field handler.?>
 
 		</div><!-- end class="section" -->
