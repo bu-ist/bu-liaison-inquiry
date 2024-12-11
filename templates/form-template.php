@@ -55,7 +55,7 @@
 
 			<?php
 			// Mini form needs to pass dummy values to otherwise required fields; insert them here as hidden inputs.
-			if ( isset( $field->hidden ) && $field->hidden && ('select' !== $field->htmlElement || $field->hidden_value) ) : ?>
+			if ( isset( $field->hidden ) && $field->hidden && (('select' !== $field->htmlElement && 'select-multiple' !== $field->htmlElement) || $field->hidden_value) ) : ?>
 				<input type="hidden" name="<?php echo esc_attr($field->id);?>" value="<?php echo esc_attr($field->hidden_value);?>">
 			<?php
 			elseif ( isset( $field->hidden ) && $field->hidden && 'select' == $field->htmlElement && isset( $field->default ) && $field->default ): ?>
@@ -183,7 +183,7 @@
 		<?php elseif ('select-multiple' == $field->htmlElement) : // Begin select-multiple handler ?>
 			<div class="row">
 				<?php $class = ' iqs-form-multi-select'; ?>
-				<div class="form-group">
+				<div class="form-group <?php echo $field->hidden ? 'hide' : '' ?>">
 					<label for="<?php echo $field->id; ?>" class="col-sm-4 control-label"><?php echo $label . (($field->required) ? ' <span class="asterisk">*</span>' : ''); ?></label>
 					<div class="col-sm-6 col-md-5">
 					<select
@@ -209,6 +209,7 @@
 					</div>
 				</div>
 			</div>
+			<!-- End select-multiple field handler. -->
 		<?php endif; ?>
 	<?php endforeach; // End field handler.?>
 

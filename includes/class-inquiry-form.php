@@ -337,11 +337,7 @@ class Inquiry_Form {
 				// If this checkbox field is set then it was checked.
 				$value = '1';
 			} elseif ( is_array( $value ) ) {
-				// If this checkbox has an empty value
-				foreach ( $value as $v ) {
-					if (!empty( $v ) )
-						$value = $v;
-				}	
+				$value = implode('%20', $value);
 			} else {
 				// Apply basic field sanitization.
 				$value = sanitize_text_field( $value );
