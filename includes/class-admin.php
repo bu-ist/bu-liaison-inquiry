@@ -242,29 +242,33 @@ class Admin {
 				jQuery('#select_form').change(function () {
 					// Hide inventory of every form
 					jQuery('[id^=form_]').hide();
-					var selected = jQuery('#select_form').val();
-					jQuery('#form_' + selected).show();
-				});
 
-				// Hide inventory of every form
-				jQuery('[id^=form_]').hide();
-				// Show the default one
-				jQuery('#form_default').show();
+					var selected = jQuery('#select_form').val();
+
+					var searchParams = new URLSearchParams(window.location.search);
+					searchParams.set( 'form_id', selected );
+					window.location.search = searchParams.toString();
+				});
 			});
 		</script>
 
 		<select id="select_form">
+			<option value="">Select</option>
 			<?php
 			foreach ( $forms_list as $name => $form_id ) {
 				$caption  = $name . ( $form_id ? ': ' . $form_id : '' );
 				$value    = $form_id ? $form_id : 'default';
-				$selected = $form_id ? '' : 'selected';
+				$selected = $value == ( $_GET['form_id'] ?? '' ) ? 'selected="selected"' : '';
 				?>
-		<option value="<?php echo esc_attr( $value ); ?>" <?php echo esc_attr( $selected ); ?>><?php echo esc_html( $caption ); ?></option>
+		<option value="<?php echo esc_attr( $value ); ?>" <?php echo $selected; ?>><?php echo esc_html( $caption ); ?></option>
 		<?php } ?>
 		</select>
 			<?php
 			foreach ( $forms_list as $name => $form_id ) {
+				$value    = $form_id ? $form_id : 'default';
+				if ( $value != $_GET['form_id'] ?? '' ) {
+					continue;
+				}
 				?>
 		<div id="form_<?php echo $form_id ? esc_attr( $form_id ) : 'default'; ?>">
 		<h2>Sample shortcode</h2>
