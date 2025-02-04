@@ -75,14 +75,17 @@ class Inquiry_Form {
 			$form_definition = $this->minify_form_definition( $form_definition, $attrs );
 		}
 
-		$form_definition = $this->autofill_fields(
-			$form_definition, Settings::list_utm_values(), function ( $field_name ) {
-				if ( isset( $_GET[ $field_name ] ) ) {
-					return $_GET[ $field_name ];
-				}
-				return '';
-			}
-		);
+		// For UTM fields, the field IDs are configured in our settings,
+		// but those fields are not normally in the form definition. We'll
+		// add them ourselves.
+		foreach( Settings::list_utm_values() as $field_name => $id ) {
+			$field = new \stdClass();
+			$field->hidden = 1;
+			$field->id = $id;
+			$field->hidden_value = $_GET[ $field_name ] ?? '';
+
+			$form_definition->sections[ count( $form_definition->sections ) - 1 ]->fields[] = $field;
+		}
 
 		$form_definition = $this->autofill_fields(
 			$form_definition, Settings::page_title_values(), function ( $field_name ) {
