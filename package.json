@@ -1,0 +1,10 @@
+{
+  "name": "bu-liaison-inquiry",
+  "version": "0.9.0",
+  "devDependencies": {
+    "@wordpress/env": "^10.24.0"
+  },
+  "scripts": {
+    "wp-env": "wp-env"
+  }
+}
