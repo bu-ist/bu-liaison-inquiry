@@ -28,6 +28,12 @@
 	// Include form ID if available.
 	echo $form_id ? '<input type="hidden" name="formID" value="' . esc_attr($form_id) .'">' : '';
 
+	// Add org key as hidden field if available.
+	global $org_key_for_template;
+	if ( ! empty( $org_key_for_template ) ) {
+		echo '<input type="hidden" name="org" value="' . esc_attr( $org_key_for_template ) . '" />';
+	}
+
 	// Initialize modal and phone fields.
 	$modals = array();
 	$phone_fields = array();

@@ -69,10 +69,22 @@ class Plugin {
 	}
 
 	/**
-	 * WordPress Ajax request handler
+	 * Handles AJAX form submissions for the Liaison inquiry form.
+	 *
+	 * Selects the correct API credentials based on the submitted org key,
+	 * instantiates the form, invokes the form handler, and returns the result as a JSON response.
+	 * This is what actually sends submitted data to the Liaison API.
+	 * Nonce verification and sensitive processing are handled in the form handler.
 	 */
 	public function ajax_inquiry_form_post() {
-		$form = $this->get_form();
+		// We only use $_POST['org'] here to select credentials; all sensitive processing is nonce-protected in handle_liaison_inquiry().
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$org_key = isset( $_POST['org'] ) ? sanitize_text_field( $_POST['org'] ) : null;
+
+		// Get the form instance.
+		$form = $this->get_form( $org_key );
+
+		// Handle the inquiry form submission and return the result as JSON.
 		wp_send_json( $form->handle_liaison_inquiry() );
 	}
 

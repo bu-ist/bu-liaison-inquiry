@@ -65,6 +65,9 @@ class Inquiry_Form {
 		}
 		unset( $attrs['form_id'] );
 
+		// Extract org key from attrs if present.
+		$org_key = isset( $attrs['org'] ) ? $attrs['org'] : null;
+
 		try {
 			$form_definition = $this->api->get_requirements( $form_id );
 		} catch ( \Exception $e ) {
@@ -95,7 +98,7 @@ class Inquiry_Form {
 			}
 		);
 
-		return $this->render_template( $form_definition, $form_id );
+		return $this->render_template( $form_definition, $form_id, $org_key );
 	}
 
 	/**
@@ -241,7 +244,7 @@ class Inquiry_Form {
 	 * @param  string|null $form_id Form's ID, null for default one.
 	 * @return string Returns full form markup
 	 */
-	public function render_template( $inquiry_form, $form_id ) {
+	public function render_template( $inquiry_form, $form_id, $org_key = null ) {
 		// Setup nonce for form to protect against various possible attacks.
 		$nonce = wp_nonce_field(
 			self::$nonce_name,
@@ -249,6 +252,10 @@ class Inquiry_Form {
 			false,
 			false
 		);
+
+		// Make $org_key available to the template
+		global $org_key_for_template;
+		$org_key_for_template = $org_key;
 
 		// Include template file.
 		ob_start();
