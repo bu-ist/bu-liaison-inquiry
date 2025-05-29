@@ -196,6 +196,29 @@ class Admin {
 			return;
 		}
 
+		// Handle add alternate credential action.
+		if ( isset( $_POST['new_org_key'], $_POST['new_client_id'], $_POST['new_api_key'] ) && check_admin_referer( 'add_alt_cred' ) ) {
+			$org_key   = sanitize_text_field( $_POST['new_org_key'] );
+			$client_id = sanitize_text_field( $_POST['new_client_id'] );
+			$api_key   = sanitize_text_field( $_POST['new_api_key'] );
+			if ( $org_key && $client_id && $api_key ) {
+				$alternates = Settings::get_alternate_credentials();
+				if ( ! isset( $alternates[ $org_key ] ) ) {
+					Settings::add_alternate_credential( $org_key, $client_id, $api_key );
+					add_settings_error( 'bu_liaison_inquiry_messages', 'alt_cred_added', __( 'Alternate credential added.', 'bu_liaison_inquiry' ), 'updated' );
+				} else {
+					add_settings_error( 'bu_liaison_inquiry_messages', 'alt_cred_exists', __( 'Org Key already exists.', 'bu_liaison_inquiry' ), 'error' );
+				}
+			}
+		}
+
+		// Handle delete alternate credential action.
+		if ( isset( $_POST['delete_alt_cred'] ) && check_admin_referer( 'delete_alt_cred_' . $_POST['delete_alt_cred'] ) ) {
+			$org_key = sanitize_text_field( $_POST['delete_alt_cred'] );
+			Settings::remove_alternate_credential( $org_key );
+			add_settings_error( 'bu_liaison_inquiry_messages', 'alt_cred_deleted', __( 'Alternate credential deleted.', 'bu_liaison_inquiry' ), 'updated' );
+		}
+
 		// Show status messages.
 		settings_errors( 'bu_liaison_inquiry_messages' );
 			?>
@@ -295,6 +318,45 @@ class Admin {
 				<?php
 			}
 		}
+		?>
+		<hr>
+		<h2><?php esc_html_e( 'Alternate Credentials (for additional organizations)', 'bu_liaison_inquiry' ); ?></h2>
+		<p><?php esc_html_e( 'Use the Org Key in your shortcode:', 'bu_liaison_inquiry' ); ?> <code>[liaison_inquiry_form org="org_key"]</code></p>
+		<table class="widefat" style="max-width:600px;">
+			<thead>
+				<tr>
+					<th><?php esc_html_e( 'Org Key', 'bu_liaison_inquiry' ); ?></th>
+					<th><?php esc_html_e( 'API Key', 'bu_liaison_inquiry' ); ?></th>
+					<th><?php esc_html_e( 'Client ID', 'bu_liaison_inquiry' ); ?></th>
+					<th><?php esc_html_e( 'Actions', 'bu_liaison_inquiry' ); ?></th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php foreach ( Settings::get_alternate_credentials() as $org_key => $creds ) : ?>
+					<tr>
+						<td><?php echo esc_html( $org_key ); ?></td>
+						<td><?php echo esc_html( substr( $creds['APIKey'], 0, 10 ) ) . '...'; ?></td>
+						<td><?php echo esc_html( $creds['ClientID'] ); ?></td>
+						<td>
+							<form method="post" style="display:inline;">
+								<?php wp_nonce_field( 'delete_alt_cred_' . $org_key ); ?>
+								<input type="hidden" name="delete_alt_cred" value="<?php echo esc_attr( $org_key ); ?>">
+								<button type="submit" class="button button-small" onclick="return confirm('<?php esc_attr_e( 'Are you sure you want to delete this alternate credential?', 'bu_liaison_inquiry' ); ?>');">Delete</button>
+							</form>
+						</td>
+					</tr>
+				<?php endforeach; ?>
+			</tbody>
+		</table>
+		<h3><?php esc_html_e( 'Add New Alternate Credential', 'bu_liaison_inquiry' ); ?></h3>
+		<form method="post" style="max-width:600px;">
+			<?php wp_nonce_field( 'add_alt_cred' ); ?>
+			<input name="new_org_key" placeholder="Org Key" required style="width:100px;">
+			<input name="new_api_key" placeholder="API Key" required style="width:300px;">
+			<input name="new_client_id" placeholder="Client ID" required style="width:60px;">
+			<button type="submit" class="button button-primary"><?php esc_html_e( 'Add Alternate', 'bu_liaison_inquiry' ); ?></button>
+		</form>
+		<?php
 	}
 
 }
