@@ -32,22 +32,22 @@ class Plugin {
 
 	/**
 	 * Initializes API class
+	 *
+	 * @param string|null $org_key Optional org key for alternate credentials.
 	 */
-	public function get_api_instance() {
-		// Get API key and Client ID from option settings.
-		$client_id = Settings::get( 'ClientID' );
-		$api_key   = Settings::get( 'APIKey' );
-
+	public function get_api_instance( $org_key = null ) {
+		$creds = Settings::get_credentials_for_org( $org_key );
 		$class = $this->api_class;
-
-		return new $class( $client_id, $api_key );
+		return new $class( $creds['ClientID'], $creds['APIKey'] );
 	}
 
 	/**
 	 * Creates an inquiry form instance
+	 *
+	 * @param string|null $org_key Optional org key for alternate credentials.
 	 */
-	public function get_form() {
-		$api = $this->get_api_instance();
+	public function get_form( $org_key = null ) {
+		$api = $this->get_api_instance( $org_key );
 		return new Inquiry_Form( $api );
 	}
 
@@ -63,7 +63,8 @@ class Plugin {
 		if ( '' === $attrs ) {
 			$attrs = [];
 		}
-		$form = $this->get_form();
+		$org_key = isset( $attrs['org'] ) ? sanitize_text_field( $attrs['org'] ) : null;
+		$form    = $this->get_form( $org_key );
 		return $form->get_html( $attrs );
 	}
 
