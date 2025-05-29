@@ -198,9 +198,9 @@ class Admin {
 
 		// Handle add alternate credential action.
 		if ( isset( $_POST['new_org_key'], $_POST['new_client_id'], $_POST['new_api_key'] ) && check_admin_referer( 'add_alt_cred' ) ) {
-			$org_key   = sanitize_text_field( $_POST['new_org_key'] );
-			$client_id = sanitize_text_field( $_POST['new_client_id'] );
-			$api_key   = sanitize_text_field( $_POST['new_api_key'] );
+			$org_key   = sanitize_text_field( wp_unslash( $_POST['new_org_key'] ) );
+			$client_id = sanitize_text_field( wp_unslash( $_POST['new_client_id'] ) );
+			$api_key   = sanitize_text_field( wp_unslash( $_POST['new_api_key'] ) );
 			if ( $org_key && $client_id && $api_key ) {
 				$alternates = Settings::get_alternate_credentials();
 				if ( ! isset( $alternates[ $org_key ] ) ) {
@@ -213,10 +213,15 @@ class Admin {
 		}
 
 		// Handle delete alternate credential action.
-		if ( isset( $_POST['delete_alt_cred'] ) && check_admin_referer( 'delete_alt_cred_' . $_POST['delete_alt_cred'] ) ) {
-			$org_key = sanitize_text_field( $_POST['delete_alt_cred'] );
-			Settings::remove_alternate_credential( $org_key );
-			add_settings_error( 'bu_liaison_inquiry_messages', 'alt_cred_deleted', __( 'Alternate credential deleted.', 'bu_liaison_inquiry' ), 'updated' );
+		if ( isset( $_POST['delete_alt_cred'] ) ) {
+			$raw_org_key = sanitize_text_field( wp_unslash( $_POST['delete_alt_cred'] ) );
+			// Verify nonce for security.
+			if ( check_admin_referer( 'delete_alt_cred_' . $raw_org_key ) ) {
+				// Remove the alternate credential.
+				Settings::remove_alternate_credential( $raw_org_key );
+				// Add a success message.
+				add_settings_error( 'bu_liaison_inquiry_messages', 'alt_cred_deleted', __( 'Alternate credential deleted.', 'bu_liaison_inquiry' ), 'updated' );
+			}
 		}
 
 		// Show status messages.
