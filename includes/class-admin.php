@@ -105,7 +105,13 @@ class Admin {
 	 */
 	public function bu_liaison_inquiry_settings_init() {
 		// Register a new setting for "bu_liaison_inquiry" page.
-		register_setting( 'bu_liaison_inquiry', 'bu_liaison_inquiry_options' );
+		register_setting(
+			'bu_liaison_inquiry',
+			'bu_liaison_inquiry_options',
+			array(
+				'show_in_rest' => true,
+			)
+		);
 
 		// Register the API Key and Client ID section.
 		$this->add_section(
