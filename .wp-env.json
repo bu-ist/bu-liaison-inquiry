@@ -1,5 +1,5 @@
 {
-  "core": "WordPress/WordPress#5.8",
+  "core": "WordPress/WordPress#5.4",
   "phpVersion": "7.4",
   "plugins": [ ".", "WordPress/classic-editor" ]
 }
