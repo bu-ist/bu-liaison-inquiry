@@ -38,21 +38,39 @@ function App() {
 
     return (
         <div className="bu-liaison-inquiry-admin-app">
+            <h1>
+                {__('BU Liaison Inquiry Settings', 'bu-liaison-inquiry')}
+            </h1>
             <Card>
                 <CardHeader>
-                    <h1>
-                        {__('BU Liaison Inquiry Settings', 'bu-liaison-inquiry')}
-                    </h1>
+                    <h2>{ __('Primary Organization Credentials', 'bu-liaison-inquiry') }</h2>
                 </CardHeader>
                 <CardBody>
-                    <TextControl
-                        label={ __('Custom Field', 'bu-liaison-inquiry') }
-                        help={ __('This is a custom field for demonstration purposes.', 'bu-liaison-inquiry') }
-                        placeholder={ __('Enter value...', 'bu-liaison-inquiry') }
-                    />
-
-                    {JSON.stringify(settings, null, 2)}
-
+                    <>
+                        <TextControl
+                            label={ __('API Key', 'bu-liaison-inquiry') }
+                            help={ __('The API key for the primary organization.', 'bu-liaison-inquiry') }
+                            value={ settings.APIKey || '' }
+                            placeholder={ __('Enter API key...', 'bu-liaison-inquiry') }
+                            style={{ maxWidth: '400px' }}
+                        />
+                        <TextControl
+                            label={ __('Client ID', 'bu-liaison-inquiry') }
+                            help={ __('The client ID for the primary organization.', 'bu-liaison-inquiry') }
+                            value={ settings.ClientID || '' }
+                            placeholder={ __('Enter client ID...', 'bu-liaison-inquiry') }
+                            style={{ maxWidth: '100px' }}
+                        />
+                        {JSON.stringify(settings, null, 2) }
+                    </>
+                </CardBody>
+            </Card>
+            <Card>
+                <CardHeader>
+                    <h2>{ __('Alternate Organization Credentials', 'bu-liaison-inquiry') }</h2>
+                </CardHeader>
+                <CardBody>
+                    Other controls
                 </CardBody>
             </Card>
         </div>
