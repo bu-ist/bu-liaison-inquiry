@@ -1,8 +1,6 @@
 /**
  * WordPress dependencies
  */
-import { useSelect } from '@wordpress/data';
-import { useEntityProp } from '@wordpress/core-data';
 import { __ } from '@wordpress/i18n';
 
 import { useState, useEffect } from '@wordpress/element';
@@ -22,19 +20,21 @@ function App() {
     const [ settings, setSettings ] = useState( {} );
 
     useEffect(() => {
+        // Define a local function to fetch settings from the REST API.
         const fetchSettings = async () => {
-                const result = await apiFetch( {
-                    path: '/bu-liaison-inquiry/v1/credentials',
-                } );
-                setSettings( result );
-                console.log('result', result);
-            };
-            fetchSettings().catch( ( error ) => {
-                console.error( error );
+            // Load the plugin settings options value from the custom endpoint.
+            const result = await apiFetch( {
+                path: '/bu-liaison-inquiry/v1/credentials',
             } );
-    }, [])
+            setSettings( result );
+            console.log('result', result);
+        };
 
-    // The most reliable method is to create a custom REST API endpoint in your plugin or theme that exposes the specific options you need.
+        // Call the fetchSettings function to load the settings when the component is first loaded.
+        fetchSettings().catch( ( error ) => {
+            console.error( error );
+        } );
+    }, [])
 
     return (
         <div className="bu-liaison-inquiry-admin-app">
