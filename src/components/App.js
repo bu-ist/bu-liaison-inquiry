@@ -5,7 +5,15 @@ import { __ } from '@wordpress/i18n';
 
 import { useState, useEffect } from '@wordpress/element';
 
-import { Card, CardHeader, CardBody, TextControl } from '@wordpress/components';
+import { 
+    Card,
+    CardHeader, 
+    CardBody, 
+    TextControl, 
+    Button,
+    Notice,
+    Spinner
+} from '@wordpress/components';
 
 import apiFetch from '@wordpress/api-fetch';
 
@@ -16,24 +24,58 @@ import apiFetch from '@wordpress/api-fetch';
  * @return {JSX.Element} The application interface.
  */
 function App() {
-
     const [ settings, setSettings ] = useState( {} );
+    const [ isLoading, setIsLoading ] = useState( true );
+    const [ isSaving, setIsSaving ] = useState( false );
+    const [ error, setError ] = useState( null );
+
+    // Handle input changes
+    const handleChange = ( key, value ) => {
+        setSettings( prev => ({
+            ...prev,
+            [key]: value
+        }));
+    };
+
+    // Handle save action
+    const handleSave = async () => {
+        try {
+            setIsSaving( true );
+            setError( null );
+
+            const response = await apiFetch({
+                path: '/bu-liaison-inquiry/v1/credentials',
+                method: 'POST',
+                data: settings
+            });
+
+            setSettings( response );
+        } catch ( err ) {
+            setError( err.message );
+            console.error( err );
+        } finally {
+            setIsSaving( false );
+        }
+    };
 
     useEffect(() => {
-        // Define a local function to fetch settings from the REST API.
         const fetchSettings = async () => {
-            // Load the plugin settings options value from the custom endpoint.
-            const result = await apiFetch( {
-                path: '/bu-liaison-inquiry/v1/credentials',
-            } );
-            setSettings( result );
-            console.log('result', result);
+            try {
+                setIsLoading( true );
+                setError( null );
+                const result = await apiFetch({
+                    path: '/bu-liaison-inquiry/v1/credentials',
+                });
+                setSettings( result );
+            } catch ( err ) {
+                setError( err.message );
+                console.error( err );
+            } finally {
+                setIsLoading( false );
+            }
         };
 
-        // Call the fetchSettings function to load the settings when the component is first loaded.
-        fetchSettings().catch( ( error ) => {
-            console.error( error );
-        } );
+        fetchSettings();
     }, [])
 
     return (
@@ -47,21 +89,52 @@ function App() {
                 </CardHeader>
                 <CardBody>
                     <>
-                        <TextControl
-                            label={ __('API Key', 'bu-liaison-inquiry') }
-                            help={ __('The API key for the primary organization.', 'bu-liaison-inquiry') }
-                            value={ settings.APIKey || '' }
-                            placeholder={ __('Enter API key...', 'bu-liaison-inquiry') }
-                            style={{ maxWidth: '400px' }}
-                        />
-                        <TextControl
-                            label={ __('Client ID', 'bu-liaison-inquiry') }
-                            help={ __('The client ID for the primary organization.', 'bu-liaison-inquiry') }
-                            value={ settings.ClientID || '' }
-                            placeholder={ __('Enter client ID...', 'bu-liaison-inquiry') }
-                            style={{ maxWidth: '100px' }}
-                        />
-                        {JSON.stringify(settings, null, 2) }
+                        {error && (
+                            <Notice 
+                                status="error" 
+                                isDismissible={false}
+                                className="save-error"
+                            >
+                                {error}
+                            </Notice>
+                        )}
+                        
+                        {isLoading ? (
+                            <Spinner />
+                        ) : (
+                            <>
+                                <TextControl
+                                    label={ __('API Key', 'bu-liaison-inquiry') }
+                                    help={ __('The API key for the primary organization.', 'bu-liaison-inquiry') }
+                                    value={ settings.APIKey || '' }
+                                    onChange={ ( value ) => handleChange( 'APIKey', value ) }
+                                    placeholder={ __('Enter API key...', 'bu-liaison-inquiry') }
+                                    style={{ maxWidth: '400px' }}
+                                    disabled={ isSaving }
+                                />
+                                <TextControl
+                                    label={ __('Client ID', 'bu-liaison-inquiry') }
+                                    help={ __('The client ID for the primary organization.', 'bu-liaison-inquiry') }
+                                    value={ settings.ClientID || '' }
+                                    onChange={ ( value ) => handleChange( 'ClientID', value ) }
+                                    placeholder={ __('Enter client ID...', 'bu-liaison-inquiry') }
+                                    style={{ maxWidth: '100px' }}
+                                    disabled={ isSaving }
+                                />
+                                <Button
+                                    variant='primary'
+                                    style={{ marginTop: '10px' }}
+                                    onClick={handleSave}
+                                    isBusy={isSaving}
+                                    disabled={isSaving}
+                                >
+                                    {isSaving 
+                                        ? __('Saving...', 'bu-liaison-inquiry')
+                                        : __('Save Settings', 'bu-liaison-inquiry')
+                                    }
+                                </Button>
+                            </>
+                        )}
                     </>
                 </CardBody>
             </Card>
