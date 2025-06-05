@@ -13,7 +13,13 @@ import {
     Spinner
 } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
-import { useForm, useFieldArray } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
+
+/**
+ * Internal dependencies
+ */
+import CredentialModal from './CredentialModal';
+import CredentialCard from './CredentialCard';
 
 /**
  * The main admin application component.
@@ -25,6 +31,9 @@ function App() {
     const [ isSaving, setIsSaving ] = useState( false );
     const [ error, setError ] = useState( null );
     const [ success, setSuccess ] = useState( false );
+    const [ alternateCredentials, setAlternateCredentials ] = useState( {} );
+    const [ isModalOpen, setIsModalOpen ] = useState( false );
+    const [ currentOrgKey, setCurrentOrgKey ] = useState( null );
 
     const { 
         register, 
@@ -32,27 +41,46 @@ function App() {
         reset,
         setValue,
         watch,
-        control,
         formState: { errors }
     } = useForm({
         defaultValues: {
             APIKey: '',
-            ClientID: '',
-            alternate_credentials: []
+            ClientID: ''
         }
-    });
-
-    const { 
-        fields: altOrgs, 
-        append: appendOrg, 
-        remove: removeOrg 
-    } = useFieldArray({
-        control,
-        name: "alternate_credentials"
     });
 
     const values = watch();
 
+    // Open modal to edit an organization
+    const editOrganization = (orgKey) => {
+        setCurrentOrgKey(orgKey);
+        setIsModalOpen(true);
+    };
+    
+    // Open modal to add a new organization
+    const addNewOrganization = () => {
+        setCurrentOrgKey(null);
+        setIsModalOpen(true);
+    };
+    
+    // Save credential from modal
+    const saveCredential = (orgKey, data) => {
+        setAlternateCredentials(prev => ({
+            ...prev,
+            [orgKey]: data
+        }));
+        setIsModalOpen(false);
+    };
+    
+    // Delete an organization
+    const deleteOrganization = (orgKey) => {
+        setAlternateCredentials(prev => {
+            const newCreds = { ...prev };
+            delete newCreds[orgKey];
+            return newCreds;
+        });
+    };
+    
     // Handle form submission
     const onSubmit = async (data) => {
         setError(null);
@@ -60,10 +88,17 @@ function App() {
         
         try {
             setIsSaving(true);
+            
+            // Combine primary credentials with alternate credentials
+            const formData = {
+                ...data,
+                alternate_credentials: alternateCredentials
+            };
+            
             const response = await apiFetch({
                 path: '/bu-liaison-inquiry/v1/credentials',
                 method: 'POST',
-                data
+                data: formData
             });
 
             reset(response);
@@ -90,7 +125,15 @@ function App() {
                 const result = await apiFetch({
                     path: '/bu-liaison-inquiry/v1/credentials',
                 });
-                reset(result); // Update form with fetched data
+                
+                // Extract alternate credentials
+                const { alternate_credentials, ...primaryCreds } = result;
+                
+                // Update primary credentials form
+                reset(primaryCreds);
+                
+                // Update alternate credentials state
+                setAlternateCredentials(alternate_credentials || {});
             } catch (err) {
                 setError(err.message);
                 console.error(err);
@@ -188,68 +231,21 @@ function App() {
                     <h2>{__('Alternate Organization Credentials', 'bu-liaison-inquiry')}</h2>
                 </CardHeader>
                 <CardBody>
-                    {altOrgs.map((org, index) => (
-                        <div key={org.id} style={{ marginBottom: '20px', padding: '15px', border: '1px solid #ccc', borderRadius: '4px' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
-                                <h3>{__('Organization', 'bu-liaison-inquiry')} {index + 1}</h3>
-                                <Button
-                                    isDestructive
-                                    variant="secondary"
-                                    onClick={() => removeOrg(index)}
-                                    disabled={isSaving}
-                                >
-                                    {__('Remove', 'bu-liaison-inquiry')}
-                                </Button>
-                            </div>
-                            <TextControl
-                                {...register(`alternate_credentials.${index}.orgKey`, {
-                                    required: __('Organization Key is required.', 'bu-liaison-inquiry')
-                                })}
-                                onChange={val => setValue(`alternate_credentials.${index}.orgKey`, val)}
-                                value={org.orgKey || ''}
-                                label={__('Organization Key:', 'bu-liaison-inquiry')}
-                                help={errors.alternate_credentials?.[index]?.orgKey?.message || __('A unique identifier for this organization.', 'bu-liaison-inquiry')}
-                                placeholder={__('Enter organization key...', 'bu-liaison-inquiry')}
-                                style={{ maxWidth: '200px' }}
-                                disabled={isSaving}
-                            />
-                            <TextControl
-                                {...register(`alternate_credentials.${index}.APIKey`, {
-                                    required: __('API Key is required.', 'bu-liaison-inquiry'),
-                                    minLength: {
-                                        value: 10,
-                                        message: __('API Key must be at least 10 characters.', 'bu-liaison-inquiry')
-                                    }
-                                })}
-                                onChange={val => setValue(`alternate_credentials.${index}.APIKey`, val)}
-                                value={org.APIKey || ''}
-                                label={__('API Key:', 'bu-liaison-inquiry')}
-                                help={errors.alternate_credentials?.[index]?.APIKey?.message || __('The API key for this organization.', 'bu-liaison-inquiry')}
-                                placeholder={__('Enter API key...', 'bu-liaison-inquiry')}
-                                style={{ maxWidth: '400px' }}
-                                disabled={isSaving}
-                            />
-                            <TextControl
-                                {...register(`alternate_credentials.${index}.ClientID`, {
-                                    required: __('Client ID is required.', 'bu-liaison-inquiry')
-                                })}
-                                onChange={val => setValue(`alternate_credentials.${index}.ClientID`, val)}
-                                value={org.ClientID || ''}
-                                label={__('Client ID:', 'bu-liaison-inquiry')}
-                                help={errors.alternate_credentials?.[index]?.ClientID?.message || __('The client ID for this organization.', 'bu-liaison-inquiry')}
-                                placeholder={__('Enter client ID...', 'bu-liaison-inquiry')}
-                                style={{ maxWidth: '100px' }}
-                                disabled={isSaving}
-                            />
-                        </div>
+                    {Object.entries(alternateCredentials).map(([orgKey, data]) => (
+                        <CredentialCard
+                            key={orgKey}
+                            orgKey={orgKey}
+                            data={data}
+                            onEdit={editOrganization}
+                            onDelete={deleteOrganization}
+                            disabled={isSaving}
+                        />
                     ))}
+                    
                     <Button
+                        isSecondary // for 5.4 compatibility
                         variant="secondary"
-                        onClick={() => appendOrg({ 
-                            orgKey: '', 
-                            APIKey: '', 
-                            ClientID: '' 
-                        })}
+                        onClick={addNewOrganization}
                         style={{ marginTop: '10px' }}
                         disabled={isSaving}
                     >
@@ -257,6 +253,16 @@ function App() {
                     </Button>
                 </CardBody>
             </Card>
+            
+            {isModalOpen && (
+                <CredentialModal
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                    orgKey={currentOrgKey}
+                    initialData={currentOrgKey ? alternateCredentials[currentOrgKey] : null}
+                    onSave={saveCredential}
+                />
+            )}
         </div>
     );
 }
