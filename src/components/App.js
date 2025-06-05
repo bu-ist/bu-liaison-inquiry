@@ -16,6 +16,12 @@ import apiFetch from '@wordpress/api-fetch';
 import { useForm } from 'react-hook-form';
 
 /**
+ * Internal dependencies
+ */
+import CredentialModal from './CredentialModal';
+import CredentialCard from './CredentialCard';
+
+/**
  * The main admin application component.
  *
  * @return {JSX.Element} The application interface.
@@ -25,6 +31,9 @@ function App() {
     const [ isSaving, setIsSaving ] = useState( false );
     const [ error, setError ] = useState( null );
     const [ success, setSuccess ] = useState( false );
+    const [ alternateCredentials, setAlternateCredentials ] = useState( {} );
+    const [ isModalOpen, setIsModalOpen ] = useState( false );
+    const [ currentOrgKey, setCurrentOrgKey ] = useState( null );
 
     const { 
         register, 
@@ -42,6 +51,36 @@ function App() {
 
     const values = watch();
 
+    // Open modal to edit an organization
+    const editOrganization = (orgKey) => {
+        setCurrentOrgKey(orgKey);
+        setIsModalOpen(true);
+    };
+    
+    // Open modal to add a new organization
+    const addNewOrganization = () => {
+        setCurrentOrgKey(null);
+        setIsModalOpen(true);
+    };
+    
+    // Save credential from modal
+    const saveCredential = (orgKey, data) => {
+        setAlternateCredentials(prev => ({
+            ...prev,
+            [orgKey]: data
+        }));
+        setIsModalOpen(false);
+    };
+    
+    // Delete an organization
+    const deleteOrganization = (orgKey) => {
+        setAlternateCredentials(prev => {
+            const newCreds = { ...prev };
+            delete newCreds[orgKey];
+            return newCreds;
+        });
+    };
+    
     // Handle form submission
     const onSubmit = async (data) => {
         setError(null);
@@ -49,10 +88,17 @@ function App() {
         
         try {
             setIsSaving(true);
+            
+            // Combine primary credentials with alternate credentials
+            const formData = {
+                ...data,
+                alternate_credentials: alternateCredentials
+            };
+            
             const response = await apiFetch({
                 path: '/bu-liaison-inquiry/v1/credentials',
                 method: 'POST',
-                data
+                data: formData
             });
 
             reset(response);
@@ -79,7 +125,15 @@ function App() {
                 const result = await apiFetch({
                     path: '/bu-liaison-inquiry/v1/credentials',
                 });
-                reset(result); // Update form with fetched data
+                
+                // Extract alternate credentials
+                const { alternate_credentials, ...primaryCreds } = result;
+                
+                // Update primary credentials form
+                reset(primaryCreds);
+                
+                // Update alternate credentials state
+                setAlternateCredentials(alternate_credentials || {});
             } catch (err) {
                 setError(err.message);
                 console.error(err);
@@ -177,9 +231,38 @@ function App() {
                     <h2>{__('Alternate Organization Credentials', 'bu-liaison-inquiry')}</h2>
                 </CardHeader>
                 <CardBody>
-                    Other controls
+                    {Object.entries(alternateCredentials).map(([orgKey, data]) => (
+                        <CredentialCard
+                            key={orgKey}
+                            orgKey={orgKey}
+                            data={data}
+                            onEdit={editOrganization}
+                            onDelete={deleteOrganization}
+                            disabled={isSaving}
+                        />
+                    ))}
+                    
+                    <Button
+                        isSecondary // for 5.4 compatibility
+                        variant="secondary"
+                        onClick={addNewOrganization}
+                        style={{ marginTop: '10px' }}
+                        disabled={isSaving}
+                    >
+                        {__('Add Organization', 'bu-liaison-inquiry')}
+                    </Button>
                 </CardBody>
             </Card>
+            
+            {isModalOpen && (
+                <CredentialModal
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                    orgKey={currentOrgKey}
+                    initialData={currentOrgKey ? alternateCredentials[currentOrgKey] : null}
+                    onSave={saveCredential}
+                />
+            )}
         </div>
     );
 }
