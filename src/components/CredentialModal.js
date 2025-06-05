@@ -22,13 +22,19 @@ import { useForm } from 'react-hook-form';
  * @param {Function} props.onSave Callback to save the credential data.
  * @return {JSX.Element} The credential modal component.
  */
-function CredentialModal({ isOpen, onClose, orgKey, initialData, onSave }) {
+function CredentialModal({ isOpen, onClose, orgKey, initialData, onSave, isSaving: parentIsSaving = false }) {
     const [error, setError] = useState(null);
+    const [success, setSuccess] = useState(false);
+    const [localIsSaving, setLocalIsSaving] = useState(false);
+    
+    // Combined saving state from parent and local
+    const isSaving = parentIsSaving || localIsSaving;
     
     const { 
         register, 
         handleSubmit, 
         setValue,
+        reset,
         watch,
         formState: { errors }
     } = useForm({
@@ -40,7 +46,7 @@ function CredentialModal({ isOpen, onClose, orgKey, initialData, onSave }) {
 
     const values = watch();
 
-    const onSubmit = (data) => {
+    const onSubmit = async (data) => {
         // Validate orgKey if this is a new organization
         if (!orgKey && !values.orgKey) {
             setError(__('Organization Key is required.', 'bu-liaison-inquiry'));
@@ -52,7 +58,30 @@ function CredentialModal({ isOpen, onClose, orgKey, initialData, onSave }) {
         
         // Pass only APIKey and ClientID to parent
         const { APIKey, ClientID } = data;
-        onSave(key, { APIKey, ClientID });
+        
+        try {
+            setError(null);
+            setSuccess(false);
+            setLocalIsSaving(true);
+            
+            await onSave(key, { APIKey, ClientID });
+            
+            // Show success message and reset form with current values as initial
+            setSuccess(true);
+            reset({ APIKey, ClientID, orgKey: key });
+            
+        } catch (err) {
+            setError(err.message || __('Failed to save credentials.', 'bu-liaison-inquiry'));
+            setSuccess(false);
+        } finally {
+            setLocalIsSaving(false);
+        }
+    };
+
+    const handleClose = () => {
+        if (!isSaving) {
+            onClose();
+        }
     };
 
     if (!isOpen) {
@@ -65,7 +94,7 @@ function CredentialModal({ isOpen, onClose, orgKey, initialData, onSave }) {
                 ? __('Edit Organization Credentials', 'bu-liaison-inquiry') 
                 : __('Add New Organization Credentials', 'bu-liaison-inquiry')
             }
-            onRequestClose={onClose}
+            onRequestClose={handleClose}
             className="bu-liaison-credential-modal"
         >
             {error && (
@@ -75,6 +104,16 @@ function CredentialModal({ isOpen, onClose, orgKey, initialData, onSave }) {
                     className="credential-error"
                 >
                     {error}
+                </Notice>
+            )}
+            
+            {success && (
+                <Notice 
+                    status="success" 
+                    isDismissible={false}
+                    className="credential-success"
+                >
+                    {__('Credentials saved successfully! You can make more changes or close this window.', 'bu-liaison-inquiry')}
                 </Notice>
             )}
             
@@ -122,14 +161,20 @@ function CredentialModal({ isOpen, onClose, orgKey, initialData, onSave }) {
                     <Button
                         isPrimary
                         type="submit"
+                        isBusy={isSaving}
+                        disabled={isSaving}
                     >
-                        {__('Save', 'bu-liaison-inquiry')}
+                        {isSaving
+                            ? __('Saving...', 'bu-liaison-inquiry')
+                            : __('Save', 'bu-liaison-inquiry')
+                        }
                     </Button>
                     <Button
                         variant="secondary"
-                        onClick={onClose}
+                        onClick={handleClose}
+                        disabled={isSaving}
                     >
-                        {__('Cancel', 'bu-liaison-inquiry')}
+                        {__('Close', 'bu-liaison-inquiry')}
                     </Button>
                 </div>
             </form>

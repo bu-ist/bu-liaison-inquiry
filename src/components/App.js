@@ -63,13 +63,38 @@ function App() {
         setIsModalOpen(true);
     };
     
-    // Save credential from modal
-    const saveCredential = (orgKey, data) => {
-        setAlternateCredentials(prev => ({
-            ...prev,
-            [orgKey]: data
-        }));
-        setIsModalOpen(false);
+    // Save credential from modal and trigger form submission
+    const saveCredential = async (orgKey, data) => {
+        try {
+            // Update alternate credentials first
+            const newCreds = {
+                ...alternateCredentials,
+                [orgKey]: data
+            };
+            
+            // Trigger form submission and wait for it
+            await new Promise((resolve, reject) => {
+                handleSubmit(async (formData) => {
+                    try {
+                        await onSubmit({
+                            ...formData,
+                            alternate_credentials: newCreds
+                        });
+                        resolve();
+                    } catch (err) {
+                        reject(err);
+                    }
+                })();
+            });
+
+            // Update state but keep modal open
+            setAlternateCredentials(newCreds);
+            return true; // Indicate success to modal
+            
+        } catch (err) {
+            // Let the modal handle the error display
+            throw err;
+        }
     };
     
     // Delete an organization
@@ -89,10 +114,10 @@ function App() {
         try {
             setIsSaving(true);
             
-            // Combine primary credentials with alternate credentials
+            // Use alternate_credentials if provided in data, otherwise use state
             const formData = {
                 ...data,
-                alternate_credentials: alternateCredentials
+                alternate_credentials: data.alternate_credentials || alternateCredentials
             };
             
             const response = await apiFetch({
@@ -261,6 +286,7 @@ function App() {
                     orgKey={currentOrgKey}
                     initialData={currentOrgKey ? alternateCredentials[currentOrgKey] : null}
                     onSave={saveCredential}
+                    isSaving={isSaving}
                 />
             )}
         </div>
