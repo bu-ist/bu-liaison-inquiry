@@ -75,7 +75,24 @@ function update_credentials( $request ) {
 		)
 	);
 
-	// Basic sanitization.
+	// Validate and sanitize alternate credentials.
+	$alternate_credentials = array();
+	if ( isset( $params['alternate_credentials'] ) && is_array( $params['alternate_credentials'] ) ) {
+		foreach ( $params['alternate_credentials'] as $org_key => $cred ) {
+			// Skip if missing required fields.
+			if ( empty( $cred['APIKey'] ) || empty( $cred['ClientID'] ) ) {
+				continue;
+			}
+
+			// Sanitize and add to validated array.
+			$alternate_credentials[ sanitize_text_field( $org_key ) ] = array(
+				'APIKey'   => sanitize_text_field( $cred['APIKey'] ),
+				'ClientID' => sanitize_text_field( $cred['ClientID'] ),
+			);
+		}
+	}
+
+	// Basic sanitization of primary credentials and other fields.
 	$sanitized = array(
 		'APIKey'                => sanitize_text_field( $params['APIKey'] ),
 		'ClientID'              => sanitize_text_field( $params['ClientID'] ),
@@ -85,7 +102,7 @@ function update_credentials( $request ) {
 		'utm_medium'            => sanitize_text_field( $params['utm_medium'] ),
 		'utm_term'              => sanitize_text_field( $params['utm_term'] ),
 		'page_title'            => sanitize_text_field( $params['page_title'] ),
-		'alternate_credentials' => isset( $params['alternate_credentials'] ) ? $params['alternate_credentials'] : array(),
+		'alternate_credentials' => $alternate_credentials,
 	);
 
 	// Update options.
