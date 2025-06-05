@@ -14,5 +14,8 @@
     "wp-env": "wp-env",
     "build": "wp-scripts build src/index.js --output-path=dist/js/build",
     "start": "wp-scripts start src/index.js --output-path=dist/js/build"
+  },
+  "dependencies": {
+    "react-hook-form": "^7.57.0"
   }
 }
