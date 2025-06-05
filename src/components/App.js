@@ -58,10 +58,10 @@ function App() {
             reset(response);
             setSuccess(true);
 
-            // Clear success message after 5 seconds
+            // Clear success message after 10 seconds
             setTimeout(() => {
                 setSuccess(false);
-            }, 5000);
+            }, 10000);
 
         } catch (err) {
             setError(err.message);
