@@ -2,13 +2,13 @@
   "name": "bu-liaison-inquiry",
   "version": "0.9.0",
   "devDependencies": {
-		"@wordpress/env": "^10.24.0",
-		"@wordpress/components": "^26.0.6",
-		"@wordpress/core-data": "^6.28.9",
-		"@wordpress/data": "^9.21.1",
-		"@wordpress/eslint-plugin": "^18.0.0",
-		"@wordpress/scripts": "^27.8.0",
-    "@wordpress/api-fetch": "^3.21.2"
+    "@wordpress/api-fetch": "^3.11.0",
+    "@wordpress/components": "^9.2.7",
+    "@wordpress/core-data": "^2.12.4",
+    "@wordpress/data": "^4.14.2",
+    "@wordpress/env": "^10.24.0",
+    "@wordpress/eslint-plugin": "^18.0.0",
+    "@wordpress/scripts": "^27.8.0"
   },
   "scripts": {
     "wp-env": "wp-env",
