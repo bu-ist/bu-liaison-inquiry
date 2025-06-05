@@ -31,7 +31,7 @@ function register_rest_routes() {
 			),
 			array(
 				'methods'             => \WP_REST_Server::CREATABLE,
-				'callback'            => __NAMESPACE__ . '\create_credential',
+				'callback'            => __NAMESPACE__ . '\update_credentials',
 				'permission_callback' => function () {
 					return current_user_can( 'manage_options' );
 				},
@@ -51,20 +51,47 @@ function get_credentials() {
 }
 
 /**
- * Create a new organization credential
- * 
- * Not tested yet
+ * Update all credentials and settings.
  *
  * @param \WP_REST_Request $request The request object.
  * @return \WP_REST_Response|\WP_Error
  */
-function create_credential( $request ) {
+function update_credentials( $request ) {
 	$params = $request->get_json_params();
 
-	// Update options.
-	update_option( 'bu_liaison_inquiry_options', $params );
+	// Ensure we have all expected fields with defaults if not provided.
+	$params = wp_parse_args(
+		$params,
+		array(
+			'APIKey'                => '',
+			'ClientID'              => '',
+			'utm_source'            => '',
+			'utm_campaign'          => '',
+			'utm_content'           => '',
+			'utm_medium'            => '',
+			'utm_term'              => '',
+			'page_title'            => '',
+			'alternate_credentials' => array(),
+		)
+	);
 
-	return rest_ensure_response( $params );
+	// Basic sanitization.
+	$sanitized = array(
+		'APIKey'                => sanitize_text_field( $params['APIKey'] ),
+		'ClientID'              => sanitize_text_field( $params['ClientID'] ),
+		'utm_source'            => sanitize_text_field( $params['utm_source'] ),
+		'utm_campaign'          => sanitize_text_field( $params['utm_campaign'] ),
+		'utm_content'           => sanitize_text_field( $params['utm_content'] ),
+		'utm_medium'            => sanitize_text_field( $params['utm_medium'] ),
+		'utm_term'              => sanitize_text_field( $params['utm_term'] ),
+		'page_title'            => sanitize_text_field( $params['page_title'] ),
+		'alternate_credentials' => isset( $params['alternate_credentials'] ) ? $params['alternate_credentials'] : array(),
+	);
+
+	// Update options.
+	update_option( 'bu_liaison_inquiry_options', $sanitized );
+
+	return rest_ensure_response( $sanitized );
 }
 
 // Register routes.
