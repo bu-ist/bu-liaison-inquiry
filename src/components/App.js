@@ -190,7 +190,8 @@ function App() {
                                     disabled={ isSaving }
                                 />
                                 <Button
-                                    variant='primary'
+                                    isPrimary
+                                    variant='primary' // Not effective in 5.4, but compatible with future versions.
                                     style={{ marginTop: '10px' }}
                                     onClick={handleSave}
                                     isBusy={isSaving}
