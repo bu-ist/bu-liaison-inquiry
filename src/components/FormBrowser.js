@@ -2,6 +2,11 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
+
+/**
+ * Internal dependencies
+ */
+import './form-browser.css';
 import { useState, useEffect } from '@wordpress/element';
 import { 
     Modal,
@@ -14,73 +19,103 @@ import apiFetch from '@wordpress/api-fetch';
 
 /**
  * Form Browser Modal component for exploring available forms and their fields.
- *
- * @param {Object} props Component properties.
- * @param {boolean} props.isOpen Whether the modal is open.
- * @param {Function} props.onClose Callback to close the modal.
- * @return {JSX.Element} The form browser modal component.
  */
 function FormBrowser({ isOpen, onClose }) {
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoadingForms, setIsLoadingForms] = useState(false);
+    const [isLoadingFields, setIsLoadingFields] = useState(false);
     const [error, setError] = useState(null);
     const [forms, setForms] = useState([]);
     const [selectedForm, setSelectedForm] = useState('');
     const [fields, setFields] = useState(null);
+    const [isMounted, setIsMounted] = useState(true);
 
-    // Load forms when modal opens
+    // Set up cleanup on mount
     useEffect(() => {
-        if (isOpen) {
-            loadForms();
+        return () => setIsMounted(false);
+    }, []);
+
+    // Reset state when modal closes
+    useEffect(() => {
+        if (!isOpen) {
+            setForms([]);
+            setSelectedForm('');
+            setFields(null);
+            setError(null);
         }
     }, [isOpen]);
 
-    const loadForms = async () => {
-        try {
-            setIsLoading(true);
-            setError(null);
+    // Load forms when modal opens
+    useEffect(() => {
+        const loadForms = async () => {
+            if (!isOpen) return;
             
-            const response = await apiFetch({
-                path: '/bu-liaison-inquiry/v1/forms',
-            });
-            
-            const formOptions = Object.entries(response).map(([name, id]) => ({
-                label: name + (id ? `: ${id}` : ''),
-                value: id || 'default'
-            }));
-            
-            setForms(formOptions);
-        } catch (err) {
-            setError(err.message);
-            console.error(err);
-        } finally {
-            setIsLoading(false);
-        }
-    };
+            try {
+                setIsLoadingForms(true);
+                setError(null);
+                
+                const response = await apiFetch({
+                    path: '/bu-liaison-inquiry/v1/forms',
+                });
+                
+                if (!isMounted) return;
+                
+                const formOptions = Object.entries(response).map(([name, id]) => ({
+                    label: name + (id ? `: ${id}` : ''),
+                    value: id || 'default'
+                }));
+                
+                setForms(formOptions);
+            } catch (err) {
+                if (isMounted) {
+                    setError(err.message);
+                    console.error('Error loading forms:', err);
+                }
+            } finally {
+                if (isMounted) {
+                    setIsLoadingForms(false);
+                }
+            }
+        };
 
-    const loadFields = async (formId) => {
-        if (!formId) return;
-        
-        try {
-            setIsLoading(true);
-            setError(null);
+        loadForms();
+    }, [isOpen, isMounted]);
+
+    // Load fields when form is selected
+    useEffect(() => {
+        const loadFields = async () => {
+            if (!selectedForm) return;
             
-            const response = await apiFetch({
-                path: `/bu-liaison-inquiry/v1/forms/${formId}/fields`,
-            });
-            
-            setFields(response);
-        } catch (err) {
-            setError(err.message);
-            console.error(err);
-        } finally {
-            setIsLoading(false);
-        }
-    };
+            try {
+                setIsLoadingFields(true);
+                setError(null);
+                
+                const response = await apiFetch({
+                    path: `/bu-liaison-inquiry/v1/forms/${selectedForm}/fields`,
+                });
+                
+                if (!isMounted) return;
+                
+                setFields(response);
+            } catch (err) {
+                if (isMounted) {
+                    setError(err.message);
+                    console.error('Error loading fields:', err);
+                }
+            } finally {
+                if (isMounted) {
+                    setIsLoadingFields(false);
+                }
+            }
+        };
+
+        loadFields();
+    }, [selectedForm, isMounted]);
 
     const handleFormChange = (value) => {
-        setSelectedForm(value);
-        setFields(null);
-        loadFields(value);
+        if (!isLoadingForms && !isLoadingFields) {
+            setSelectedForm(value);
+            setFields(null);
+        }
     };
 
     const generateShortcode = () => {
@@ -90,12 +125,20 @@ function FormBrowser({ isOpen, onClose }) {
         return `[liaison_inquiry_form form_id="${selectedForm}"]`;
     };
 
+    const handleClose = () => {
+        if (!isLoadingForms && !isLoadingFields) {
+            onClose();
+        }
+    };
+
     if (!isOpen) return null;
+
+    const isLoading = isLoadingForms || isLoadingFields;
 
     return (
         <Modal
             title={__('Browse Liaison Forms', 'bu-liaison-inquiry')}
-            onRequestClose={onClose}
+            onRequestClose={handleClose}
             className="bu-liaison-form-browser-modal"
         >
             {error && (
@@ -130,6 +173,7 @@ function FormBrowser({ isOpen, onClose }) {
                                 navigator.clipboard.writeText(generateShortcode());
                             }}
                             style={{ marginLeft: '8px' }}
+                            disabled={isLoading}
                         >
                             {__('Copy', 'bu-liaison-inquiry')}
                         </Button>
@@ -142,11 +186,15 @@ function FormBrowser({ isOpen, onClose }) {
                     <div className="field-inventory">
                         <h3>{__('Field inventory', 'bu-liaison-inquiry')}</h3>
                         {fields.sections.map(section => (
-                            section.fields.map(field => (
-                                <p key={field.id}>
-                                    {field.displayName} = {field.id}
-                                </p>
-                            ))
+                            <div key={section.id || section.name} className="field-section">
+                                <h4>{section.name}</h4>
+                                {section.fields.map(field => (
+                                    <div key={field.id} className="field-item">
+                                        <span className="field-name">{field.displayName}</span>
+                                        <code className="field-id">{field.id}</code>
+                                    </div>
+                                ))}
+                            </div>
                         ))}
                     </div>
                 )}
