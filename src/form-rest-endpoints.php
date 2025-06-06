@@ -13,6 +13,49 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
+ * Get API credentials based on organization key
+ *
+ * @param string|null $org_key Optional organization key for alternate credentials.
+ * @return array{api_key: string, error: ?\WP_Error} API key and potential error.
+ */
+function get_api_credentials( $org_key = null ) {
+	$options = get_option( 'bu_liaison_inquiry_options', array() );
+	$result  = array(
+		'api_key' => '',
+		'error'   => null,
+	);
+
+	if ( $org_key && isset( $options['alternate_credentials'][ $org_key ] ) ) {
+		$creds = $options['alternate_credentials'][ $org_key ];
+		if ( empty( $creds['APIKey'] ) ) {
+			$result['error'] = new \WP_Error(
+				'missing_api_key',
+				sprintf(
+					/* translators: %s: organization key */
+					__( 'API Key is required for organization: %s', 'bu-liaison-inquiry' ),
+					$org_key
+				),
+				array( 'status' => 400 )
+			);
+			return $result;
+		}
+		$result['api_key'] = $creds['APIKey'];
+	} else {
+		if ( empty( $options['APIKey'] ) ) {
+			$result['error'] = new \WP_Error(
+				'missing_api_key',
+				__( 'API Key is required.', 'bu-liaison-inquiry' ),
+				array( 'status' => 400 )
+			);
+			return $result;
+		}
+		$result['api_key'] = $options['APIKey'];
+	}
+
+	return $result;
+}
+
+/**
  * Register REST routes for form browsing
  *
  * @return void
@@ -26,9 +69,17 @@ function register_form_routes() {
 			array(
 				'methods'             => \WP_REST_Server::READABLE,
 				'callback'            => __NAMESPACE__ . '\get_forms',
-				'permission_callback' => function () {
+				'permission_callback' => function() {
 					return current_user_can( 'manage_options' );
 				},
+				'args'                => array(
+					'org_key' => array(
+						'required'          => false,
+						'validate_callback' => function( $param ) {
+							return is_string( $param );
+						},
+					),
+				),
 			),
 		)
 	);
@@ -41,13 +92,19 @@ function register_form_routes() {
 			array(
 				'methods'             => \WP_REST_Server::READABLE,
 				'callback'            => __NAMESPACE__ . '\get_form_fields',
-				'permission_callback' => function () {
+				'permission_callback' => function() {
 					return current_user_can( 'manage_options' );
 				},
 				'args'                => array(
 					'form_id' => array(
 						'required'          => false,
-						'validate_callback' => function ( $param ) {
+						'validate_callback' => function( $param ) {
+							return is_string( $param );
+						},
+					),
+					'org_key' => array(
+						'required'          => false,
+						'validate_callback' => function( $param ) {
 							return is_string( $param );
 						},
 					),
@@ -60,23 +117,20 @@ function register_form_routes() {
 /**
  * Get list of available forms
  *
- * @return \WP_REST_Response|\WP_Error
+ * @param \WP_REST_Request $request The request object.
+ * @return \WP_REST_Response|\WP_Error The response.
  */
-function get_forms() {
+function get_forms( $request ) {
 	try {
-		// Get current settings.
-		$options = get_option( 'bu_liaison_inquiry_options', array() );
+		$org_key = $request->get_param( 'org_key' );
+		$creds   = get_api_credentials( $org_key );
 
-		if ( empty( $options['APIKey'] ) ) {
-			return new \WP_Error(
-				'missing_api_key',
-				__( 'API Key is required to fetch forms.', 'bu-liaison-inquiry' ),
-				array( 'status' => 400 )
-			);
+		if ( $creds['error'] ) {
+			return $creds['error'];
 		}
 
-		// Initialize API with current settings.
-		$api = new Spectrum_API( null, $options['APIKey'] );
+		// Initialize API with credentials.
+		$api = new Spectrum_API( null, $creds['api_key'] );
 
 		// Get forms list.
 		$forms = $api->get_forms_list();
@@ -96,7 +150,7 @@ function get_forms() {
  * Get field inventory for a specific form
  *
  * @param \WP_REST_Request $request The request object.
- * @return \WP_REST_Response|\WP_Error
+ * @return \WP_REST_Response|\WP_Error The response.
  */
 function get_form_fields( $request ) {
 	try {
@@ -106,19 +160,15 @@ function get_form_fields( $request ) {
 			$form_id = null;
 		}
 
-		// Get current settings.
-		$options = get_option( 'bu_liaison_inquiry_options', array() );
+		$org_key = $request->get_param( 'org_key' );
+		$creds   = get_api_credentials( $org_key );
 
-		if ( empty( $options['APIKey'] ) ) {
-			return new \WP_Error(
-				'missing_api_key',
-				__( 'API Key is required to fetch form fields.', 'bu-liaison-inquiry' ),
-				array( 'status' => 400 )
-			);
+		if ( $creds['error'] ) {
+			return $creds['error'];
 		}
 
-		// Initialize API with current settings.
-		$api = new Spectrum_API( null, $options['APIKey'] );
+		// Initialize API with credentials.
+		$api = new Spectrum_API( null, $creds['api_key'] );
 
 		// Get form requirements.
 		$fields = $api->get_requirements( $form_id );

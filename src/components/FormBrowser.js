@@ -19,8 +19,14 @@ import apiFetch from '@wordpress/api-fetch';
 
 /**
  * Form Browser Modal component for exploring available forms and their fields.
+ *
+ * @param {Object} props Component properties.
+ * @param {boolean} props.isOpen Whether the modal is open.
+ * @param {Function} props.onClose Callback to close the modal.
+ * @param {string} [props.orgKey] Optional organization key for alternate credentials.
+ * @return {JSX.Element} The form browser modal component.
  */
-function FormBrowser({ isOpen, onClose }) {
+function FormBrowser({ isOpen, onClose, orgKey }) {
     const [isLoadingForms, setIsLoadingForms] = useState(false);
     const [isLoadingFields, setIsLoadingFields] = useState(false);
     const [error, setError] = useState(null);
@@ -54,7 +60,7 @@ function FormBrowser({ isOpen, onClose }) {
                 setError(null);
                 
                 const response = await apiFetch({
-                    path: '/bu-liaison-inquiry/v1/forms',
+                    path: `/bu-liaison-inquiry/v1/forms${orgKey ? `?org_key=${orgKey}` : ''}`,
                 });
                 
                 if (!isMounted) return;
@@ -78,7 +84,7 @@ function FormBrowser({ isOpen, onClose }) {
         };
 
         loadForms();
-    }, [isOpen, isMounted]);
+    }, [isOpen, isMounted, orgKey]);
 
     // Load fields when form is selected
     useEffect(() => {
@@ -90,7 +96,7 @@ function FormBrowser({ isOpen, onClose }) {
                 setError(null);
                 
                 const response = await apiFetch({
-                    path: `/bu-liaison-inquiry/v1/forms/${selectedForm}/fields`,
+                    path: `/bu-liaison-inquiry/v1/forms/${selectedForm}/fields${orgKey ? `?org_key=${orgKey}` : ''}`,
                 });
                 
                 if (!isMounted) return;
@@ -109,7 +115,7 @@ function FormBrowser({ isOpen, onClose }) {
         };
 
         loadFields();
-    }, [selectedForm, isMounted]);
+    }, [selectedForm, isMounted, orgKey]);
 
     const handleFormChange = (value) => {
         if (!isLoadingForms && !isLoadingFields) {
@@ -137,7 +143,10 @@ function FormBrowser({ isOpen, onClose }) {
 
     return (
         <Modal
-            title={__('Browse Liaison Forms', 'bu-liaison-inquiry')}
+            title={orgKey 
+                ? __('Browse Forms for ' + orgKey, 'bu-liaison-inquiry')
+                : __('Browse Default Forms', 'bu-liaison-inquiry')
+            }
             onRequestClose={handleClose}
             className="bu-liaison-form-browser-modal"
         >
