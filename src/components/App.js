@@ -114,12 +114,33 @@ function App() {
     };
     
     // Delete an organization
-    const deleteOrganization = (orgKey) => {
-        setAlternateCredentials(prev => {
-            const newCreds = { ...prev };
+    const deleteOrganization = async (orgKey) => {
+        // Ask for confirmation
+        if (!window.confirm(__('Are you sure you want to delete this organization? This cannot be undone.', 'bu-liaison-inquiry'))) {
+            return;
+        }
+        
+        try {
+            // Update alternate credentials
+            const newCreds = { ...alternateCredentials };
             delete newCreds[orgKey];
-            return newCreds;
-        });
+            
+            // Save changes to server
+            await triggerFormSubmission({ alternate_credentials: newCreds });
+            
+            // Update local state
+            setAlternateCredentials(newCreds);
+            setSuccess(true);
+            
+            // Clear success message after 10 seconds
+            setTimeout(() => {
+                setSuccess(false);
+            }, 10000);
+            
+        } catch (err) {
+            setError(err.message);
+            console.error(err);
+        }
     };
     
     // Handle form submission
