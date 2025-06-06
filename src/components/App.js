@@ -20,6 +20,7 @@ import { useForm } from 'react-hook-form';
  */
 import CredentialModal from './CredentialModal';
 import CredentialCard from './CredentialCard';
+import FormBrowser from './FormBrowser';
 
 /**
  * The main admin application component.
@@ -72,6 +73,7 @@ function App() {
     const [ alternateCredentials, setAlternateCredentials ] = useState( {} );
     const [ isModalOpen, setIsModalOpen ] = useState( false );
     const [ currentOrgKey, setCurrentOrgKey ] = useState( null );
+    const [ isFormBrowserOpen, setIsFormBrowserOpen ] = useState( false );
 
     const { 
         register, 
@@ -423,7 +425,7 @@ function App() {
                                     type="submit"
                                     isPrimary
                                     variant="primary"
-                                    style={{ marginTop: '10px' }}
+                                    style={{ marginTop: '10px', marginRight: '10px' }}
                                     isBusy={isSaving}
                                     disabled={isSaving}
                                 >
@@ -431,6 +433,16 @@ function App() {
                                         ? __('Saving...', 'bu-liaison-inquiry')
                                         : __('Save Settings', 'bu-liaison-inquiry')
                                     }
+                                </Button>
+
+                                <Button
+                                    isSecondary
+                                    variant="secondary"
+                                    onClick={() => setIsFormBrowserOpen(true)}
+                                    style={{ marginTop: '10px' }}
+                                    disabled={isSaving}
+                                >
+                                    {__('Browse Forms', 'bu-liaison-inquiry')}
                                 </Button>
                             </form>
                         )}
@@ -476,6 +488,11 @@ function App() {
                     existingOrgs={alternateCredentials}
                 />
             )}
+            
+            <FormBrowser
+                isOpen={isFormBrowserOpen}
+                onClose={() => setIsFormBrowserOpen(false)}
+            />
         </div>
     );
 }
