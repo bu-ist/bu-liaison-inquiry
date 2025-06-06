@@ -38,6 +38,30 @@ const styles = {
         padding: '0 8px',
         marginBottom: '16px',
     },
+    utmSection: {
+        marginTop: '24px',
+        marginBottom: '24px',
+    },
+    utmDetails: {
+        border: '1px solid #ccd0d4',
+        borderRadius: '4px',
+        backgroundColor: '#fff',
+    },
+    utmSummary: {
+        padding: '12px 16px',
+        cursor: 'pointer',
+        fontWeight: 500,
+        backgroundColor: '#f0f0f1',
+        borderBottom: '1px solid #ccd0d4',
+    },
+    utmContent: {
+        padding: '16px',
+    },
+    utmDescription: {
+        fontSize: '13px',
+        margin: '0 0 16px 0',
+        color: '#757575',
+    }
 };
 
 function App() {
@@ -308,83 +332,91 @@ function App() {
                                     disabled={isSaving}
                                 />
 
-                                <h3>{__('UTM Parameters', 'bu-liaison-inquiry')}</h3>
-                                <p style={styles.utmDescription}>
-                                    {__('These UTM parameters will be used for all form submissions unless overridden in the shortcode.', 'bu-liaison-inquiry')}
-                                </p>
+                                <div style={styles.utmSection}>
+                                    <details style={styles.utmDetails}>
+                                        <summary style={styles.utmSummary}>
+                                            {__('UTM Parameters', 'bu-liaison-inquiry')}
+                                        </summary>
+                                        <div style={styles.utmContent}>
+                                            <p style={styles.utmDescription}>
+                                                {__('These UTM parameters will be used for all form submissions unless overridden in the shortcode.', 'bu-liaison-inquiry')}
+                                            </p>
 
-                                <div style={styles.utmContainer}>
-                                    <div style={styles.utmField}>
-                                        <TextControl
-                                            {...register('utm_source')}
-                                            onChange={val => setValue('utm_source', val)}
-                                            value={values.utm_source || ''}
-                                            label={__('Source:', 'bu-liaison-inquiry')}
-                                            help={__('Identifies which site sent the traffic (e.g., google, newsletter)', 'bu-liaison-inquiry')}
-                                            placeholder={__('Enter UTM source...', 'bu-liaison-inquiry')}
-                                            disabled={isSaving}
-                                        />
-                                    </div>
-                                    
-                                    <div style={styles.utmField}>
-                                        <TextControl
-                                            {...register('utm_medium')}
-                                            onChange={val => setValue('utm_medium', val)}
-                                            value={values.utm_medium || ''}
-                                            label={__('Medium:', 'bu-liaison-inquiry')}
-                                            help={__('Identifies marketing medium (e.g., cpc, banner, email)', 'bu-liaison-inquiry')}
-                                            placeholder={__('Enter UTM medium...', 'bu-liaison-inquiry')}
-                                            disabled={isSaving}
-                                        />
-                                    </div>
-                                    
-                                    <div style={styles.utmField}>
-                                        <TextControl
-                                            {...register('utm_campaign')}
-                                            onChange={val => setValue('utm_campaign', val)}
-                                            value={values.utm_campaign || ''}
-                                            label={__('Campaign Name:', 'bu-liaison-inquiry')}
-                                            help={__('Name of the campaign (e.g., spring-promotion)', 'bu-liaison-inquiry')}
-                                            placeholder={__('Enter UTM campaign...', 'bu-liaison-inquiry')}
-                                            disabled={isSaving}
-                                        />
-                                    </div>
-                                    
-                                    <div style={styles.utmField}>
-                                        <TextControl
-                                            {...register('utm_content')}
-                                            onChange={val => setValue('utm_content', val)}
-                                            value={values.utm_content || ''}
-                                            label={__('Content:', 'bu-liaison-inquiry')}
-                                            help={__('Used to differentiate similar content (e.g., text-link-1)', 'bu-liaison-inquiry')}
-                                            placeholder={__('Enter UTM content...', 'bu-liaison-inquiry')}
-                                            disabled={isSaving}
-                                        />
-                                    </div>
-                                    
-                                    <div style={styles.utmField}>
-                                        <TextControl
-                                            {...register('utm_term')}
-                                            onChange={val => setValue('utm_term', val)}
-                                            value={values.utm_term || ''}
-                                            label={__('Term:', 'bu-liaison-inquiry')}
-                                            help={__('Identifies search terms used (e.g., university-application)', 'bu-liaison-inquiry')}
-                                            placeholder={__('Enter UTM term...', 'bu-liaison-inquiry')}
-                                            disabled={isSaving}
-                                        />
-                                    </div>
-                                    <div style={styles.utmField}>
-                                        <TextControl
-                                            {...register('page_title')}
-                                            onChange={val => setValue('page_title', val)}
-                                            value={values.page_title || ''}
-                                            label={__('Page Title:', 'bu-liaison-inquiry')}
-                                            help={__('The default page title for inquiry forms. Can be overridden in the shortcode.', 'bu-liaison-inquiry')}
-                                            placeholder={__('Enter page title...', 'bu-liaison-inquiry')}
-                                            style={{ maxWidth: '400px' }}
-                                            disabled={isSaving}
-                                        />
-                                    </div>
+                                            <div style={styles.utmContainer}>
+                                                <div style={styles.utmField}>
+                                                    <TextControl
+                                                        {...register('utm_source')}
+                                                        onChange={val => setValue('utm_source', val)}
+                                                        value={values.utm_source || ''}
+                                                        label={__('Source:', 'bu-liaison-inquiry')}
+                                                        help={__('Identifies which site sent the traffic (e.g., google, newsletter)', 'bu-liaison-inquiry')}
+                                                        placeholder={__('Enter UTM source...', 'bu-liaison-inquiry')}
+                                                        disabled={isSaving}
+                                                    />
+                                                </div>
+                                                
+                                                <div style={styles.utmField}>
+                                                    <TextControl
+                                                        {...register('utm_medium')}
+                                                        onChange={val => setValue('utm_medium', val)}
+                                                        value={values.utm_medium || ''}
+                                                        label={__('Medium:', 'bu-liaison-inquiry')}
+                                                        help={__('Identifies marketing medium (e.g., cpc, banner, email)', 'bu-liaison-inquiry')}
+                                                        placeholder={__('Enter UTM medium...', 'bu-liaison-inquiry')}
+                                                        disabled={isSaving}
+                                                    />
+                                                </div>
+                                                
+                                                <div style={styles.utmField}>
+                                                    <TextControl
+                                                        {...register('utm_campaign')}
+                                                        onChange={val => setValue('utm_campaign', val)}
+                                                        value={values.utm_campaign || ''}
+                                                        label={__('Campaign Name:', 'bu-liaison-inquiry')}
+                                                        help={__('Name of the campaign (e.g., spring-promotion)', 'bu-liaison-inquiry')}
+                                                        placeholder={__('Enter UTM campaign...', 'bu-liaison-inquiry')}
+                                                        disabled={isSaving}
+                                                    />
+                                                </div>
+                                                
+                                                <div style={styles.utmField}>
+                                                    <TextControl
+                                                        {...register('utm_content')}
+                                                        onChange={val => setValue('utm_content', val)}
+                                                        value={values.utm_content || ''}
+                                                        label={__('Content:', 'bu-liaison-inquiry')}
+                                                        help={__('Used to differentiate similar content (e.g., text-link-1)', 'bu-liaison-inquiry')}
+                                                        placeholder={__('Enter UTM content...', 'bu-liaison-inquiry')}
+                                                        disabled={isSaving}
+                                                    />
+                                                </div>
+                                                
+                                                <div style={styles.utmField}>
+                                                    <TextControl
+                                                        {...register('utm_term')}
+                                                        onChange={val => setValue('utm_term', val)}
+                                                        value={values.utm_term || ''}
+                                                        label={__('Term:', 'bu-liaison-inquiry')}
+                                                        help={__('Identifies search terms used (e.g., university-application)', 'bu-liaison-inquiry')}
+                                                        placeholder={__('Enter UTM term...', 'bu-liaison-inquiry')}
+                                                        disabled={isSaving}
+                                                    />
+                                                </div>
+                                                <div style={styles.utmField}>
+                                                    <TextControl
+                                                        {...register('page_title')}
+                                                        onChange={val => setValue('page_title', val)}
+                                                        value={values.page_title || ''}
+                                                        label={__('Page Title:', 'bu-liaison-inquiry')}
+                                                        help={__('The default page title for inquiry forms. Can be overridden in the shortcode.', 'bu-liaison-inquiry')}
+                                                        placeholder={__('Enter page title...', 'bu-liaison-inquiry')}
+                                                        style={{ maxWidth: '400px' }}
+                                                        disabled={isSaving}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </details>
                                 </div>
 
                                 <Button
