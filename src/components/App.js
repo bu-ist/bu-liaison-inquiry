@@ -64,7 +64,8 @@ function App() {
             utm_campaign: '',
             utm_content: '',
             utm_medium: '',
-            utm_term: ''
+            utm_term: '',
+            page_title: ''
         }
     });
 
@@ -369,6 +370,18 @@ function App() {
                                             label={__('Term:', 'bu-liaison-inquiry')}
                                             help={__('Identifies search terms used (e.g., university-application)', 'bu-liaison-inquiry')}
                                             placeholder={__('Enter UTM term...', 'bu-liaison-inquiry')}
+                                            disabled={isSaving}
+                                        />
+                                    </div>
+                                    <div style={styles.utmField}>
+                                        <TextControl
+                                            {...register('page_title')}
+                                            onChange={val => setValue('page_title', val)}
+                                            value={values.page_title || ''}
+                                            label={__('Page Title:', 'bu-liaison-inquiry')}
+                                            help={__('The default page title for inquiry forms. Can be overridden in the shortcode.', 'bu-liaison-inquiry')}
+                                            placeholder={__('Enter page title...', 'bu-liaison-inquiry')}
+                                            style={{ maxWidth: '400px' }}
                                             disabled={isSaving}
                                         />
                                     </div>
