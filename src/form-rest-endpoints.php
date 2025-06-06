@@ -25,7 +25,21 @@ function get_api_credentials( $org_key = null ) {
 		'error'   => null,
 	);
 
-	if ( $org_key && isset( $options['alternate_credentials'][ $org_key ] ) ) {
+	// If org_key is provided, try to get organization-specific credentials.
+	if ( $org_key ) {
+		if ( ! isset( $options['alternate_credentials'][ $org_key ] ) ) {
+			$result['error'] = new \WP_Error(
+				'invalid_org_key',
+				sprintf(
+					/* translators: %s: organization key */
+					__( 'No credentials found for organization: %s', 'bu-liaison-inquiry' ),
+					$org_key
+				),
+				array( 'status' => 400 )
+			);
+			return $result;
+		}
+
 		$creds = $options['alternate_credentials'][ $org_key ];
 		if ( empty( $creds['APIKey'] ) ) {
 			$result['error'] = new \WP_Error(
@@ -39,19 +53,22 @@ function get_api_credentials( $org_key = null ) {
 			);
 			return $result;
 		}
+
 		$result['api_key'] = $creds['APIKey'];
-	} else {
-		if ( empty( $options['APIKey'] ) ) {
-			$result['error'] = new \WP_Error(
-				'missing_api_key',
-				__( 'API Key is required.', 'bu-liaison-inquiry' ),
-				array( 'status' => 400 )
-			);
-			return $result;
-		}
-		$result['api_key'] = $options['APIKey'];
+		return $result;
 	}
 
+	// No org_key provided, use default credentials.
+	if ( empty( $options['APIKey'] ) ) {
+		$result['error'] = new \WP_Error(
+			'missing_api_key',
+			__( 'API Key is required.', 'bu-liaison-inquiry' ),
+			array( 'status' => 400 )
+		);
+		return $result;
+	}
+
+	$result['api_key'] = $options['APIKey'];
 	return $result;
 }
 
