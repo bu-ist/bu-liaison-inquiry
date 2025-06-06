@@ -45,7 +45,12 @@ function App() {
     } = useForm({
         defaultValues: {
             APIKey: '',
-            ClientID: ''
+            ClientID: '',
+            utm_source: '',
+            utm_campaign: '',
+            utm_content: '',
+            utm_medium: '',
+            utm_term: ''
         }
     });
 
@@ -188,6 +193,14 @@ function App() {
                 alternate_credentials: data.alternate_credentials || alternateCredentials
             };
             
+            // Ensure all UTM parameters are included
+            const utmParameters = ['utm_source', 'utm_campaign', 'utm_content', 'utm_medium', 'utm_term'];
+            utmParameters.forEach(param => {
+                if (formData[param] === undefined) {
+                    formData[param] = '';
+                }
+            });
+            
             const response = await apiFetch({
                 path: '/bu-liaison-inquiry/v1/credentials',
                 method: 'POST',
@@ -217,7 +230,7 @@ function App() {
             </h1>
             <Card>
                 <CardHeader>
-                    <h2>{__('Primary Organization Credentials', 'bu-liaison-inquiry')}</h2>
+                    <h2>{__('Primary Organization Credentials and UTM parameters', 'bu-liaison-inquiry')}</h2>
                 </CardHeader>
                 <CardBody>
                     <>
@@ -241,6 +254,12 @@ function App() {
                             </Notice>
                         )}
                         
+                        <div className="bu-liaison-inquiry-description">
+                            <p>
+                                {__('These credentials are used by default. You can also add alternate organizations below, any shortcode that does not specify and alternate organization will use these credentials.  The UTM parameters are used for all organizations unless individually overridden in the shortcode.', 'bu-liaison-inquiry')}
+                            </p>
+                        </div>
+
                         {isLoading ? (
                             <Spinner />
                         ) : (
@@ -273,6 +292,70 @@ function App() {
                                     style={{ maxWidth: '100px' }}
                                     disabled={isSaving}
                                 />
+
+                                <h3>{__('UTM Parameters', 'bu-liaison-inquiry')}</h3>
+                                <p className="description">
+                                    {__('These UTM parameters will be used for all form submissions unless overridden in the shortcode.', 'bu-liaison-inquiry')}
+                                </p>
+                                
+                                <div className="utm-parameters-documentation">
+                                    <p>
+                                        {__('UTM parameters are tracking parameters used to determine where visitors to your forms are coming from. They help track the effectiveness of your marketing campaigns.', 'bu-liaison-inquiry')}
+                                    </p>
+                                </div>
+
+                                <div className="utm-parameters-grid">
+                                    <TextControl
+                                        {...register('utm_source')}
+                                        onChange={val => setValue('utm_source', val)}
+                                        value={values.utm_source || ''}
+                                        label={__('Source:', 'bu-liaison-inquiry')}
+                                        help={__('Identifies which site sent the traffic (e.g., google, newsletter)', 'bu-liaison-inquiry')}
+                                        placeholder={__('Enter UTM source...', 'bu-liaison-inquiry')}
+                                        disabled={isSaving}
+                                    />
+                                    
+                                    <TextControl
+                                        {...register('utm_medium')}
+                                        onChange={val => setValue('utm_medium', val)}
+                                        value={values.utm_medium || ''}
+                                        label={__('Medium:', 'bu-liaison-inquiry')}
+                                        help={__('Identifies marketing medium (e.g., cpc, banner, email)', 'bu-liaison-inquiry')}
+                                        placeholder={__('Enter UTM medium...', 'bu-liaison-inquiry')}
+                                        disabled={isSaving}
+                                    />
+                                    
+                                    <TextControl
+                                        {...register('utm_campaign')}
+                                        onChange={val => setValue('utm_campaign', val)}
+                                        value={values.utm_campaign || ''}
+                                        label={__('Campaign Name:', 'bu-liaison-inquiry')}
+                                        help={__('Name of the campaign (e.g., spring-promotion)', 'bu-liaison-inquiry')}
+                                        placeholder={__('Enter UTM campaign...', 'bu-liaison-inquiry')}
+                                        disabled={isSaving}
+                                    />
+                                    
+                                    <TextControl
+                                        {...register('utm_content')}
+                                        onChange={val => setValue('utm_content', val)}
+                                        value={values.utm_content || ''}
+                                        label={__('Content:', 'bu-liaison-inquiry')}
+                                        help={__('Used to differentiate similar content (e.g., text-link-1)', 'bu-liaison-inquiry')}
+                                        placeholder={__('Enter UTM content...', 'bu-liaison-inquiry')}
+                                        disabled={isSaving}
+                                    />
+                                    
+                                    <TextControl
+                                        {...register('utm_term')}
+                                        onChange={val => setValue('utm_term', val)}
+                                        value={values.utm_term || ''}
+                                        label={__('Term:', 'bu-liaison-inquiry')}
+                                        help={__('Identifies search terms used (e.g., university-application)', 'bu-liaison-inquiry')}
+                                        placeholder={__('Enter UTM term...', 'bu-liaison-inquiry')}
+                                        disabled={isSaving}
+                                    />
+                                </div>
+
                                 <Button
                                     type="submit"
                                     isPrimary
