@@ -51,6 +51,32 @@ function App() {
 
     const values = watch();
 
+    /**
+     * Trigger form submission programmatically.
+     * 
+     * This helper function allows us to trigger the React Hook Form submission
+     * from outside the form component, while still using its validation.
+     * 
+     * @param {Object} customData - Additional data to merge with the form values.
+     * @return {Promise} A promise that wraps the entire form submission process and resolves when submission is complete.
+     */
+    const triggerFormSubmission = async (customData) => {
+        return new Promise((resolve, reject) => {
+            //
+            handleSubmit(async (formData) => {
+                try {
+                    await onSubmit({
+                        ...formData,
+                        ...customData
+                    });
+                    resolve();
+                } catch (err) {
+                    reject(err);
+                }
+            })();  // Immediately invoke the handleSubmit function, simulating a form submission
+        });
+    };
+
     // Open modal to edit an organization
     const editOrganization = (orgKey) => {
         setCurrentOrgKey(orgKey);
@@ -72,20 +98,10 @@ function App() {
                 [orgKey]: data
             };
             
-            // Trigger form submission and wait for it
-            await new Promise((resolve, reject) => {
-                handleSubmit(async (formData) => {
-                    try {
-                        await onSubmit({
-                            ...formData,
-                            alternate_credentials: newCreds
-                        });
-                        resolve();
-                    } catch (err) {
-                        reject(err);
-                    }
-                })();
-            });
+            // Trigger form submission and wait for it.
+            // We use a Promise and an IIFE directly trigger the React Hook form's handleSubmit event outside of the form component itself.
+            // This lets us rely on the form validation and submission logic.
+            await triggerFormSubmission({ alternate_credentials: newCreds });
 
             // Update state but keep modal open
             setAlternateCredentials(newCreds);
