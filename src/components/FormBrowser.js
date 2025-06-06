@@ -178,6 +178,16 @@ function FormBrowser({ isOpen, onClose, orgKey }) {
             )}
 
             <div className="form-browser-content">
+                { !isLoadingForms && 
+                    <p>
+                        { forms.length } {__('forms found. Select a form to view its fields and generate a shortcode.', 'bu-liaison-inquiry')}
+                    </p>
+                }
+                { isLoadingForms && 
+                    <p>
+                        {__('Loading', 'bu-liaison-inquiry')}
+                    </p>
+                }
                 <SelectControl
                     label={__('Select a form:', 'bu-liaison-inquiry')}
                     value={selectedForm}
