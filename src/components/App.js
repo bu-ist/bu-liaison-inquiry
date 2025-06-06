@@ -74,6 +74,7 @@ function App() {
     const [ isModalOpen, setIsModalOpen ] = useState( false );
     const [ currentOrgKey, setCurrentOrgKey ] = useState( null );
     const [ isFormBrowserOpen, setIsFormBrowserOpen ] = useState( false );
+    const [ formBrowserOrgKey, setFormBrowserOrgKey ] = useState( null );
 
     const { 
         register, 
@@ -220,6 +221,18 @@ function App() {
         }
     };
     
+    // Handle form browser for specific organization
+    const handleBrowseForms = (orgKey = null) => {
+        setFormBrowserOrgKey(orgKey);
+        setIsFormBrowserOpen(true);
+    };
+
+    // Handle form browser close
+    const handleFormBrowserClose = () => {
+        setIsFormBrowserOpen(false);
+        setFormBrowserOrgKey(null);
+    };
+
     // Handle form submission
     const onSubmit = async (data) => {
         setError(null);
@@ -461,6 +474,7 @@ function App() {
                             data={data}
                             onEdit={editOrganization}
                             onDelete={deleteOrganization}
+                            onBrowseForms={handleBrowseForms}
                             disabled={isSaving}
                         />
                     ))}
@@ -489,10 +503,13 @@ function App() {
                 />
             )}
             
-            <FormBrowser
-                isOpen={isFormBrowserOpen}
-                onClose={() => setIsFormBrowserOpen(false)}
-            />
+            {isFormBrowserOpen && (
+                <FormBrowser
+                    isOpen={isFormBrowserOpen}
+                    onClose={handleFormBrowserClose}
+                    orgKey={formBrowserOrgKey}
+                />
+            )}
         </div>
     );
 }
