@@ -94,10 +94,7 @@ function CredentialModal({ isOpen, onClose, orgKey, initialData, onSave, isSavin
             setLocalIsSaving(true);
             
             await onSave(key, { APIKey, ClientID });
-            
-            // Show success message and reset form with current values as initial
             setSuccess(true);
-            reset({ APIKey, ClientID, orgKey: key });
             
         } catch (err) {
             setError(err.message || __('Failed to save credentials.', 'bu-liaison-inquiry'));
@@ -142,7 +139,7 @@ function CredentialModal({ isOpen, onClose, orgKey, initialData, onSave, isSavin
                     isDismissible={false}
                     className="credential-success"
                 >
-                    {__('Credentials saved successfully! You can make more changes or close this window.', 'bu-liaison-inquiry')}
+                    {__('Credentials saved successfully!', 'bu-liaison-inquiry')}
                 </Notice>
             )}
             
@@ -159,10 +156,9 @@ function CredentialModal({ isOpen, onClose, orgKey, initialData, onSave, isSavin
                         onChange={handleOrgKeyChange}
                         value={values.orgKey || ''}
                         label={__('Organization Key:', 'bu-liaison-inquiry')}
-                        help={errors.orgKey?.message || (checkOrgKeyExists(values.orgKey) ? 
-                            __('This key already exists!', 'bu-liaison-inquiry') : 
-                            __('A unique identifier for this organization.', 'bu-liaison-inquiry'))}
+                        help={__('A unique identifier for this organization.', 'bu-liaison-inquiry')}
                         placeholder={__('Enter organization key...', 'bu-liaison-inquiry')}
+                        disabled={success}
                     />
                 )}
                 
@@ -177,8 +173,9 @@ function CredentialModal({ isOpen, onClose, orgKey, initialData, onSave, isSavin
                     onChange={val => setValue('APIKey', val)}
                     value={values.APIKey || ''}
                     label={__('API Key:', 'bu-liaison-inquiry')}
-                    help={errors.APIKey?.message || __('The API key for this organization.', 'bu-liaison-inquiry')}
+                    help={__('The API key for this organization.', 'bu-liaison-inquiry')}
                     placeholder={__('Enter API key...', 'bu-liaison-inquiry')}
+                    disabled={success}
                 />
                 
                 <TextControl
@@ -188,23 +185,27 @@ function CredentialModal({ isOpen, onClose, orgKey, initialData, onSave, isSavin
                     onChange={val => setValue('ClientID', val)}
                     value={values.ClientID || ''}
                     label={__('Client ID:', 'bu-liaison-inquiry')}
-                    help={errors.ClientID?.message || __('The client ID for this organization.', 'bu-liaison-inquiry')}
+                    help={__('The client ID for this organization.', 'bu-liaison-inquiry')}
                     placeholder={__('Enter client ID...', 'bu-liaison-inquiry')}
+                    disabled={success}
                 />
                 
                 <div className="bu-liaison-modal-actions">
+                    {!success && (
+                        <Button
+                            isPrimary
+                            type="submit"
+                            isBusy={isSaving}
+                            disabled={isSaving}
+                        >
+                            {isSaving
+                                ? __('Saving...', 'bu-liaison-inquiry')
+                                : __('Save', 'bu-liaison-inquiry')
+                            }
+                        </Button>
+                    )}
                     <Button
-                        isPrimary
-                        type="submit"
-                        isBusy={isSaving}
-                        disabled={isSaving}
-                    >
-                        {isSaving
-                            ? __('Saving...', 'bu-liaison-inquiry')
-                            : __('Save', 'bu-liaison-inquiry')
-                        }
-                    </Button>
-                    <Button
+                        isSecondary // for 5.4 compatibility
                         variant="secondary"
                         onClick={handleClose}
                         disabled={isSaving}
