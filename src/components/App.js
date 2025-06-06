@@ -51,6 +51,37 @@ function App() {
 
     const values = watch();
 
+    // Load the initial settings data through apiFetch and populate the form with it.
+    // This uses the React Hook Form's reset method to set the initial values.
+    // It also extracts alternate credentials and sets them in the component state.
+    useEffect(() => {
+        const fetchSettings = async () => {
+            try {
+                setIsLoading(true);
+                setError(null);
+                const result = await apiFetch({
+                    path: '/bu-liaison-inquiry/v1/credentials',
+                });
+                
+                // Extract alternate credentials
+                const { alternate_credentials, ...primaryCreds } = result;
+                
+                // Update primary credentials form
+                reset(primaryCreds);
+                
+                // Update alternate credentials state
+                setAlternateCredentials(alternate_credentials || {});
+            } catch (err) {
+                setError(err.message);
+                console.error(err);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchSettings();
+    }, [reset]);
+
     /**
      * Trigger form submission programmatically.
      * 
@@ -178,34 +209,6 @@ function App() {
             setIsSaving(false);
         }
     };
-
-    useEffect(() => {
-        const fetchSettings = async () => {
-            try {
-                setIsLoading(true);
-                setError(null);
-                const result = await apiFetch({
-                    path: '/bu-liaison-inquiry/v1/credentials',
-                });
-                
-                // Extract alternate credentials
-                const { alternate_credentials, ...primaryCreds } = result;
-                
-                // Update primary credentials form
-                reset(primaryCreds);
-                
-                // Update alternate credentials state
-                setAlternateCredentials(alternate_credentials || {});
-            } catch (err) {
-                setError(err.message);
-                console.error(err);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchSettings();
-    }, [reset]);
 
     return (
         <div className="bu-liaison-inquiry-admin-app">
