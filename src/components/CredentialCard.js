@@ -50,20 +50,13 @@ function CredentialCard({ orgKey, data, onEdit, onDelete, disabled }) {
             <CardBody>
                 <div className="bu-liaison-credential-info">
                     <div className="bu-liaison-credential-field">
-                        <strong>{__('API Key:', 'bu-liaison-inquiry')}</strong> 
-                        <div className="credential-value">
-                            {/* Show part of the API key for security */}
-                            {data.APIKey ? 
-                                `${data.APIKey.substring(0, 6)}...${data.APIKey.substring(data.APIKey.length - 4)}` : 
-                                __('Not set', 'bu-liaison-inquiry')
-                            }
-                        </div>
+                        <strong>{__('API Key:', 'bu-liaison-inquiry')}</strong>                         
+                        {" "}  {data.APIKey || __('Not set', 'bu-liaison-inquiry')}
+
                     </div>
                     <div className="bu-liaison-credential-field">
                         <strong>{__('Client ID:', 'bu-liaison-inquiry')}</strong> 
-                        <div className="credential-value">
-                            {data.ClientID || __('Not set', 'bu-liaison-inquiry')}
-                        </div>
+                        {data.ClientID || __('Not set', 'bu-liaison-inquiry')}
                     </div>
                 </div>
             </CardBody>
