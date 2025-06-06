@@ -30,6 +30,7 @@ function FormBrowser({ isOpen, onClose, orgKey }) {
     const [isLoadingForms, setIsLoadingForms] = useState(false);
     const [isLoadingFields, setIsLoadingFields] = useState(false);
     const [error, setError] = useState(null);
+    const [formLoadError, setFormLoadError] = useState(null);
     const [forms, setForms] = useState([]);
     const [selectedForm, setSelectedForm] = useState('');
     const [fields, setFields] = useState(null);
@@ -57,6 +58,7 @@ function FormBrowser({ isOpen, onClose, orgKey }) {
             
             try {
                 setIsLoadingForms(true);
+                setFormLoadError(null);
                 setError(null);
                 
                 const response = await apiFetch({
@@ -64,6 +66,11 @@ function FormBrowser({ isOpen, onClose, orgKey }) {
                 });
                 
                 if (!isMounted) return;
+                
+                if (!response || Object.keys(response).length === 1) {  // Right now, there is always a default form called "Inquiry Form" so if it is only one, then we didn't get any forms back.
+                    setFormLoadError(__('No forms found. Please check your credentials and try again.', 'bu-liaison-inquiry'));
+                    return;
+                }
                 
                 const formOptions = Object.entries(response).map(([name, id]) => ({
                     label: name + (id ? `: ${id}` : ''),
@@ -73,7 +80,7 @@ function FormBrowser({ isOpen, onClose, orgKey }) {
                 setForms(formOptions);
             } catch (err) {
                 if (isMounted) {
-                    setError(err.message);
+                    setFormLoadError(err.message || __('Failed to load forms. Please check your credentials and try again.', 'bu-liaison-inquiry'));
                     console.error('Error loading forms:', err);
                 }
             } finally {
@@ -150,6 +157,16 @@ function FormBrowser({ isOpen, onClose, orgKey }) {
             onRequestClose={handleClose}
             className="bu-liaison-form-browser-modal"
         >
+            {formLoadError && (
+                <Notice 
+                    status="error" 
+                    isDismissible={false}
+                    className="form-browser-error"
+                >
+                    {formLoadError}
+                </Notice>
+            )}
+
             {error && (
                 <Notice 
                     status="error" 
