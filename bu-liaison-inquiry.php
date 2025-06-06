@@ -24,6 +24,9 @@ require_once __DIR__ . '/src/new-admin.php';
 // Load the new REST API endpoints.
 require_once __DIR__ . '/src/admin-rest-endpoints.php';
 
+// Load the form REST API endpoints.
+require_once __DIR__ . '/src/form-rest-endpoints.php';
+
 $admin = new Admin();
 
 // Initialize the admin settings.
