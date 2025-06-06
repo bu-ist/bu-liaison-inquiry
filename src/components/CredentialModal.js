@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { useState } from '@wordpress/element';
+import { useState, useEffect } from '@wordpress/element';
 import { 
     Modal,
     TextControl, 
@@ -38,8 +38,11 @@ function CredentialModal({ isOpen, onClose, orgKey, initialData, onSave, isSavin
         setValue,
         reset,
         watch,
-        formState: { errors }
+        setError: setFieldError,
+        clearErrors,
+        formState: { errors, isSubmitted, isDirty, dirtyFields }
     } = useForm({
+        mode: 'onChange', // Enable real-time validation
         defaultValues: initialData || { 
             APIKey: '', 
             ClientID: '' 
@@ -50,23 +53,39 @@ function CredentialModal({ isOpen, onClose, orgKey, initialData, onSave, isSavin
 
     // Check if an organization key already exists
     const checkOrgKeyExists = (key) => {
-        if (!key || orgKey) return false; // Skip check if editing existing org
+        if (!key || orgKey) return false;
         return Object.keys(existingOrgs).includes(key);
     };
 
     // Handle orgKey change for real-time validation
     const handleOrgKeyChange = (val) => {
-        setValue('orgKey', val);
+        setValue('orgKey', val, { 
+            shouldValidate: true, // Trigger validation on change
+            shouldDirty: true 
+        });
         
-        // Clear previous error if it was about duplicate keys
+        // Clear global error if it was about duplicate keys
         if (error && error.includes('already exists')) {
             setError(null);
         }
         
         // Show inline validation for duplicate keys
         if (val && checkOrgKeyExists(val)) {
-            setError(__('This Organization Key already exists. Please choose a unique key.', 'bu-liaison-inquiry'));
+            setFieldError('orgKey', {
+                type: 'manual',
+                message: __('This Organization Key already exists. Please choose a unique key.', 'bu-liaison-inquiry')
+            });
+        } else {
+            clearErrors('orgKey');
         }
+    };
+
+    // Handle field changes with validation
+    const handleFieldChange = (field, val) => {
+        setValue(field, val, {
+            shouldValidate: true,
+            shouldDirty: true
+        });
     };
 
     const onSubmit = async (data) => {
@@ -156,7 +175,7 @@ function CredentialModal({ isOpen, onClose, orgKey, initialData, onSave, isSavin
                         onChange={handleOrgKeyChange}
                         value={values.orgKey || ''}
                         label={__('Organization Key:', 'bu-liaison-inquiry')}
-                        help={__('A unique identifier for this organization.', 'bu-liaison-inquiry')}
+                        help={errors.orgKey?.message || __('A unique identifier for this organization.', 'bu-liaison-inquiry')}
                         placeholder={__('Enter organization key...', 'bu-liaison-inquiry')}
                         disabled={success}
                     />
@@ -170,10 +189,10 @@ function CredentialModal({ isOpen, onClose, orgKey, initialData, onSave, isSavin
                             message: __('API Key must be at least 10 characters.', 'bu-liaison-inquiry')
                         }
                     })}
-                    onChange={val => setValue('APIKey', val)}
+                    onChange={(val) => handleFieldChange('APIKey', val)}
                     value={values.APIKey || ''}
                     label={__('API Key:', 'bu-liaison-inquiry')}
-                    help={__('The API key for this organization.', 'bu-liaison-inquiry')}
+                    help={errors.APIKey?.message || __('The API key for this organization.', 'bu-liaison-inquiry')}
                     placeholder={__('Enter API key...', 'bu-liaison-inquiry')}
                     disabled={success}
                 />
@@ -182,14 +201,14 @@ function CredentialModal({ isOpen, onClose, orgKey, initialData, onSave, isSavin
                     {...register('ClientID', {
                         required: __('Client ID is required.', 'bu-liaison-inquiry')
                     })}
-                    onChange={val => setValue('ClientID', val)}
+                    onChange={(val) => handleFieldChange('ClientID', val)}
                     value={values.ClientID || ''}
                     label={__('Client ID:', 'bu-liaison-inquiry')}
-                    help={__('The client ID for this organization.', 'bu-liaison-inquiry')}
+                    help={errors.ClientID?.message || __('The client ID for this organization.', 'bu-liaison-inquiry')}
                     placeholder={__('Enter client ID...', 'bu-liaison-inquiry')}
                     disabled={success}
                 />
-                
+
                 <div className="bu-liaison-modal-actions">
                     {!success && (
                         <Button
