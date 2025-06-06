@@ -20,9 +20,11 @@ import { useForm } from 'react-hook-form';
  * @param {string|null} props.orgKey The organization key (null for new organizations).
  * @param {Object|null} props.initialData Initial credential data.
  * @param {Function} props.onSave Callback to save the credential data.
+ * @param {boolean} props.isSaving Whether the parent component is in a saving state.
+ * @param {Object} props.existingOrgs Current organization credentials.
  * @return {JSX.Element} The credential modal component.
  */
-function CredentialModal({ isOpen, onClose, orgKey, initialData, onSave, isSaving: parentIsSaving = false }) {
+function CredentialModal({ isOpen, onClose, orgKey, initialData, onSave, isSaving: parentIsSaving = false, existingOrgs = {} }) {
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
     const [localIsSaving, setLocalIsSaving] = useState(false);
@@ -46,6 +48,27 @@ function CredentialModal({ isOpen, onClose, orgKey, initialData, onSave, isSavin
 
     const values = watch();
 
+    // Check if an organization key already exists
+    const checkOrgKeyExists = (key) => {
+        if (!key || orgKey) return false; // Skip check if editing existing org
+        return Object.keys(existingOrgs).includes(key);
+    };
+
+    // Handle orgKey change for real-time validation
+    const handleOrgKeyChange = (val) => {
+        setValue('orgKey', val);
+        
+        // Clear previous error if it was about duplicate keys
+        if (error && error.includes('already exists')) {
+            setError(null);
+        }
+        
+        // Show inline validation for duplicate keys
+        if (val && checkOrgKeyExists(val)) {
+            setError(__('This Organization Key already exists. Please choose a unique key.', 'bu-liaison-inquiry'));
+        }
+    };
+
     const onSubmit = async (data) => {
         // Validate orgKey if this is a new organization
         if (!orgKey && !values.orgKey) {
@@ -55,6 +78,12 @@ function CredentialModal({ isOpen, onClose, orgKey, initialData, onSave, isSavin
 
         // For new orgs, use the entered key, otherwise use the existing key
         const key = orgKey || values.orgKey;
+        
+        // Check for duplicate keys when adding a new organization
+        if (!orgKey && existingOrgs[key]) {
+            setError(__('This Organization Key already exists. Please choose a unique key.', 'bu-liaison-inquiry'));
+            return;
+        }
         
         // Pass only APIKey and ClientID to parent
         const { APIKey, ClientID } = data;
@@ -121,12 +150,18 @@ function CredentialModal({ isOpen, onClose, orgKey, initialData, onSave, isSavin
                 {!orgKey && (
                     <TextControl
                         {...register('orgKey', {
-                            required: __('Organization Key is required.', 'bu-liaison-inquiry')
+                            required: __('Organization Key is required.', 'bu-liaison-inquiry'),
+                            pattern: {
+                                value: /^[a-zA-Z0-9_-]+$/,
+                                message: __('Organization Key can only contain letters, numbers, underscores and hyphens.', 'bu-liaison-inquiry')
+                            }
                         })}
-                        onChange={val => setValue('orgKey', val)}
+                        onChange={handleOrgKeyChange}
                         value={values.orgKey || ''}
                         label={__('Organization Key:', 'bu-liaison-inquiry')}
-                        help={errors.orgKey?.message || __('A unique identifier for this organization.', 'bu-liaison-inquiry')}
+                        help={errors.orgKey?.message || (checkOrgKeyExists(values.orgKey) ? 
+                            __('This key already exists!', 'bu-liaison-inquiry') : 
+                            __('A unique identifier for this organization.', 'bu-liaison-inquiry'))}
                         placeholder={__('Enter organization key...', 'bu-liaison-inquiry')}
                     />
                 )}

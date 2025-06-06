@@ -324,6 +324,7 @@ function App() {
                     initialData={currentOrgKey ? alternateCredentials[currentOrgKey] : null}
                     onSave={saveCredential}
                     isSaving={isSaving}
+                    existingOrgs={alternateCredentials}
                 />
             )}
         </div>
