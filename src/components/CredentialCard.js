@@ -31,15 +31,6 @@ function CredentialCard({ orgKey, data, onEdit, onDelete, onBrowseForms, disable
                         <Button
                             isSecondary // for 5.4 compatibility
                             variant="secondary"
-                            onClick={() => onBrowseForms(orgKey)}
-                            disabled={disabled}
-                            style={{ marginRight: '8px' }}
-                        >
-                            {__('Browse Forms', 'bu-liaison-inquiry')}
-                        </Button>
-                        <Button
-                            isSecondary // for 5.4 compatibility
-                            variant="secondary"
                             onClick={() => onEdit(orgKey)}
                             disabled={disabled}
                             style={{ marginRight: '8px' }}
@@ -66,6 +57,16 @@ function CredentialCard({ orgKey, data, onEdit, onDelete, onBrowseForms, disable
                     <div className="bu-liaison-credential-field">
                         <strong>{__('Client ID:', 'bu-liaison-inquiry')}</strong> 
                         {data.ClientID || __('Not set', 'bu-liaison-inquiry')}
+                    </div>
+                    <div style={{ marginTop: '16px' }}>
+                        <Button
+                            isSecondary
+                            variant="secondary"
+                            onClick={() => onBrowseForms(orgKey)}
+                            disabled={disabled}
+                        >
+                            {__('Browse Forms', 'bu-liaison-inquiry')}
+                        </Button>
                     </div>
                 </div>
             </CardBody>
