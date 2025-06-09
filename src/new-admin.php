@@ -52,6 +52,13 @@ function bu_liaison_enqueue_admin_scripts() {
 		'bu-liaison-inquiry'
 	);
 
+	// Enqueue WordPress components styles and the plugin's compiled CSS.
 	wp_enqueue_style( 'wp-components' );
+	wp_enqueue_style(
+		'bu-liaison-admin',
+		plugins_url( 'dist/js/build/index.css', __DIR__ ),
+		array( 'wp-components' ), // Make sure our styles load after WP components.
+		$asset_file['version']
+	);
 }
 add_action( 'admin_enqueue_scripts', 'bu_liaison_enqueue_admin_scripts' );
