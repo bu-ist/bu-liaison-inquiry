@@ -331,6 +331,8 @@ function App() {
                                     value={values.APIKey || ''}
                                     label={__('API Key:', 'bu-liaison-inquiry')}
                                     help={errors.APIKey?.message || __('The API key for the primary organization.', 'bu-liaison-inquiry')}
+                                    className={`components-text-control__input ${errors.APIKey ? 'has-error' : ''}`}
+                                    __nextHasNoMarginBottom
                                     placeholder={__('Enter API key...', 'bu-liaison-inquiry')}
                                     style={{ maxWidth: '400px' }}
                                     disabled={isSaving}
@@ -343,6 +345,8 @@ function App() {
                                     value={values.ClientID || ''}
                                     label={__('Client ID:', 'bu-liaison-inquiry')}
                                     help={errors.ClientID?.message || __('The client ID for the primary organization.', 'bu-liaison-inquiry')}
+                                    className={`components-text-control__input ${errors.ClientID ? 'has-error' : ''}`}
+                                    __nextHasNoMarginBottom
                                     placeholder={__('Enter client ID...', 'bu-liaison-inquiry')}
                                     style={{ maxWidth: '100px' }}
                                     disabled={isSaving}

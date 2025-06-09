@@ -176,6 +176,8 @@ function CredentialModal({ isOpen, onClose, orgKey, initialData, onSave, isSavin
                         value={values.orgKey || ''}
                         label={__('Organization Key:', 'bu-liaison-inquiry')}
                         help={errors.orgKey?.message || __('A unique identifier for this organization.', 'bu-liaison-inquiry')}
+                        className={`components-text-control__input ${errors.orgKey ? 'has-error' : ''}`}
+                        __nextHasNoMarginBottom
                         placeholder={__('Enter organization key...', 'bu-liaison-inquiry')}
                         disabled={success}
                     />
@@ -193,6 +195,8 @@ function CredentialModal({ isOpen, onClose, orgKey, initialData, onSave, isSavin
                     value={values.APIKey || ''}
                     label={__('API Key:', 'bu-liaison-inquiry')}
                     help={errors.APIKey?.message || __('The API key for this organization.', 'bu-liaison-inquiry')}
+                    className={`components-text-control__input ${errors.APIKey ? 'has-error' : ''}`}
+                    __nextHasNoMarginBottom
                     placeholder={__('Enter API key...', 'bu-liaison-inquiry')}
                     disabled={success}
                 />
@@ -205,6 +209,8 @@ function CredentialModal({ isOpen, onClose, orgKey, initialData, onSave, isSavin
                     value={values.ClientID || ''}
                     label={__('Client ID:', 'bu-liaison-inquiry')}
                     help={errors.ClientID?.message || __('The client ID for this organization.', 'bu-liaison-inquiry')}
+                    className={`components-text-control__input ${errors.ClientID ? 'has-error' : ''}`}
+                    __nextHasNoMarginBottom
                     placeholder={__('Enter client ID...', 'bu-liaison-inquiry')}
                     disabled={success}
                 />
