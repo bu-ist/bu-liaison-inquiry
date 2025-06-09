@@ -1,5 +1,15 @@
 <?php
+/**
+ * Register Admin page for Liaison form settings.
+ *
+ * @package BU_Liaison_Inquiry
+ */
 
+/**
+ * Render the React admin page with a div that will be replaced by the React app.
+ *
+ * @return void
+ */
 function bu_liaison_render_new_admin_page() {
 	// Check if the user has the required capability to view this page.
 	if ( ! current_user_can( 'manage_options' ) ) {
