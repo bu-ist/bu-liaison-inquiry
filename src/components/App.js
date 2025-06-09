@@ -18,6 +18,7 @@ import { useForm } from 'react-hook-form';
 /**
  * Internal dependencies
  */
+import './app.css';
 import CredentialModal from './CredentialModal';
 import CredentialCard from './CredentialCard';
 import FormBrowser from './FormBrowser';
