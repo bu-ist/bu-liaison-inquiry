@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { useState, useEffect } from '@wordpress/element';
+import { useState } from '@wordpress/element';
 import { 
     Modal,
     TextControl, 
