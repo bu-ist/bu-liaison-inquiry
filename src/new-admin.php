@@ -5,12 +5,25 @@
  * @package BU_Liaison_Inquiry
  */
 
+namespace BU\Plugins\Liaison_Inquiry;
+
+// WordPress functions are in global namespace.
+use function add_action;
+use function add_menu_page;
+use function current_user_can;
+use function get_current_screen;
+use function plugin_dir_path;
+use function plugins_url;
+use function wp_enqueue_script;
+use function wp_enqueue_style;
+use function wp_set_script_translations;
+
 /**
  * Render the React admin page with a div that will be replaced by the React app.
  *
  * @return void
  */
-function bu_liaison_render_new_admin_page() {
+function render_admin_page() {
 	// Check if the user has the required capability to view this page.
 	if ( ! current_user_can( 'manage_options' ) ) {
 		return;
@@ -27,8 +40,8 @@ add_action(
 			__( 'BU Liaison Inquiry New', 'bu_liaison_inquiry' ),
 			__( 'Liaison Inquiry', 'bu_liaison_inquiry' ),
 			'manage_options',
-			'bu-liaison-new-admin',
-			'bu_liaison_render_new_admin_page',
+			'bu-liaison-admin',
+			__NAMESPACE__ . '\render_admin_page',
 			'dashicons-feedback',
 			6
 		);
@@ -41,9 +54,9 @@ add_action(
  *
  * @return void
  */
-function bu_liaison_enqueue_admin_scripts() {
+function enqueue_admin_scripts() {
 	$page = get_current_screen();
-	if ( 'toplevel_page_bu-liaison-new-admin' !== $page->id ) {
+	if ( 'toplevel_page_bu-liaison-admin' !== $page->id ) {
 		return;
 	}
 
@@ -71,4 +84,4 @@ function bu_liaison_enqueue_admin_scripts() {
 		$asset_file['version']
 	);
 }
-add_action( 'admin_enqueue_scripts', 'bu_liaison_enqueue_admin_scripts' );
+add_action( 'admin_enqueue_scripts', __NAMESPACE__ . '\enqueue_admin_scripts' );
