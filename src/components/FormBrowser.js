@@ -135,6 +135,9 @@ function FormBrowser({ isOpen, onClose, orgKey }) {
         if (!selectedForm || selectedForm === 'default') {
             return '[liaison_inquiry_form]';
         }
+        if (!orgKey) {
+            return `[liaison_inquiry_form form_id="${selectedForm}"]`;
+        }
         return `[liaison_inquiry_form org="${orgKey}" form_id="${selectedForm}"]`;
     };
 
