@@ -27,15 +27,6 @@ require_once __DIR__ . '/src/admin-rest-endpoints.php';
 // Load the form REST API endpoints.
 require_once __DIR__ . '/src/form-rest-endpoints.php';
 
-$admin = new Admin();
-
-// Initialize the admin settings.
-add_action( 'admin_init', array( $admin, 'bu_liaison_inquiry_settings_init' ) );
-
-// Register the page in the admin menu.
-add_action( 'admin_menu', array( $admin, 'bu_liaison_inquiry_options_page' ) );
-
-
 // Instantiate plugin (only once).
 if ( ! isset( $GLOBALS['bu_liaison_inquiry'] ) ) {
 	// Check whether in Dev Mode.
