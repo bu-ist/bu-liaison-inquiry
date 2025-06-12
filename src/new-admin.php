@@ -25,7 +25,7 @@ use function wp_set_script_translations;
  */
 function render_admin_page() {
 	// Check if the user has the required capability to view this page.
-	if ( ! current_user_can( 'manage_options' ) ) {
+	if ( ! current_user_can( 'manage_categories' ) ) {
 		return;
 	}
 
@@ -39,7 +39,7 @@ add_action(
 		add_options_page(
 			__( 'Liaison Forms', 'bu_liaison_inquiry' ),
 			__( 'Liaison Forms', 'bu_liaison_inquiry' ),
-			'manage_options',
+			'manage_categories',
 			'bu_liaison_inquiry',
 			__NAMESPACE__ . '\render_admin_page'
 		);

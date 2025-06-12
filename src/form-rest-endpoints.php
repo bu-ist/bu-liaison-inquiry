@@ -87,7 +87,7 @@ function register_form_routes() {
 				'methods'             => \WP_REST_Server::READABLE,
 				'callback'            => __NAMESPACE__ . '\get_forms',
 				'permission_callback' => function() {
-					return current_user_can( 'manage_options' );
+					return current_user_can( 'manage_categories' );
 				},
 				'args'                => array(
 					'org_key' => array(
@@ -110,7 +110,7 @@ function register_form_routes() {
 				'methods'             => \WP_REST_Server::READABLE,
 				'callback'            => __NAMESPACE__ . '\get_form_fields',
 				'permission_callback' => function() {
-					return current_user_can( 'manage_options' );
+					return current_user_can( 'manage_categories' );
 				},
 				'args'                => array(
 					'form_id' => array(
