@@ -9,7 +9,7 @@ namespace BU\Plugins\Liaison_Inquiry;
 
 // WordPress functions are in global namespace.
 use function add_action;
-use function add_menu_page;
+use function add_options_page;
 use function current_user_can;
 use function get_current_screen;
 use function plugin_dir_path;
@@ -36,14 +36,12 @@ function render_admin_page() {
 add_action(
 	'admin_menu',
 	function () {
-		add_menu_page(
-			__( 'BU Liaison Inquiry New', 'bu_liaison_inquiry' ),
-			__( 'Liaison Inquiry', 'bu_liaison_inquiry' ),
+		add_options_page(
+			__( 'Liaison Forms', 'bu_liaison_inquiry' ),
+			__( 'Liaison Forms', 'bu_liaison_inquiry' ),
 			'manage_options',
-			'bu-liaison-admin',
-			__NAMESPACE__ . '\render_admin_page',
-			'dashicons-feedback',
-			6
+			'bu_liaison_inquiry',
+			__NAMESPACE__ . '\render_admin_page'
 		);
 	}
 );
@@ -56,7 +54,7 @@ add_action(
  */
 function enqueue_admin_scripts() {
 	$page = get_current_screen();
-	if ( 'toplevel_page_bu-liaison-admin' !== $page->id ) {
+	if ( 'settings_page_bu_liaison_inquiry' !== $page->id ) {
 		return;
 	}
 
