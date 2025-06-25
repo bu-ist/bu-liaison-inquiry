@@ -132,13 +132,7 @@ function FormBrowser({ isOpen, onClose, orgKey }) {
     };
 
     const generateShortcode = () => {
-        if (!selectedForm || selectedForm === 'default') {
-            return '[liaison_inquiry_form]';
-        }
-        if (!orgKey) {
-            return `[liaison_inquiry_form form_id="${selectedForm}"]`;
-        }
-        return `[liaison_inquiry_form org="${orgKey}" form_id="${selectedForm}"]`;
+        return `[liaison_inquiry_form${orgKey ? ` org="${orgKey}"` : ''}${selectedForm && selectedForm !== 'default' ? ` form_id="${selectedForm}"` : ''}]`;
     };
 
     const handleClose = () => {
