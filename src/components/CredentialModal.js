@@ -222,6 +222,7 @@ function CredentialModal({ isOpen, onClose, orgKey, initialData, onSave, isSavin
                             type="submit"
                             isBusy={isSaving}
                             disabled={isSaving}
+                            style={{ marginRight: '12px' }}
                         >
                             {isSaving
                                 ? __('Saving...', 'bu-liaison-inquiry')
