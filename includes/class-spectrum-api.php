@@ -143,6 +143,9 @@ class Spectrum_API {
 			return $return;
 		}
 
+		// Remove org key before sending to API.
+		unset( $post_vars['org'] );
+
 		// Set the API Key from the site options.
 		$post_vars['IQS-API-KEY'] = $this->api_key;
 

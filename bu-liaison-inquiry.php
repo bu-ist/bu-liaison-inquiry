@@ -6,7 +6,7 @@
  * Author: Boston University IS&T (Jonathan Williams)
  * Author URI: http://developer.bu.edu
  * Description: Provide a form to send data to the Liaison SpectrumEMP API
- * Version: 0.8.2
+ * Version: 1.0.0
  *
  * @package BU_Liaison_Inquiry
  */
@@ -18,14 +18,14 @@ namespace BU\Plugins\Liaison_Inquiry;
  */
 require __DIR__ . '/vendor/autoload.php';
 
-$admin = new Admin();
+// Load the new admin page.
+require_once __DIR__ . '/src/new-admin.php';
 
-// Initialize the admin settings.
-add_action( 'admin_init', array( $admin, 'bu_liaison_inquiry_settings_init' ) );
+// Load the new REST API endpoints.
+require_once __DIR__ . '/src/admin-rest-endpoints.php';
 
-// Register the page in the admin menu.
-add_action( 'admin_menu', array( $admin, 'bu_liaison_inquiry_options_page' ) );
-
+// Load the form REST API endpoints.
+require_once __DIR__ . '/src/form-rest-endpoints.php';
 
 // Instantiate plugin (only once).
 if ( ! isset( $GLOBALS['bu_liaison_inquiry'] ) ) {

@@ -32,6 +32,24 @@ Any other values can be set by including a shortcode attribute of the form `fiel
 ### SOURCE
 Liaison uses a special field called `source` that can track where a lead originated.  It appears to be the only field in the Liaison forms that uses something other than an integer for the field id.  The source can be set in a shortcode attribute like any other field like this: `source="12345"`.
 
+## Managing Credentials
+
+To maintain backwards compatibility and support multiple Liaison organizations, there is a "default" API Key and Client ID, which are set at the top of the settings page in the WordPress admin.
+
+You can also enable multiple organizations by adding alternate credentials in the plugin settings. This allows you to use different API Keys and Client IDs for different forms or organizations. The alternate credentials can be added in the "Alternate Credentials" section of the settings page. Each alternate requires a unique Org Key, which is referenced in the shortcode.
+
+### Multi-Organization Support
+
+If your site needs to support multiple Liaison organizations (Client IDs/API Keys), you can add alternate credentials in the plugin settings under Settings → Liaison Forms.
+
+To use a specific organization's credentials, add the org attribute to your shortcode:
+```html
+[liaison_inquiry_form org="org_key"]
+```
+
+- Your_org_key is the identifier you set when adding alternate credentials in the admin.
+- If org is omitted, the default credentials are used.
+
 ## Dev Mode
 
 The plugin may be switched to dev mode. In this mode, no requests to the SpectrumEMP API will be sent. It is useful mostly for developers working on new features, but also for plugin users who want to try the plugin out prior obtaining Liaison API Keys.
