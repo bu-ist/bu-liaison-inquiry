@@ -81,7 +81,12 @@ class Spectrum_API {
 
 		$api_query = self::SUBMITTABLE_URL . '?IQS-API-KEY=' . $this->api_key;
 
-		$api_response = wp_remote_get( $api_query );
+		// Set a longer timeout (10 seconds) to prevent timeouts when API is slow to respond.
+		$args = array(
+			'timeout' => 10,
+		);
+
+		$api_response = wp_remote_get( $api_query, $args );
 
 		$this->throw_on_error( $api_response );
 
@@ -108,7 +113,12 @@ class Spectrum_API {
 			$api_query .= '&formID=' . $form_id;
 		}
 
-		$api_response = wp_remote_get( $api_query );
+		// Set a longer timeout (10 seconds) to prevent timeouts when API is slow to respond.
+		$args = array(
+			'timeout' => 10,
+		);
+
+		$api_response = wp_remote_get( $api_query, $args );
 
 		$this->throw_on_error( $api_response );
 
@@ -152,6 +162,7 @@ class Spectrum_API {
 		// Setup arguments for the external API call.
 		$post_args = array(
 			'body' => $post_vars,
+			'timeout' => 10, // Increase timeout to 10 seconds to prevent timeouts when API is slow to respond.
 		);
 
 		$remote_submit = wp_remote_post( self::SUBMIT_URL, $post_args );
