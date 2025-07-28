@@ -61,9 +61,9 @@ class Spectrum_API {
 			// @codeCoverageIgnoreStart
 			if ( defined( 'BU_CMS' ) && BU_CMS ) {
 				$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? ' (Request URI: ' . sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) . ')' : '';
-				error_log( 'Liaison form API call failed: ' . esc_html( $error_message ) . $request_uri );
+				error_log( 'Liaison form API call failed: ' . $error_message . $request_uri );
 			}// @codeCoverageIgnoreEnd
-			throw new \Exception( 'Error: ' . esc_html( $error_message ) );
+			throw new \Exception( 'Error: ' . $error_message );
 		}
 	}
 
