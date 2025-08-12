@@ -71,6 +71,8 @@ class Spectrum_API {
 	 * Get the list of forms from EMP API. The list is always prepended by
 	 * "Inquiry Form" which is missing from API response.
 	 *
+	 * Do not cache, as this is for the admin interface, where it isn't used heavily and we don't want the data to be out of date.
+	 *
 	 * @return array Return the list of forms as an associative array in the format:
 	 *               [(string)'Form Name' => (string|null) 'Form ID']
 	 */
@@ -103,12 +105,26 @@ class Spectrum_API {
 	/**
 	 * Get info from EMP API about the fields that should be displayed for the form.
 	 *
+	 * Caches the result as a transient for 15 minutes. By default transients are stored
+	 * in the WordPress database, but with a Redis implementation they will be stored in Redis.
+	 *
 	 * @param  string|null $form_id Form's ID, null for default one.
 	 * @return array Return "data" field of the decoded JSON response.
 	 *
 	 * @throws \Exception If API response is not successful.
 	 */
 	public function get_requirements( $form_id ) {
+		// Generate a unique cache key for this form and API key.
+		$cache_key = 'liaison_form_req_' . md5( $this->api_key . '_' . ( $form_id ? $form_id : 'default' ) );
+
+		// Try to get cached data first.
+		$cached_data = get_transient( $cache_key );
+
+		if ( false !== $cached_data ) {
+			return $cached_data;
+		}
+
+		// If no cached data available, make the API call.
 		$api_query = self::REQUIREMENTS_URL . '?IQS-API-KEY=' . $this->api_key;
 		if ( $form_id ) {
 			$api_query .= '&formID=' . $form_id;
@@ -134,6 +150,9 @@ class Spectrum_API {
 			}// @codeCoverageIgnoreEnd
 			throw new \Exception( 'Error: ' . $form_message );
 		}
+
+		// Cache the successful response for 15 minutes (900 seconds).
+		set_transient( $cache_key, $inquiry_form_decode->data, 900 );
 
 		return $inquiry_form_decode->data;
 	}
