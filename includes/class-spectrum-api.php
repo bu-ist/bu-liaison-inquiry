@@ -173,15 +173,18 @@ class Spectrum_API {
 			return $return;
 		}
 
-		// Remove org key before sending to API.
-		unset( $post_vars['org'] );
+		// Capture the referring page before removing it from post vars.
+		$referring_page = isset( $post_vars['referring_page'] ) ? $post_vars['referring_page'] : '';
+
+		// Remove our custom fields before sending to API.
+		unset( $post_vars['org'], $post_vars['referring_page'] );
 
 		// Set the API Key from the site options.
 		$post_vars['IQS-API-KEY'] = $this->api_key;
 
 		// Setup arguments for the external API call.
 		$post_args = array(
-			'body' => $post_vars,
+			'body'    => $post_vars,
 			'timeout' => 10, // Increase timeout to 10 seconds to prevent timeouts when API is slow to respond.
 		);
 
@@ -192,8 +195,9 @@ class Spectrum_API {
 			$return['status']   = 0;
 			$return['response'] = 'Failed submitting to Liaison API. Please retry. Error: ' . $error;
 			// @codeCoverageIgnoreStart
-			if ( defined( 'BU_CMS' ) && BU_CMS ) {
-				error_log( sprintf( '%s: %s', __METHOD__, $return['response'] ) );
+			if ( defined( '\BU_CMS' ) && constant( '\BU_CMS' ) ) {
+				$page_info = ! empty( $referring_page ) ? ' (Referring Page: ' . $referring_page . ')' : '';
+				error_log( sprintf( '%s: %s%s', __METHOD__, $return['response'], $page_info ) );
 			}// @codeCoverageIgnoreEnd
 		} else {
 			// Decode the response and activate redirect to the personal url on success.
