@@ -195,7 +195,7 @@ class Spectrum_API {
 			$return['status']   = 0;
 			$return['response'] = 'Failed submitting to Liaison API. Please retry. Error: ' . $error;
 			// @codeCoverageIgnoreStart
-			if ( defined( '\BU_CMS' ) && constant( '\BU_CMS' ) ) {
+			if ( defined( 'BU_CMS' ) && constant( 'BU_CMS' ) ) {
 				$page_info = ! empty( $referring_page ) ? ' (Referring Page: ' . $referring_page . ')' : '';
 				error_log( sprintf( '%s: %s%s', __METHOD__, $return['response'], $page_info ) );
 			}// @codeCoverageIgnoreEnd
