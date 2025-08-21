@@ -35,7 +35,7 @@
 	}
 
 	// Add the current page URL as a hidden field for troubleshooting errors.
-	echo '<input type="hidden" name="referring_page" value="' . esc_attr( esc_url( get_permalink() ) ) . '" />';
+	echo '<input type="hidden" name="referring_page" value="' . esc_attr( get_permalink() ) . '" />';
 
 	// Initialize modal and phone fields.
 	$modals = array();
