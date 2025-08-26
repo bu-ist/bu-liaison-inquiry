@@ -214,8 +214,8 @@ class Spectrum_API {
 
 				// Build status message with attempt number and outcome.
 				$attempt_num = $retry_count + 1;
-				$outcome     = $should_retry ? 'retrying' : ( $retry_count === $max_retries ? 'giving up' : '' );
-				$status_msg  = "Try {$attempt_num} failed" . ( $outcome ? ", {$outcome}" : '' );
+				$outcome     = $should_retry ? 'retrying' : 'giving up';
+				$status_msg  = sprintf( 'Try %d failed, %s', $attempt_num, $outcome );
 
 				error_log( sprintf( '%s: %s - %s%s', __METHOD__, $status_msg, "Error: {$error}", $page_info ) );
 			}// @codeCoverageIgnoreEnd
