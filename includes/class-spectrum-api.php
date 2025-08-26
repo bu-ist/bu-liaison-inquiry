@@ -260,7 +260,6 @@ class Spectrum_API {
 		$retryable_errors = array(
 			'http_request_failed', // General failure (includes timeouts).
 			'curl_error',         // cURL specific errors.
-			'http_404',           // Temporary 404 errors.
 			'http_500',           // Server errors that might be temporary.
 			'http_503',           // Service unavailable (often temporary).
 			'http_request_timeout', // Explicit timeout.
