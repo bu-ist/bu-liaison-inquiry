@@ -158,14 +158,24 @@ class Spectrum_API {
 	}
 
 	/**
-	 * Send inquiry form to EMP API.
+	 * Send inquiry form to EMP API with retry capability.
 	 *
-	 * @param array $post_vars An array of form fields to be posted.
+	 * Makes up to 3 attempts to submit the form if retryable errors occur:
+	 * 1. First attempt: 10 second timeout
+	 * 2. Second attempt: 10 second timeout
+	 * 3. Final attempt: 5 second timeout
+	 *
+	 * Total maximum time including 0.1s delays between attempts: ~25.2 seconds,
+	 * staying well within CloudFront's 30-second timeout limit.
+	 *
+	 * @param array $post_vars   An array of form fields to be posted.
+	 * @param int   $retry_count Optional. Number of retries already attempted. Default 0.
 	 *
 	 * @return array Returns the result of the form submission.
 	 */
-	public function post_form( $post_vars ) {
-		$return = array();
+	public function post_form( $post_vars, $retry_count = 0 ) {
+		$return      = array();
+		$max_retries = 2; // Maximum number of retries (total attempts = 3).
 
 		if ( ! isset( $this->api_key ) ) {
 			$return['status']   = 0;
@@ -182,23 +192,44 @@ class Spectrum_API {
 		// Set the API Key from the site options.
 		$post_vars['IQS-API-KEY'] = $this->api_key;
 
+		// Use shorter timeout on final attempt to stay within CloudFront's 30-second limit.
+		$timeout = ( 2 === $retry_count ) ? 5 : 10;
+
 		// Setup arguments for the external API call.
 		$post_args = array(
 			'body'    => $post_vars,
-			'timeout' => 10, // Increase timeout to 10 seconds to prevent timeouts when API is slow to respond.
+			'timeout' => $timeout, // Timeout is either 10 or 5 seconds, depending which attempt this is.
 		);
 
 		$remote_submit = wp_remote_post( self::SUBMIT_URL, $post_args );
 
 		if ( is_wp_error( $remote_submit ) ) {
-			$error              = $remote_submit->get_error_message();
-			$return['status']   = 0;
-			$return['response'] = 'Failed submitting to Liaison API. Please retry. Error: ' . $error;
+			$error        = $remote_submit->get_error_message();
+			$error_code   = $remote_submit->get_error_code();
+			$should_retry = $retry_count < $max_retries && $this->is_retryable_error( $error_code );
+
 			// @codeCoverageIgnoreStart
 			if ( defined( 'BU_CMS' ) && BU_CMS ) {
 				$page_info = ! empty( $referring_page ) ? ' (Referring Page: ' . $referring_page . ')' : '';
-				error_log( sprintf( '%s: %s%s', __METHOD__, $return['response'], $page_info ) );
+
+				// Build status message with attempt number and outcome.
+				$attempt_num = $retry_count + 1;
+				$outcome     = $should_retry ? 'retrying' : 'giving up';
+				$status_msg  = sprintf( 'Try %d failed, %s', $attempt_num, $outcome );
+
+				error_log( sprintf( '%s: %s - %s%s', __METHOD__, $status_msg, "Error: {$error}", $page_info ) );
 			}// @codeCoverageIgnoreEnd
+
+			// If we should retry, do so with an incremented retry count.
+			if ( $should_retry ) {
+				// Minimal delay (0.1s) before retry to allow transient issues to resolve.
+				usleep( 100000 );
+				return $this->post_form( $post_vars, $retry_count + 1 );
+			}
+
+			// If we shouldn't retry or have exhausted retries, return the error.
+			$return['status']   = 0;
+			$return['response'] = 'Failed submitting to Liaison API. Please retry. Error: ' . $error;
 		} else {
 			// Decode the response and activate redirect to the personal url on success.
 			$resp = json_decode( $remote_submit['body'] );
@@ -213,5 +244,27 @@ class Spectrum_API {
 		}
 
 		return $return;
+	}
+
+	/**
+	 * Determine if an error should trigger a retry attempt.
+	 *
+	 * Generally with most transport setups, the error code will be 'http_request_failed',
+	 * but other transports may use different error codes so we try some additional ones here.
+	 *
+	 * @param string $error_code The WP_Error code from the failed request.
+	 * @return bool True if the error is retryable, false otherwise.
+	 */
+	private function is_retryable_error( $error_code ) {
+		// List of error codes that should trigger a retry.
+		$retryable_errors = array(
+			'http_request_failed', // General failure (includes timeouts).
+			'curl_error',         // cURL specific errors.
+			'http_500',           // Server errors that might be temporary.
+			'http_503',           // Service unavailable (often temporary).
+			'http_request_timeout', // Explicit timeout.
+		);
+
+		return in_array( $error_code, $retryable_errors, true );
 	}
 }
