@@ -217,7 +217,15 @@ class Spectrum_API {
 				$outcome     = $should_retry ? 'retrying' : 'giving up';
 				$status_msg  = sprintf( 'Try %d failed, %s', $attempt_num, $outcome );
 
-				error_log( sprintf( '%s: %s - %s%s', __METHOD__, $status_msg, "Error: {$error}", $page_info ) );
+				error_log(
+					sprintf(
+						'%s: %s - Error: %s%s',
+						__METHOD__,
+						$status_msg,
+						$error,
+						$page_info
+					)
+				);
 			}// @codeCoverageIgnoreEnd
 
 			// If we should retry, do so with an incremented retry count.
