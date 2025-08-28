@@ -1,6 +1,6 @@
 {
   "name": "bu-liaison-inquiry",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "devDependencies": {
     "@wordpress/api-fetch": "^3.11.0",
     "@wordpress/components": "^9.2.7",
