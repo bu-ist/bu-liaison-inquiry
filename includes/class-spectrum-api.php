@@ -168,12 +168,13 @@ class Spectrum_API {
 	 * Total maximum time including 0.1s delays between attempts: ~25.2 seconds,
 	 * staying well within CloudFront's 30-second timeout limit.
 	 *
-	 * @param array $post_vars   An array of form fields to be posted.
-	 * @param int   $retry_count Optional. Number of retries already attempted. Default 0.
+	 * @param array  $post_vars      An array of form fields to be posted.
+	 * @param int    $retry_count    Optional. Number of retries already attempted. Default 0.
+	 * @param string $referring_page Optional. The original referring page URL, preserved across retries. Default empty.
 	 *
 	 * @return array Returns the result of the form submission.
 	 */
-	public function post_form( $post_vars, $retry_count = 0 ) {
+	public function post_form( $post_vars, $retry_count = 0, $referring_page = '' ) {
 		$return      = array();
 		$max_retries = 2; // Maximum number of retries (total attempts = 3).
 
@@ -183,8 +184,10 @@ class Spectrum_API {
 			return $return;
 		}
 
-		// Capture the referring page before removing it from post vars.
-		$referring_page = isset( $post_vars['referring_page'] ) ? $post_vars['referring_page'] : '';
+		// On first attempt, capture referring page from post vars.
+		if ( 0 === $retry_count && empty( $referring_page ) ) {
+			$referring_page = isset( $post_vars['referring_page'] ) ? $post_vars['referring_page'] : '';
+		}
 
 		// Remove our custom fields before sending to API.
 		unset( $post_vars['org'], $post_vars['referring_page'] );
@@ -232,7 +235,7 @@ class Spectrum_API {
 			if ( $should_retry ) {
 				// Minimal delay (0.1s) before retry to allow transient issues to resolve.
 				usleep( 100000 );
-				return $this->post_form( $post_vars, $retry_count + 1 );
+				return $this->post_form( $post_vars, $retry_count + 1, $referring_page );
 			}
 
 			// If we shouldn't retry or have exhausted retries, return the error.
