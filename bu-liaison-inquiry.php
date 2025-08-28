@@ -6,7 +6,7 @@
  * Author: Boston University IS&T (Jonathan Williams)
  * Author URI: http://developer.bu.edu
  * Description: Provide a form to send data to the Liaison SpectrumEMP API
- * Version: 1.0.6
+ * Version: 1.0.7
  *
  * @package BU_Liaison_Inquiry
  */
