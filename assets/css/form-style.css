@@ -5,3 +5,20 @@
 .hide {
     display: none !important;
 }
+
+.form-retry-notice {
+    margin-bottom: 15px;
+}
+
+.retry-actions {
+    margin-top: 10px;
+}
+
+.countdown {
+    font-weight: bold;
+}
+
+.retry-message {
+    display: block;
+    margin-top: 8px;
+}
