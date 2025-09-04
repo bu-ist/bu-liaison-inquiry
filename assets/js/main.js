@@ -115,11 +115,9 @@ function main($) {
 	that.init = function() {
 		// Prevent any direct form submissions - everything should go through validation
 		$('#form_example').on('submit', function(e) {
-			// Only prevent default if not triggered by validation
-			if (!e.isDefaultPrevented()) {
-				e.preventDefault();
-				$(this).validate().form();
-			}
+			// Always prevent default form submission and trigger validation
+			e.preventDefault();
+			$(this).validate().form();
 		});
 
 		//$('.twipsy').tooltip({
