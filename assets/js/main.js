@@ -13,26 +13,104 @@ function main($) {
 			.addClass('btn-primary')
 			.removeAttr('disabled');
 	}
-	
-	// Function to show retry message UI
-	function showRetryMessage() {
-		// Create retry notification if it doesn't exist
-		if ($('.form-retry-notice').length === 0) {
-			$('<div class="alert alert-warning form-retry-notice">' +
-				'<strong>Your form submission timed out.</strong> ' +
-				'Please click the submit button below to try again.' +
-				'</div>').insertAfter('.form-submit-danger');
-		}
-		
-		// Show the notice
-		$('.form-retry-notice').show();
-		
-		// Update the submit button text to indicate retry
-		$('.btn-primary').html('Retry Submission <i class="icon-chevron-right icon-white"></i>')
-			.removeClass('btn-primary')
-			.addClass('btn-warning')
-			.removeAttr('disabled');
-	}
+    
+    // Track if we're on our first or second retry attempt
+    var isFirstRetry = true;
+    
+    // Helper function to modify the referring_page hidden field to track retry attempts
+    function modifyReferringPage(retryType) {
+        var $referringField = $('input[name="referring_page"]');
+        var currentValue = $referringField.val();
+        
+        // Don't add suffix multiple times
+        if (!currentValue.includes('-browser-retry-')) {
+            $referringField.val(currentValue + '-browser-retry-' + retryType);
+        }
+    }
+    
+    // Helper function to create or update the retry notification
+    function updateRetryNotice(isFirstAttempt) {
+        var title = isFirstAttempt ? 
+            'Your form submission timed out.' : 
+            'Your form submission timed out again.';
+            
+        var message = isFirstAttempt ?
+            '<span class="retry-message">Automatically retrying in <span class="countdown">3</span> seconds...</span>' :
+            '<span class="retry-message">Please click the button below to try again.</span>';
+        
+        if ($('.form-retry-notice').length === 0) {
+            $('<div class="alert alert-warning form-retry-notice">' +
+                '<strong>' + title + '</strong> ' +
+                message +
+                '</div>').insertAfter('.form-submit-danger');
+        } else {
+            $('.form-retry-notice').html(
+                '<strong>' + title + '</strong> ' +
+                message
+            );
+        }
+        
+        // Show the notice
+        $('.form-retry-notice').show();
+    }
+    
+    // Function to set up and start the automatic countdown timer
+    function startCountdownAndAutoRetry() {
+        var count = 3;
+        var countdownTimer = setInterval(function() {
+            count--;
+            $('.countdown').text(count);
+            
+            if (count <= 0) {
+                clearInterval(countdownTimer);
+                // Change message to "Retrying now..."
+                $('.retry-message').text('Retrying now...');
+                
+                // Submit the form automatically after countdown
+                setTimeout(function() {
+                    isFirstRetry = false; // Mark that we've done the first retry
+                    $('#form_example').submit();
+                }, 100);
+            }
+        }, 1000);
+        
+        // Store the timer ID so we can cancel it if needed
+        window.retryCountdownTimer = countdownTimer;
+    }
+    
+    // Function to set up the manual retry button
+    function setupManualRetryButton() {
+        $('.btn-primary').html('Retry Submission <i class="icon-chevron-right icon-white"></i>')
+            .removeClass('btn-primary')
+            .addClass('btn-warning')
+            .removeAttr('disabled')
+            .one('click', function() {
+                // When clicked, update the referring page to indicate manual retry
+                modifyReferringPage('manual');
+            });
+    }
+    
+    // Main function to initiate and manage the browser-side retry workflow
+    function initiateBrowserRetry() {
+        // Clear any previous countdown timer
+        if (window.retryCountdownTimer) {
+            clearInterval(window.retryCountdownTimer);
+        }
+        
+        // Hide standard error messages
+        $('.form-submit-danger').hide();
+        
+        if (isFirstRetry) {
+            // First timeout - do automatic retry with countdown
+            updateRetryNotice(true);
+            modifyReferringPage('auto');
+            startCountdownAndAutoRetry();
+        } else {
+            // Second timeout - switch to manual retry
+            updateRetryNotice(false);
+            setupManualRetryButton();
+        }
+    }
 
 	that.init = function() {
 		// Prevent any direct form submissions - everything should go through validation
@@ -103,9 +181,9 @@ function main($) {
 							resetSubmitButton();
 						} else if (message.toLowerCase().indexOf('failed submitting') >= 0 && 
 								  message.indexOf('cURL error 28:') >= 0) {
-							// Show retry UI for timeout errors
+							// Initiate browser retry workflow for timeout errors
 							$('.form-submit-danger').hide();
-							showRetryMessage();
+							initiateBrowserRetry();
 						} else {
 							$('.form-submit-danger').html(message).show();
 							resetSubmitButton();
