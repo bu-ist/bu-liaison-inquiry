@@ -250,7 +250,7 @@ function main($) {
 					}
 					
 					$('.form-submit-danger').html(message).show();
-					resetSubmitButton();
+					resetSubmitButton(false);
 				});
 			},
 
