@@ -6,6 +6,9 @@ function main($) {
 
 	var that = [];
 	
+    // Track if we're on our first or second retry attempt
+    var isFirstRetry = true;
+
 	// Function to reset submit button to its original state
 	function resetSubmitButton(toRetryState) {
 		var $button = $('.btn-warning.btn-primary, .btn-warning, .btn-primary');
@@ -46,9 +49,6 @@ function main($) {
 			});
 		}
 	}
-    
-    // Track if we're on our first or second retry attempt
-    var isFirstRetry = true;
     
     // Helper function to modify the referring_page hidden field to track retry attempts
     function modifyReferringPage(retryType) {
