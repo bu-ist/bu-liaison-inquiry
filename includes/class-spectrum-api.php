@@ -158,6 +158,44 @@ class Spectrum_API {
 	}
 
 	/**
+	 * Log form submission activity when enabled.
+	 *
+	 * @param string $message      The message to log.
+	 * @param string $method_name  The name of the calling method (for log prefix).
+	 * @param bool   $is_error     Whether this is an error message.
+	 */
+	private function log_activity( $message, $method_name, $is_error = false ) {
+		if ( ! defined( 'BU_CMS' ) || ! BU_CMS ) {
+			return;
+		}
+
+		$log_message = sprintf( '%s: %s', $method_name, $message );
+		error_log( $log_message );
+	}
+
+	/**
+	 * Get browser retry info from referring page URL.
+	 *
+	 * @param string $referring_page The referring page URL to check.
+	 * @return string Description of the browser retry status, or empty string if none.
+	 */
+	private function get_browser_retry_info( $referring_page ) {
+		if ( empty( $referring_page ) ) {
+			return '';
+		}
+
+		if ( strpos( $referring_page, '-browser-retry-auto' ) !== false ) {
+			return ' (Automatic browser retry)';
+		}
+
+		if ( strpos( $referring_page, '-browser-retry-manual' ) !== false ) {
+			return ' (Manual browser retry)';
+		}
+
+		return '';
+	}
+
+	/**
 	 * Send inquiry form to EMP API with retry capability.
 	 *
 	 * Makes up to 3 attempts to submit the form if retryable errors occur:
@@ -218,17 +256,9 @@ class Spectrum_API {
 				// Build status message with attempt number and outcome.
 				$attempt_num = $retry_count + 1;
 				$outcome     = $should_retry ? 'retrying' : 'giving up';
-				$status_msg  = sprintf( 'Try %d failed, %s', $attempt_num, $outcome );
+				$status_msg  = sprintf( 'Try %d failed, %s - Error: %s%s', $attempt_num, $outcome, $error, $page_info );
 
-				error_log(
-					sprintf(
-						'%s: %s - Error: %s%s',
-						__METHOD__,
-						$status_msg,
-						$error,
-						$page_info
-					)
-				);
+				$this->log_activity( $status_msg, __METHOD__, true );
 			}// @codeCoverageIgnoreEnd
 
 			// If we should retry, do so with an incremented retry count.
@@ -247,6 +277,18 @@ class Spectrum_API {
 
 			$return['status'] = ( isset( $resp->status ) && 'success' === $resp->status ) ? 1 : 0;
 			$return['data']   = ( isset( $resp->data ) ) ? $resp->data : '';
+
+			// Log successful form submissions.
+			if ( 1 === $return['status'] ) {
+				$browser_retry_info = $this->get_browser_retry_info( $referring_page );
+				$success_message    = sprintf(
+					'Form submitted successfully on attempt %d%s',
+					$retry_count + 1,
+					$browser_retry_info
+				);
+				$this->log_activity( $success_message, __METHOD__ );
+			}
+
 			if ( isset( $resp->message ) ) {
 				$return['response'] = $resp->message;
 			} else {
