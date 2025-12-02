@@ -47,7 +47,7 @@ SITE.field_rules_form_library = (function($) {
         	$.subscribe('spectrumEMP/formFieldUpdate', function(e, field_data) {
 	        	self.fields_by_id[field_data.field_id] = field_data.field;
 	        	$.each(self.fields_by_id, function(watch_field, submit_fields) {
-		        	$(self.fields_by_id[watch_field]).unbind('change');
+		        	$(self.fields_by_id[watch_field]).off('change');
 	        	});
 	        	self._setup_listeners();
         })},
