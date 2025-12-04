@@ -94,7 +94,7 @@
 							$field.parents(options.errorApplyTo).addClass(options.errorClass);
 						}
 						
-						if (using.indexOf('C') != -1 && $field.attr('name').length > 0 && !$form.find('[name="' + $field.attr('name') + '"]:input:checked').size()) {
+						if (using.indexOf('C') != -1 && $field.attr('name').length > 0 && !$form.find('[name="' + $field.attr('name') + '"]:input:checked').length) {
 							$field.parents(options.errorApplyTo).addClass(options.errorClass);
 						}
 						
