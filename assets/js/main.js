@@ -37,7 +37,7 @@ function main($) {
 				modifyReferringPage('manual');
 				
 				// Show submitting state
-				$(this).html('Submitting...').attr('disabled', 'disabled');
+				$(this).html('Submitting...').prop('disabled', true);
 				
 				// Trigger form validation and submission using the stored validator
 				if (that.formValidator.form()) {
@@ -198,7 +198,7 @@ function main($) {
 
 			onSuccess: function($form) {
 
-				var $sb = $form.find('.btn-primary').html('Submitting...').attr('disabled', 'disabled');
+				var $sb = $form.find('.btn-primary').html('Submitting...').prop('disabled', true);
 
 				$.post( $form.attr('action'), $form.serialize(), function(r) {
 
